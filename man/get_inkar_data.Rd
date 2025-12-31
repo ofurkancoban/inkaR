@@ -18,7 +18,7 @@ get_inkar_data(
 
 \item{level}{Character. Spatial level code (e.g., "KRE" for Kreise).}
 
-\item{year}{Integer/Character. Specific year (e.g., 2021). If NULL, fetches all available years.}
+\item{year}{Integer/Character vector. Specific year (e.g., 2021) or range (e.g., 2010:2020). If NULL, fetches all available years.}
 
 \item{lang}{Character. "de" (default) for German column names, "en" for English.}
 

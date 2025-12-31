@@ -26,7 +26,7 @@ get_time_references <- function(variable, level) {
     SpaceCollection = list(list(level = level))
   )
 
-  # Note: Endpoint is /Wizard/GetMöglich (encoded)
+  # Note: Endpoint is /Wizard/GetM\\u00F6glich (encoded)
   # using unencoded string here, relying on httr2 to handle or pre-encoded
   req <- inkar_request("Wizard/GetM%C3%B6glich") |>
     httr2::req_method("POST") |>
@@ -34,10 +34,10 @@ get_time_references <- function(variable, level) {
 
   resp <- perform_request(req)
 
-  # Response structure: list(Möglich = list(...))
-  if (!is.null(resp$Möglich)) {
+  # Response structure: list(M\u00F6glich = list(...))
+  if (!is.null(resp[["M\\u00F6glich"]])) {
     # It returns a list of lists. Bind them.
-    times <- dplyr::bind_rows(resp$Möglich)
+    times <- dplyr::bind_rows(resp[["M\\u00F6glich"]])
     return(times)
   }
 
@@ -51,7 +51,7 @@ get_time_references <- function(variable, level) {
 #'
 #' @param variable Character. The indicator ID (Shortname), e.g., "011".
 #' @param level Character. Spatial level code (e.g., "KRE" for Kreise).
-#' @param year Integer/Character. Specific year (e.g., 2021). If NULL, fetches all available years.
+#' @param year Integer/Character vector. Specific year (e.g., 2021) or range (e.g., 2010:2020). If NULL, fetches all available years.
 #' @param lang Character. "de" (default) for German column names, "en" for English.
 #' @param format Character. "long" (default) for tidy format, "wide" for years as columns.
 #' @param csv Logical. If TRUE, saves the data to a CSV file in the current directory.
@@ -73,22 +73,28 @@ get_inkar_data <- function(
     # Case 1: Variable is an alphanumeric ID (e.g., "bip", "xbev")
     # The API generally rejects these and needs the numeric M_ID.
     if (variable %in% inds$ID) {
-       match_row <- inds[inds$ID == variable, ]
-       if (nrow(match_row) >= 1) {
-          # Use M_ID from the match
-          m_id_val <- match_row$M_ID[1]
-           message("Using unique M_ID '", m_id_val, "' for Indicator Code '", variable, "'")
-          variable <- as.character(m_id_val)
-       }
+      match_row <- inds[inds$ID == variable, ]
+      if (nrow(match_row) >= 1) {
+        # Use M_ID from the match
+        m_id_val <- match_row$M_ID[1]
+        message(
+          "Using unique M_ID '",
+          m_id_val,
+          "' for Indicator Code '",
+          variable,
+          "'"
+        )
+        variable <- as.character(m_id_val)
+      }
     } else {
-        # Case 2: Variable might be the numeric M_ID itself (e.g., "1203", "11")
-        var_num <- suppressWarnings(as.numeric(variable))
-        if (!is.na(var_num) && var_num %in% inds$M_ID) {
-             # It IS a valid M_ID. Use it directly.
-             # Note: API accepts "11", "011", "1" etc.
-             message("Using M_ID '", var_num, "' directly.")
-             variable <- as.character(var_num)
-        }
+      # Case 2: Variable might be the numeric M_ID itself (e.g., "1203", "11")
+      var_num <- suppressWarnings(as.numeric(variable))
+      if (!is.na(var_num) && var_num %in% inds$M_ID) {
+        # It IS a valid M_ID. Use it directly.
+        # Note: API accepts "11", "011", "1" etc.
+        message("Using M_ID '", var_num, "' directly.")
+        variable <- as.character(var_num)
+      }
     }
   }
 
@@ -320,7 +326,7 @@ get_inkar_data <- function(
       }
     }
 
-  df <- df |>
+    df <- df |>
       dplyr::select(dplyr::any_of(target_cols), dplyr::everything())
   }
 
@@ -329,16 +335,18 @@ get_inkar_data <- function(
     # Generate a sensible filename: inkar_{ID}_{LEVEL}_{NAME}.csv
     # Sanitize variable/name for filename
     safe_id <- gsub("[^a-zA-Z0-9]", "", variable)
-    
+
     # Sanitize indicator name (spaces to underscores, remove special chars)
     safe_name <- gsub("[^a-zA-Z0-9]", "_", raw_ind_name)
     # Collapse multiple underscores
     safe_name <- gsub("_+", "_", safe_name)
     # Truncate if too long (filesystem limits)
-    if (nchar(safe_name) > 50) safe_name <- substr(safe_name, 1, 50)
-    
+    if (nchar(safe_name) > 50) {
+      safe_name <- substr(safe_name, 1, 50)
+    }
+
     filename <- paste0("inkar_", safe_id, "_", level, "_", safe_name, ".csv")
-    
+
     utils::write.csv(df, filename, row.names = FALSE)
     message("Data saved to: ", filename)
   }
@@ -362,9 +370,9 @@ get_geographies <- function(geography = NULL) {
     return(tibble::tibble(
       Name = c(
         "Bund",
-        "Länder",
+        "L\\u00E4nder",
         "Kreise",
-        "Gemeindeverbände",
+        "Gemeindeverb\\u00E4nde",
         "Gemeinden",
         "Raumordnungsregionen"
       ),
@@ -387,7 +395,7 @@ get_geographies <- function(geography = NULL) {
       # Standardize output to ID and Name
       regions <- regions |>
         dplyr::select(
-          region_id = dplyr::any_of(c("Schlüssel", "Kennziffer", "ID")),
+          region_id = dplyr::any_of(c("Schl\\u00FCssel", "Kennziffer", "ID")),
           region_name = dplyr::any_of(c(
             "Name",
             "Raumname",

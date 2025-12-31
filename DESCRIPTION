@@ -2,7 +2,7 @@ Package: inkaR
 Title: Download and Analyze INKAR Data
 Version: 0.1.1
 Authors@R: 
-    person("Furkan", "Coban", , "email@example.com", role = c("aut", "cre"))
+    person("Omer Furkan", "Coban", , "oemer.furkan.coban@uni-oldenburg.de", role = c("aut", "cre"))
 Description: A lightweight package to download spatial development indicators 
     from the BBSR INKAR database. Provides a modern interface using 'httr2' 
     and handles metadata lookup including bilingual support (DE/EN).
@@ -20,6 +20,9 @@ Imports:
     tidyr
 Suggests: 
     readxl,
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
 Depends: 
-    R (>= 3.5)
+    R (>= 4.1.0)

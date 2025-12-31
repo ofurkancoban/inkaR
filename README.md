@@ -3,6 +3,7 @@
 This package provides a lightweight, modern interface to download data from the [BBSR INKAR](https://www.inkar.de/) database.
 
 ## Features
+
 - **Modern Backend**: Uses `httr2` for robust API requests.
 - **Bilingual**: Search and retrieve indicator metadata in German (DE) or English (EN).
 - **Offline Metadata**: Includes a bundled dataset of indicators for fast searching.
@@ -17,7 +18,9 @@ devtools::install(".")
 ## Usage
 
 ### 1. Find Indicators
+
 Search for data you are interested in.
+
 ```r
 library(inkaR)
 
@@ -30,14 +33,19 @@ pop_inds <- search_indicators("Population", lang = "en")
 ```
 
 ### 2. Download Data
+
 Use the `ID` (Shortname) from the search results.
 
 ```r
 # Download data for indicator "001" (Total Population) for Districts (Kreise)
 df <- get_inkar_data(variable = "001", level = "Kreise")
+
+# Download for a specific year range
+df_range <- get_inkar_data("001", level = "Kreise", year = 2010:2020)
 ```
 
 ## Setup (Development)
+
 If you have a new `Uebersicht der Indikatoren.xlsx` file, update the package data by running:
 
 ```r

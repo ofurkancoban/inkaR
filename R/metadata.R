@@ -97,7 +97,7 @@ view_indicators <- function(lang = c("de", "en")) {
                 Gemeinden,
                 Kreise,
                 Algorithmus,
-                Kürzel = ID,
+                "K\\u00FCrzel" = ID,
                 Anmerkungen,
                 `Statistische Grundlagen` = dplyr::any_of(c(
                     "Statistische Grundlagen",

@@ -1,9 +1,3 @@
-#' Convert API list response to Tibble
-#'
-#' @param data Raw list data from JSON
-#' @return A tibble
-#' @noRd
-
 #' Rename first matching column and remove others
 #'
 #'Helper to robustly rename *one* column from a set of candidates.
@@ -72,7 +66,7 @@ parse_inkar_json <- function(data, lang = "de") {
         df <- df |>
             rename_first_found(
                 col_region_id,
-                c("Schlüssel", "RaumID", "Raum")
+                c("Schl\\u00FCssel", "RaumID", "Raum")
             ) |>
             rename_first_found(
                 col_region_name,
