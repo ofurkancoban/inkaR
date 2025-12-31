@@ -1,0 +1,25 @@
+Package: inkaR
+Title: Download and Analyze INKAR Data
+Version: 0.1.1
+Authors@R: 
+    person("Furkan", "Coban", , "email@example.com", role = c("aut", "cre"))
+Description: A lightweight package to download spatial development indicators 
+    from the BBSR INKAR database. Provides a modern interface using 'httr2' 
+    and handles metadata lookup including bilingual support (DE/EN).
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports: 
+    httr2,
+    jsonlite,
+    tibble,
+    dplyr,
+    rlang,
+    tidyr
+Suggests: 
+    readxl,
+    testthat
+Depends: 
+    R (>= 3.5)
