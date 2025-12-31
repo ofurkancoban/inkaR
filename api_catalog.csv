@@ -1,0 +1,563 @@
+"ID","Name","Active"
+1,"Katasterfläche in km²",TRUE
+2,"Zahl der Einwohner insgesamt",TRUE
+3,"Zahl der männlichen Einwohner",TRUE
+4,"Zahl der weiblichen Einwohner",TRUE
+5,"Zensuskorrigierte Zahl der Einwohner insgesamt",TRUE
+6,"Zahl der Einwohner im Alter von 15 bis unter 65 Jahren",TRUE
+7,"Zahl der Erwerbstätigen in 1000 Personen",TRUE
+8,"Zahl der sozialversicherungspflichtig Beschäftigten am Arbeitsort insgesamt",TRUE
+9,"Zahl der sozialversicherungspflichtig Beschäftigten am Wohnort insgesamt",TRUE
+10,"Zahl der Arbeitslosen insgesamt",TRUE
+11,"Bruttoinlandsprodukt (BIP) absolut in Millionen Euro",TRUE
+12,"Anteil der Arbeitslosen an den zivilen Erwerbspersonen in %",TRUE
+13,"Anteil der arbeitslosen Frauen an den weiblichen zivilen Erwerbspersonen in %",TRUE
+14,"Anteil der arbeitslosen Männer an den männlichen zivilen Erwerbspersonen in %",TRUE
+15,"Anteil der arbeitslosen Frauen an den Arbeitslosen in %",TRUE
+16,"Anteil der arbeitslosen Männer an den Arbeitslosen in %",TRUE
+17,"Anteil der Arbeitslosen, 1 Jahr und länger arbeitslos, an den Arbeitslosen in %",TRUE
+18,"Anteil der weiblichen Arbeitslosen, 1 Jahr und länger arbeitslos, an den weiblichen Arbeitslosen in %",TRUE
+19,"Anteil der männlichen Arbeitslosen, 1 Jahr und länger arbeitslos, an den männlichen Arbeitslosen in %",TRUE
+20,"Anteil der ausländischen Arbeitslosen an den Arbeitslosen in %",TRUE
+21,"Anteil der ausländischen weiblichen  Arbeitslosen an den weiblichen Arbeitslosen in %",TRUE
+22,"Anteil der ausländischen männlichen Arbeitslosen an den männlichen Arbeitslosen in %",TRUE
+23,"Anteil der Arbeitslosen ohne Berufsausbildung an den Arbeitslosen in %",TRUE
+24,"Anteil Arbeitslose Anforderungsniveau Experte an den Arbeitslosen in %",TRUE
+25,"Anteil Arbeitslose Anforderungsniveau Spezialist an den Arbeitslosen in %",TRUE
+26,"Anteil Arbeitslose Anforderungsniveau Fachkraft an den Arbeitslosen in %",TRUE
+27,"Anteil Arbeitslose Anforderungsniveau Helfer an den Arbeitslosen in %",TRUE
+28,"Anteil der offenen Stellen mit Anforderungsniveau Experte an den offenen Stellen in % ",TRUE
+29,"Anteil der offenen Stellen mit Anforderungsniveau Spezialist an den offenen Stellen in % ",TRUE
+30,"Anteil der offenen Stellen mit Anforderungsniveau Fachkraft an den offenen Stellen in % ",TRUE
+31,"Anteil der offenen Stellen mit Anforderungsniveau Helfer an den offenen Stellen in % ",TRUE
+32,"Anteil der Arbeitslosen 55 Jahre und älter an den zivilen Erwerbspersonen 55 Jahre und älter in %",TRUE
+33,"Anteil der Arbeitslosen unter 25 Jahren an den zivilen Erwerbspersonen unter 25 Jahre in %",TRUE
+34,"Anteil der Arbeitslosen 55 Jahre und älter an den Arbeitslosen in %",TRUE
+35,"Anteil der weiblichen Arbeitslosen 55 Jahre und älter an den weiblichen Arbeitslosen in %",TRUE
+36,"Anteil der männlichen Arbeitslosen 55 Jahre und älter an den männlichen Arbeitslosen in %",TRUE
+37,"Anteil der Arbeitslosen unter 25 Jahren an den Arbeitslosen in %",TRUE
+38,"Anteil der weiblichen Arbeitslosen unter 25 Jahren an den weiblichen Arbeitslosen in %",TRUE
+39,"Anteil der männlichen Arbeitslosen unter 25 Jahren an den männlichen Arbeitslosen in %",TRUE
+40,"Anteil der Arbeitslosen 55 Jahre und älter an Einwohnern von 55 bis unter 65 Jahren in %",TRUE
+41,"Anteil der weiblichen Arbeitslosen 55 Jahre und älter an weiblichen Einwohnern von 55 bis unter 65 Jahren in %",TRUE
+42,"Anteil der männlichen Arbeitslosen 55 Jahre und älter an männlichen Einwohnern von 55 bis unter 65 Jahren in %",TRUE
+43,"Anteil der Arbeitslosen unter 25 Jahren an Einwohnern von 15 bis unter 25 Jahren in %",TRUE
+44,"Anteil der weiblichen Arbeitslosen unter 25 Jahren an weiblichen Einwohnern von 15 bis unter 25 Jahren in %",TRUE
+45,"Anteil der männlichen Arbeitslosen unter 25 Jahren an männlichen Einwohnern von 15 bis unter 25 Jahren in %",TRUE
+46,"Durchschnittliche Kaufwerte für Bauland in € je m²",TRUE
+47,"Baugenehmigungen für neue Wohnungen je 1.000 Einwohner",TRUE
+48,"Anteil der Baugenehmigungen für neue Wohnungen in Gebäuden mit 1 und. 2 Wohnungen an den Baugenehmigungen in %",TRUE
+49,"Anteil der Baugenehmigungen für neue Wohnungen in Gebäuden mit 3 u. mehr Wohnungen an den Baugenehmigungen in %",TRUE
+50,"Fertiggestellte Wohnungen je 1.000 Wohnungen des Bestandes",TRUE
+51,"Anteil neu errichteter Ein- und Zweifamilienhäuser an den neu errichteten Häusern in %",TRUE
+52,"Anteil neuer Wohnungen in Ein- und Zweifamilienhäusern an den neuen Wohnungen in %",TRUE
+53,"Fertiggestellte Wohnungen in neuen Wohngebäuden je 1.000 Einwohner",TRUE
+54,"Fertiggestellte Wohnungen in neuen Ein- und Zweifamilienhäusern je 1.000 Einwohner",TRUE
+55,"Fertiggestellte Wohnungen in neuen Mehrfamilienhäusern je 1.000 Einwohner",TRUE
+56,"Anteil fertiggestellter Wohngebäude  mit erneuerbarer Heizenergie an neu errichteten Wohngebäuden in %",TRUE
+57,"Anteil fertiggestellter Wohnungen  mit erneuerbarer Heizenergie an allen  errichteten Wohnungen in Wohngebäuden in %",TRUE
+58,"Wiedervermietungsmieten inserierter Wohnungen (Angebotsmieten)",TRUE
+59,"Bauüberhang von Wohnungen in Wohn- und Nichtwohngebäuden je 10.000 Einwohner",TRUE
+60,"Anteil der Wohngebäude mit 1 und 2 Wohnungen an den Wohngebäuden in %",TRUE
+61,"Anteil der Wohngebäude mit 3 und mehr Wohnungen an den Wohngebäuden in %",TRUE
+62,"Anteil der Wohnungen mit 1 und 2 Räumen an den Wohnungen in %",TRUE
+63,"Anteil der Wohnungen mit 5 und mehr Räumen in %",TRUE
+64,"Wohnfläche je Einwohner in m²",TRUE
+65,"Anteil Wohnungen in Ein- und Zweifamilienhäusern an allen Wohnungen in %",TRUE
+66,"Anteil Wohnungen in Mehrfamilienhäusern an allen Wohnungen in %",TRUE
+67,"SV Beschäftigte am Wohnort je 100 Einwohner im erwerbsfähigen Alter in %",TRUE
+68,"SV beschäftigte Frauen am Wohnort je 100 Frauen im erwerbsfähigen Alter in %",TRUE
+69,"SV beschäftigte Männer am Wohnort je 100 Männer im erwerbsfähigen Alter in %",TRUE
+70,"SV beschäftigte Ausländer am Wohnort je 100 erwerbsfähige Ausländer in %",TRUE
+71,"Verhältnis junge (15-<20J) zu alte (60-<65J) Erwerbsfähige in %",TRUE
+72,"SV Beschäftigte am Wohnort im Alter von 15 bis unter 30 Jahre je 100 Einwohner dieser Altersgruppe in %",TRUE
+73,"SV Beschäftigte am Wohnort im Alter von 55 bis unter 65 Jahren je 100 Einwohner dieser Altersgruppe in %",TRUE
+74,"Anteil der SV Beschäftigten am Arbeitsort (Teilzeit) an den SV Beschäftigten in %",TRUE
+75,"Anteil der SV beschäftigten Frauen am Arbeitsort (Teilzeit) an allen SV beschäftigten Frauen in %",TRUE
+76,"Erwerbspersonen je 100 Einwohner im erwerbsfähigen Alter in %",TRUE
+77,"Weibliche Erwerbspersonen je 100 Frauen im erwerbsfähigen Alter in %",TRUE
+78,"Männliche Erwerbspersonen je 100 Männer im erwerbsfähigen Alter in %",TRUE
+79,"Selbstständige je 100 Erwerbstätige in %",TRUE
+80,"Anteil der SV Beschäftigten am Arbeitsort mit akademischem Berufsabschluss an den SV Beschäftigten in %",TRUE
+81,"Anteil der SV Beschäftigten am Arbeitsort mit Berufsabschluss an den SV Beschäftigten in %",TRUE
+82,"Anteil der SV Beschäftigten am Arbeitsort ohne Berufsabschluss an den SV Beschäftigten in %",TRUE
+83,"Anteil der SV Beschäftigten am Wohnort mit akademischem Berufsabschluss an den SV Beschäftigten in %",TRUE
+84,"Anteil der SV Beschäftigten am Wohnort mit Berufsabschluss an den SV Beschäftigten in %",TRUE
+85,"Anteil der SV Beschäftigten am Wohnortohne Berufsabschluss an den SV Beschäftigten in %",TRUE
+86,"Anteil der SV Beschäftigten am Arbeitsort mit Anforderungsniveau Experte an den SV Beschäftigten in %",TRUE
+87,"Anteil der SV Beschäftigten am Arbeitsort mit Anforderungsniveau Spezialist an den SV Beschäftigten in %",TRUE
+88,"Anteil der SV Beschäftigten am Arbeitsort mit Anforderungsniveau Fachkraft an den SV Beschäftigten in %",TRUE
+89,"Anteil der SV Beschäftigten am Arbeitsort mit Anforderungsniveau Helfer an den SV Beschäftigten in %",TRUE
+90,"Anteil der geringfügig entlohnten Beschäftigten am Arbeitsort an den privatrechtlichen Beschäftigungsverhältnissen in %",TRUE
+91,"Anteil der geringfügig entlohnten Beschäftigten am Arbeitsort (ausschließlich) an den privatrechtlichen Beschäftigungsverhältnissen in %",TRUE
+92,"Anteil der geringfügig entlohnten Beschäftigten am Arbeitsort im Nebenjob an den privatrechtlichen Beschäftigungsverhältnissen in %",TRUE
+93,"Anteil der geringfügig entlohnten Beschäftigten am Arbeitsort (ausschließlich) an den geringfügig entlohnten Beschäftigten in %",TRUE
+94,"Anteil der geringfügig entlohnten Beschäftigten im Nebenjob an den geringfügig entlohnten Beschäftigten in %",TRUE
+95,"Anteil der geringfügig entlohnten weiblichen Beschäftigten an den geringfügig entlohnten Beschäftigten am Arbeitsort in %",TRUE
+96,"Anteil der geringfügig entlohnten männlichen Beschäftigten an den geringfügig entlohnten Beschäftigten in %",TRUE
+97,"Anteil erwerbstätiger ALGII-Bezieher an den Leistungsberechtigten in %",TRUE
+98,"Anteil Kurzarbeiter an den SV Beschäftigten am Arbeitsort in %",TRUE
+99,"Anteil der geringfügig entlohnten Beschäftigten 65 Jahre und älter an den geringfügig entlohnten Beschäftigten in %",TRUE
+100,"Anteil der geringfügig entlohnten männlichen Beschäftigten am Arbeitsort 65 Jahre und älter an den männlichen geringfügig entlohnten Beschäftigten in %",TRUE
+101,"Anteil der geringfügig entlohnten weiblichen Beschäftigten 65 Jahre und älter an den weiblichen geringfügig entlohnten Beschäftigten in %",TRUE
+102,"Unterbeschäftigte je 100 Erwerbspersonen in %",TRUE
+103,"Anteil der SV Beschäftigten am Arbeitsort im Primären Sektor an den SV Beschäftigten in %",TRUE
+104,"Anteil der SV Beschäftigten am Arbeitsort im Sekundären Sektor an den SV Beschäftigten in %",TRUE
+105,"Anteil der SV Beschäftigten am Arbeitsort im Tertiären Sektor an den SV Beschäftigten in %",TRUE
+106,"SV Beschäftigte am Arbeitsort in der Industrie je 100 Einwohner im erwerbsfähigen Alter in %",TRUE
+107,"SV Beschäftigte am Arbeitsort im Dienstleistungssektor je 100 Einwohner im erwerbsfähigen Alter in %",TRUE
+108,"Anteil der SV Beschäftigten am Arbeitsort in wissensintensiven unternehmensbezogenen Dienstleistungsbranchen an den SV Beschäftigten in %",TRUE
+109,"Anteil der SV Beschäftigten am Arbeitsort in Kreativbranchen an den SV Beschäftigten in %",TRUE
+110,"Anteil der SV Beschäftigten am Arbeitsort in wissens- u. forschungsintensiven Industrien an den SV Beschäftigten in %",TRUE
+111,"Anteil der sozialversicherungspfichtig Beschäftigten in IT- und naturwissenschaftlichen Dienstleistungsberufen an den SV Beschäftigten in %",TRUE
+112,"Anteil der SV Beschäftigte am Arbeitsort in Handwerksbetrieben an den SV Beschäftigten in %",TRUE
+113,"Anteil der Erwerbstätigen im Primären Sektor an den Erwerbstätigen in %",TRUE
+114,"Anteil der Erwerbstätigen im Sekundären Sektor an den Erwerbstätigen in %",TRUE
+115,"Anteil der Erwerbstätigen im Tertiären Sektor an den Erwerbstätigen in %",TRUE
+116,"Anteil der Erwerbstätigen im Verarbeitenden Gewerbe an den Erwerbstätigen im Sekundären Sektor in %",TRUE
+117,"Anteil der Erwerbstätigen in Finanz-, Versicherungs- und Unternehmensdienstleistungen sowie im Grundstücks- und Wohnungswesen an den Erwerbstätigen im Tertiären Sektor in %",TRUE
+118,"Anteil der SV Beschäftigten am Arbeitsort im Baugewerbe an den SV Beschäftigten in %",TRUE
+119,"Anteil der Einwohner unter 3 Jahren an den Einwohnern in %",TRUE
+120,"Anteil der Einwohner von 3 bis unter 6 Jahren an den Einwohnern in %",TRUE
+121,"Anteil der Einwohner unter 6 Jahren an den Einwohnern in %",TRUE
+122,"Anteil der Einwohner von 6 bis unter 18 Jahren an den Einwohnern in %",TRUE
+123,"Anteil der Einwohner von 18 bis unter 25 Jahren an den Einwohnern in %",TRUE
+124,"Anteil der Einwohner von 25 bis unter 30 Jahren an den Einwohnern in %",TRUE
+125,"Anteil der Einwohner von 30 bis unter 50 Jahren an den Einwohnern in %",TRUE
+126,"Anteil der Einwohner von 50 bis unter 65 Jahren an den Einwohnern in %",TRUE
+127,"Anteil der Einwohner von 65 bis unter 75 Jahren an den Einwohnern in %",TRUE
+128,"Anteil der Einwohner von 75 bis unter 85 Jahren an den Einwohnern in %",TRUE
+129,"Anteil der Einwohner 65 Jahre und älter an den Einwohnern in %",TRUE
+130,"Anteil der Einwohner 75 Jahre und älter an den Einwohnern in %",TRUE
+131,"Anteil der Einwohner 85 Jahre und älter an den Einwohnern in %",TRUE
+132,"Anteil der weiblichen Einwohner von 18 bis unter 25 Jahren an den Einwohnern dieser Altersgruppe in %",TRUE
+133,"Anteil der weiblichen Einwohner von 25 bis unter 30 Jahren an den Einwohnern dieser Altersgruppe in %",TRUE
+134,"Anteil der weiblichen Einwohner von 65 bis unter 75 Jahren an den Einwohnern dieser Altersgruppe in %",TRUE
+135,"Anteil der weiblichen Einwohner von 75 bis unter 85 Jahren an den Einwohnern dieser Altersgruppe in %",TRUE
+136,"Anteil der weiblichen Einwohner 65 Jahre und älter an den Einwohnern dieser Altersgruppe in %",TRUE
+137,"Anteil der weiblichen Einwohner 75 Jahre und älter an den Einwohnern dieser Altersgruppe in %",TRUE
+138,"Anteil der weiblichen Einwohner 85 Jahre und älter an den Einwohnern dieser Altersgruppe in %",TRUE
+139,"Durchschnittsalter der Bevölkerung in Jahren",TRUE
+140,"Eheschließungen je 1.000 Einwohner 18 Jahre und älter",TRUE
+141,"Ehescheidungen je 1.000 Einwohner 18 Jahre und älter",TRUE
+142,"Gender-Index des BBSR",TRUE
+143,"Anteil der Ausländer an den Einwohnern in %",TRUE
+144,"Anteil der weiblichen Ausländer an den Ausländern in %",TRUE
+145,"Personen je Haushalt",TRUE
+146,"Anteil der Einpersonenhaushalte an den Haushalten insgesamt in %",TRUE
+147,"Anteil der Haushalte mit Kindern an allen Haushalten in %",TRUE
+148,"Einwohner unter 15 Jahren je 100 Einwohner im erwerbsfähigen Alter",TRUE
+149,"Einwohner 65 Jahre und älter je 100 Einwohner im erwerbsfähigen Alter",TRUE
+150,"Anteil der Frauen an den Einwohnern in %",TRUE
+151,"Anteil der Frauen an den Einwohnern von 20 bis unter 40 Jahren in %",TRUE
+152,"Einbürgerungen je 1.000 Ausländer",TRUE
+153,"Einbürgerungen je 1.000 Einwohner",TRUE
+154,"Anteil Schutzsuchender an Bevölkerung in %",TRUE
+155,"Anteil Schutzsuchender an ausländischer Bevölkerung in %",TRUE
+156,"Entwicklung der Zahl der Einwohner über die letzten 10 Jahre in %",TRUE
+157,"Entwicklung der Zahl der Einwohner über die letzten 5 Jahre in %",TRUE
+158,"Prognostizierte Bevölkerungsentwicklung 2022 bis 2030 in Prozent (Basis ROP 2045)",TRUE
+159,"Prognostizierte Bevölkerungsentwicklung 2022 bis 2035 in Prozent (Basis ROP 2045)",TRUE
+160,"Prognostizierte Bevölkerungsentwicklung 2022 bis 2040 in Prozent (Basis ROP 2045)",TRUE
+161,"Prognostizierte Bevölkerungsentwicklung 2022 bis 2045 in Prozent (Basis ROP 2045)",TRUE
+162,"Gesamtwanderungssaldo je 1.000 Einwohner",TRUE
+163,"Außenwanderungssaldo je 1.000 Einwohner",TRUE
+164,"Außenwanderungssaldo Frauen je 1.000 weibliche Einwohner",TRUE
+165,"Außenwanderungssaldo Männer je 1.000 männliche Einwohner",TRUE
+166,"Binnenwanderungssaldo insgesamt je 1.000 Einwohner",TRUE
+167,"Binnenwanderungssaldo Frauen insgesamt je 1.000 weibliche Einwohner",TRUE
+168,"Binnenwanderungssaldo Männer insgesamt je 1.000 männliche Einwohner",TRUE
+169,"Binnenwanderungssaldo der Einwohner von 18 bis unter 25 Jahren je 1.000 Einwohner der Altersgruppe",TRUE
+170,"Binnenwanderungssaldo der weiblichen Einwohner von 18 bis unter 25 Jahren je 1.000 weibliche Einwohner der Altersgruppe",TRUE
+171,"Binnenwanderungssaldo der männlichen Einwohner von 18 bis unter 25 Jahren je 1.000 männliche Einwohner der Altersgruppe",TRUE
+172,"Binnenwanderungssaldo der Einwohner von 25 bis unter 30 Jahren je 1.000 Einwohner der Altersgruppe",TRUE
+173,"Binnenwanderungssaldo der weiblichen Einwohner von 25 bis unter 30 Jahren je 1.000 weibliche Einwohner der Altersgruppe",TRUE
+174,"Binnenwanderungssaldo der männlichen Einwohner von 25 bis unter 30 Jahren je 1.000 männliche Einwohner der Altersgruppe",TRUE
+175,"Binnenwanderungssaldo der Einwohner 65 Jahre und älter je 1.000 Einwohner der Altersgruppe",TRUE
+176,"Binnenwanderungssaldo der Einwohner unter 18 Jahre je 1.000 Einwohner der Altersgruppe",TRUE
+177,"Binnenwanderungssaldo der Einwohner 30 bis unter 50 Jahre je 1.000 Einwohner der Altersgruppe",TRUE
+178,"Binnenwanderungsvolumen je 1.000 Einwohner",TRUE
+179,"Binnenwanderungsvolumen der Frauen je 1.000 weibliche Einwohner",TRUE
+180,"Binnenwanderungsvolumen der Männer je 1.000 männliche Einwohner",TRUE
+181,"Zuzüge je 1.000 Einwohner",TRUE
+182,"Fortzüge je 1.000 Einwohner",TRUE
+183,"Zuzüge der Frauen je 1.000 weibliche Einwohner",TRUE
+184,"Fortzüge der Frauen je 1.000 weibliche Einwohner",TRUE
+185,"Zuzüge der Männer je 1.000 männliche Einwohner",TRUE
+186,"Fortzüge der Männer je 1.000 männliche Einwohner",TRUE
+187,"Geborene je 1.000 Einwohner",TRUE
+188,"Gestorbene je 1.000 Einwohner",TRUE
+189,"Natürlicher Saldo je 1.000 Einwohner",TRUE
+190,"Zusammengefasste Geburtenziffer (TFR)",TRUE
+191,"Geborene von Müttern von 15 bis unter 20 Jahren je 1.000 Frauen im Alter von 15 bis unter 20 Jahren",TRUE
+192,"Geborene von Müttern 40 Jahre und älter je 1.000 Frauen im Alter von 40 bis unter 45 Jahren",TRUE
+193,"Anteil der Gestorbenen unter 1 Jahr je 1.000 Einwohner unter 1 Jahr",TRUE
+194,"Anteil aller Zweitstimmen (gültig und ungültig) an den Wahlberechtigten in %",TRUE
+195,"Anteil der Zweitstimmen CDU/CSU an den Zweitstimmen in %",TRUE
+196,"Anteil der Zweitstimmen SPD an den Zweitstimmen in %",TRUE
+197,"Anteil der Zweitstimmen Grüne an den Zweitstimmen in %",TRUE
+198,"Anteil der Zweitstimmen FDP an den Zweitstimmen in %",TRUE
+199,"Anteil der Zweitstimmen Sonstige Parteien an den Zweitstimmen in %",TRUE
+200,"Anteil der Zweitstimmen Die Linke an den Zweitstimmen in %",TRUE
+201,"Anteil der Zweitstimmen AfD an den Zweitstimmen in %",TRUE
+202,"Straftaten je 100.000 Einwohner",TRUE
+203,"Fälle von Wohnungseinbruchdiebstahl je 100.000 Einwohner",TRUE
+204,"Schüler an Berufsschulen je 1.000 Einwohner",TRUE
+205,"Anteil Berufsschülerinnen an den Berufsschülern in %",TRUE
+206,"Anteil der ausländischen Berufsschüler an den Berufsschülern in %",TRUE
+207,"Gesamtangebot an betrieblichen Ausbildungsplätzen je 100 Nachfrager",TRUE
+208,"Auszubildende je 1.000 SV Beschäftige",TRUE
+209,"Anteil der weiblichen Auszubildende an den Auszubildenden in %",TRUE
+210,"Anteil der männlichen Auszubildende an den Auszubildenden in %",TRUE
+211,"Auszubildende am Wohnort je 100 Einwohner von 15 bis unter 25 Jahren in %",TRUE
+212,"Studierende an wissenschaftlichen Hochschulen und Fachhochschulen je 1.000 Einwohner",TRUE
+213,"Studierende an Fachhochschulen je 1.000 Einwohner",TRUE
+214,"Anteil der Frauen an den Studierenden in %",TRUE
+215,"Anteil der Männer an den Studierenden in %",TRUE
+216,"Anteil der Ausländer an den Studierenden in %",TRUE
+217,"Studierende im 1. Semester an den Studierenden in %",TRUE
+218,"Studierende je 100 Einwohner von 18 bis unter 25 Jahren in %",TRUE
+219,"Schüler je 100 Einwohner",TRUE
+220,"Anteil der ausländischen Schüler an den Schülern in %",TRUE
+221,"Ausländische Schüler je 100 Ausländer von 6 bis unter 18 Jahren",TRUE
+222,"Anteil der Schulabgänger mit Hochschulreife an den Schulabgängern in %",TRUE
+223,"Anteil der weiblichen Schulabgänger mit Hochschulreife an den weiblichen Schulabgängern in %",TRUE
+224,"Anteil der männlichen Schulabgänger mit Hochschulreife an den männlichen Schulabgängern in %",TRUE
+225,"Anteil der Schulabgänger mit mittlerem Schulabschluss an den Schulabgängern  in %",TRUE
+226,"Anteil der weiblichen Schulabgänger mit mittlerem Schulabschluss an den weiblichen Schulabgängern in %",TRUE
+227,"Anteil der männlichen Schulabgänger mit mittlerem Schulabschluss an den männlichen Schulabgängern in %",TRUE
+228,"Anteil der Schulabgänger mit Hauptschulabschluss an den Schulabgängern in %",TRUE
+229,"Anteil der weiblichen Schulabgänger mit Hauptschulabschluss an den weiblichen Schulabgängern in %",TRUE
+230,"Anteil der männlichen Schulabgänger mit Hauptschulabschluss an den männlichen Schulabgängern in %",TRUE
+231,"Anteil der Schulabgänger ohne Hauptschulabschluss an den Schulabgängern in %",TRUE
+232,"Anteil der weiblichen Schulabgänger ohne Hauptschulabschluss an den weiblichen Schulabgängern in %",TRUE
+233,"Anteil der männlichen Schulabgänger ohne Hauptschulabschluss an den männlichen Schulabgängern in %",TRUE
+234,"Monatlicher Bruttoverdienst von Arbeitnehmern in Euro",TRUE
+235,"Monatlicher Bruttoverdienst von Arbeitnehmern im Produzierenden Gewerbe in Euro",TRUE
+236,"Medianeinkommen der sozialversicherungspflichtig Vollzeitbeschäftigten in Euro",TRUE
+237,"Medianeinkommen der weiblichen sozialversicherungspflichtig Vollzeitbeschäftigten in Euro",TRUE
+238,"Medianeinkommen der männlichen sozialversicherungspflichtig Vollzeitbeschäftigten in Euro",TRUE
+239,"Medianeinkommen der sozialversicherungspflichtig Vollzeitbeschäftigten im Alter von 25 bis unter 55 Jahren in Euro",TRUE
+240,"Medianeinkommen der sozialversicherungspflichtig Vollzeitbeschäftigten im Alter von 55 bis unter 65 Jahren in Euro",TRUE
+241,"Medianeinkommen der sozialversicherungspflichtig Vollzeitbeschäftigten mit anerkanntem Berufsabschluss in Euro",TRUE
+242,"Medianeinkommen der sozialversicherungspflichtig Vollzeitbeschäftigten mit akademischem Berufsabschluss in Euro",TRUE
+243,"Medianeinkommen der vollzeitbeschäftigten Frauen im Verhältnis zu dem Medianeinkommen der vollzeitbeschäftigten Männer",TRUE
+244,"Durchschnittliches Haushaltseinkommen in € je Einwohner",TRUE
+245,"Anteil der Haushalte mit einem Nettoeinkommen von unter 1.500€ pro Monat an den Haushalten insgesamt in %",TRUE
+246,"Anteil der Haushalte mit einem Nettoeinkommen zwischen 1.500€ und 3.600€ pro Monat an den Haushalten insgesamt in %",TRUE
+247,"Anteil der Haushalte mit einem Nettoeinkommen von über 3.600€ pro Monat an den Haushalten insgesamt in %",TRUE
+248,"Kaufkraft je Einwohner in Euro",TRUE
+249,"Einzelhandelsrelevante Kaufkraft je Einwohner in Euro",TRUE
+250,"Verbraucherinsolvenzverfahren je 1.000 Einwohner 18 Jahre und älter",TRUE
+251,"Mittlere voraussichtliche Gläubigerforderungen bei Verbraucherinsolvenzverfahren in €",TRUE
+252,"Anteil ehemals Selbständiger an Insolvenzverfahren übriger Schuldner in %",TRUE
+253,"Private Schuldner je 100 Einwohner 18 Jahre und älter in %",TRUE
+254,"Anzahl geleisteter Arbeitsstunden von Arbeitnehmern",TRUE
+255,"Anteil der Siedlungs- und Verkehrsfläche an der Fläche in %",TRUE
+256,"Einwohner je km² Siedlungs- und Verkehrsfläche",TRUE
+257,"Anteil Erholungsfläche an der Fläche in %",TRUE
+258,"Erholungsfläche je Einwohner in m²",TRUE
+259,"Anteil Freifläche an der Fläche in %",TRUE
+260,"Freifläche je Einwohner in m²",TRUE
+261,"Anteil Landwirtschaftsfläche an der Fläche in %",TRUE
+262,"Anteil naturnähere Fläche an der Fläche in %",TRUE
+263,"Naturnähere Fläche je Einwohner in m²",TRUE
+264,"Anteil Waldfläche an der Fläche in %",TRUE
+265,"Anteil Wasserfläche an der Fläche in %",TRUE
+266,"Änderung der Siedlungs- und Verkehrsfläche an der Gesamtfläche im Vergleich zum Vorjahr",TRUE
+267,"Entsorgte oder behandelte Abfallmenge je Einwohner in kg",TRUE
+268,"Hausabfälle (o. Elektroaltgeräte) je Einwohner in t",TRUE
+269,"Anteil von Haus- und Sperrmüll an den Haushaltsabfällen in %",TRUE
+270,"Anteil organische Abfälle an den Haushaltsabfällen in %",TRUE
+271,"Anteil von Wertstoffen an den Haushaltsabfällen in %",TRUE
+272,"Überschuss der Stickstoff-Flächenbilanz der landwirtschaftlich genutzen Fläche in kg N/ha FL",TRUE
+273,"Wasserabgabe an Letztverbraucher (Haushalte und Kleingewerbe) in l je Einwohner und Tag",TRUE
+274,"Krankenhausbetten je 1.000 Einwohner",TRUE
+275,"Ärzte je 10.000 Einwohner",TRUE
+276,"Hausärzte je 10.000 Einwohner",TRUE
+277,"Allgemeinärzte je 10.000 Einwohner",TRUE
+278,"Internisten je 10.000 Einwohner",TRUE
+279,"Kinderärzte je 10.000 Kinder bis zu 15 Jahren",TRUE
+280,"Pflegebedürftige je 100 Einwohner",TRUE
+281,"Anteil der Pflegebedürftigen in ambulanter Pflege an den Pflegebedürftigen insgesamt in %",TRUE
+282,"Anteil der Pflegebedürftigen in stationärer Dauerpflege an den Pflegebedürftigen insgesamt in %",TRUE
+283,"Anteil der Empfänger von Pflegegeld an den Pflegebedürftigen insgesamt in %",TRUE
+284,"Personal in Pflegeheimen je 100 vollstationärer Pflegebedürftiger ",TRUE
+285,"Personal in ambulanten Pflegediensten je 100 ambulanter Pflegebedürftiger",TRUE
+286,"Verfügbare Plätze in Pflegeheimen je 10.000 Einwohner",TRUE
+287,"Anteil der Kinder unter 3 Jahren in Kindertageseinrichtungen an den Kinder der entsprechenden Altersgruppe",TRUE
+288,"Anteil der Kinder unter 3 Jahren in Kindertageseinrichtungen mit einer Betreuungszeit von 7 und mehr Stunden pro Tag an den Kinder der entsprechenden Altersgruppe",TRUE
+289,"Anteil der Kinder von 3 bis unter 6 Jahren in Kindertageseinrichtungen an den Kinder der entsprechenden Altersgruppe",TRUE
+290,"Anteil der Kinder von 3 bis unter 6 Jahren in Kindertageseinrichtungen mit einer Betreuungszeit von 7 und mehr Stunden pro Tag an den Kinder der entsprechenden Altersgruppe",TRUE
+291,"Anteil der Kinder mit ausländischer Herkunft in Tageseinrichtungen an den betreuten Kindern in %",TRUE
+292,"Plätze in Kindertageseinrichtungen je pädagogisch tätige Person ",TRUE
+293,"Anteil integrative Kindertageseinrichtungen an allen Kindertageseinrichtungen",TRUE
+294,"Gemeindliche Steuerkraft in € je Einwohner",TRUE
+295,"Einkommensteuer in € je Einwohner",TRUE
+296,"Gewerbesteuer in € je Einwohner",TRUE
+297,"Umsatzsteuer in € je Einwohner",TRUE
+298,"Schlüsselzuweisungen in € je Einwohner",TRUE
+299,"Kommunale Schulden in € je Einwohner",TRUE
+300,"Kassenkredite in € je Einwohner",TRUE
+301,"Personal der Kommunen je 10.000 Einwohner",TRUE
+302,"Ausgaben für Sachinvestitionen in € je Einwohner",TRUE
+303,"Zuweisungen für Investitionsfördermaßnahmen in € je Einwohner",TRUE
+304,"Steuereinnahmen der Gemeinden und Gemeindeverbände in Euro je Einwohner",TRUE
+305,"vorgesehene Bundesfinanzhilfen zur Städtebauförderung insgesamt (langfristig) in € je Einwohner",TRUE
+306,"vorgesehene für Bundesfinanzhilfen zur Städtebauförderung insgesamt (kurzfristig) in € je Einwohner",TRUE
+307,"Bewilligte Zuschüsse Gemeinschaftsaufgabe 'Verbesserung der regionalen Wirtschaftsstruktur, einzelbetriebliche Regionalförderung' (langfristig) in € je Einwohner",TRUE
+308,"Bewilligte Zuschüsse Gemeinschaftsaufgabe 'Verbesserung der regionalen Wirtschaftsstruktur, einzelbetriebliche Regionalförderung' (kurzfristig) in € je Einwohner",TRUE
+309,"Bewilligte Zuschüsse Gemeinschaftsaufgabe 'Verbesserung der regionalen Wirtschaftsstruktur Infrastruktur' (langfristig) in € je Einwohner",TRUE
+310,"Bewilligte Zuschüsse Gemeinschaftsaufgabe 'Verbesserung der regionalen Wirtschaftsstruktur Infrastruktur' (kurzfristig) in € je Einwohner",TRUE
+311,"Ist-Ausgaben Bund beim Zusammenwirken von Bund und Ländern bei Forschungsbauten und Großgeräten nach Art. 91 GG, Bewilligungen Exzellenzinitiative und Hochschulpakt (Bereiche Programmpauschale und Qualitätspakt Lehre) (langfristig) in € je Einwohner",TRUE
+312,"Ist-Ausgaben Zusammenwirken von Bund und Ländern bei Forschungsbauten und Großgeräten nach Art. 91 GG, Bewilligungen Exzellenzinitiative und Hochschulpakt (Bereiche Programmpauschale und Qualitätspakt Lehre) (kurzfristig) in € je Einwohner",TRUE
+313,"Zuschüsse für arbeitsmarktpolitische Hilfen der BA für Arbeit (langfristig) in € je Einwohner",TRUE
+314,"Zuschüsse für arbeitsmarktpolitische Hilfen der BA für Arbeit (kurzfristig) in € je Einwohner",TRUE
+315,"Ist-Ausgaben für direkte Projektförderung ausgewählter Ressorts (langfristig) in € je Einwohner",TRUE
+316,"Ist-Ausgaben für direkte Projektförderung ausgewählter Ressorts (kurfristig) in € je Einwohner",TRUE
+317,"Anteil der Einwohner in Gemeinden mit einer Bevölkerungsdichte von unter 150 E/km²",TRUE
+318,"Bevölkerungsanteil, der in Mittelzentren und möglichen Mittelzentren lebt",TRUE
+319,"Bevölkerungsanteil, der in Oberzentren und möglichen Oberzentren lebt",TRUE
+320,"Einwohner je km²",TRUE
+321,"Einwohner und Beschäftigte je km²",TRUE
+322,"Anteil der erwerbsfähigen und nicht erwerbsfähigen Leistungsberechtigten nach SGB II an den unter 65-jährigen Einwohnern in %",TRUE
+323,"Anteil weibliche erwerbsfähige Leistungsberechtigte nach SGB II an allen SGB II Empfängern in %",TRUE
+324,"Anteil der Haushalte, die Wohngeld empfangen je 1.000 Haushalte",TRUE
+325,"Anteil der Haushalte, die Empfänger von Mietzuschuss sind, je Wohngeldempfänger-Haushalte in %",TRUE
+326,"Anteil der Haushalte, die Empfänger von Lastenzuschuss sind, je Wohngeldempfänger-Haushalte in %",TRUE
+327,"Anteil der Bevölkerung mit Grundsicherung im Alter an den Einwohnern 65 Jahre und älter in %",TRUE
+328,"Anteil der weiblichen Empfänger von Grundsicherung im Alter an den Empfängern von Grundsicherung im Alter insgesamt in %",TRUE
+329,"Anteil der männlichen Empfänger von Grundsicherung im Alter an den Empfängern von Grundsicherung im Alter insgesamt in %",TRUE
+330,"Empfänger von Regelleistungen nach dem Asylbewerbergesetz je 1.000 Einwohner",TRUE
+331,"Anteil der Bevölkerung mit sozialen Mindestsicherungsleistungen in %",TRUE
+332,"Elterngeldbezieher (Väter) je 100 Kinder unter 1 Jahr",TRUE
+333,"Anteil der Väter an den Elterngeldbeziehern in %",TRUE
+334,"Anteil der Mütter an den Elterngeldbeziehenden in %",TRUE
+335,"Anteil der Bedarfsgemeinschaften mit 1 Person an den Bedarfsgemeinschaften insgesamt in %",TRUE
+336,"Anteil der Bedarfsgemeinschaften mit 5 und mehr Personen an den Bedarfsgemeinschaften insgesamt in %",TRUE
+337,"Anteil der Bedarfsgemeinschaften mit Kindern an den Bedarfsgemeinschaften insgesamt in %",TRUE
+338,"Personen in Bedarfsgemeinschaften je 1.000 Einwohner",TRUE
+339,"Anteil der erwerbsfähigen SGBII- Leistungsberechtigten an den Personen an den Bedarfsgemeinschaften in %",TRUE
+340,"Anteil der weiblichen erwerbsfähigen SGBII-Leistungsberechtigten an den erwerbsfähigen SGBII-Leistungsberechtigten in %",TRUE
+341,"Anteil der erwerbsfähigen Leistungsberechtigten unter 25 Jahren an den erwerbsfähigen SGBII-Leistungsberechtigten in %",TRUE
+342,"Anteil der erwerbsfähigen Leistungsberechtigten über 55 Jahren an den erwerbsfähigen SGBII-Leistungsberechtigten in %",TRUE
+343,"Anteil der alleinerziehenden erwerbsfähigen SGBII-Leistungsberechtigten an den erwerbsfähigen  SGBII-Leistungsberechtigten in %",TRUE
+344,"Nicht erwerbsfähige SGBII-Leistungsberechtigte unter 15 Jahren je 100 Einwohner unter 15 Jahren",TRUE
+345,"Durchschnittliche monatliche Anspruchshöhe von Arbeitslosengeld I (SGB III) in €  je Empfänger",TRUE
+346,"Durchschnittliche monatliche Anspruchshöhe von Arbeitslosengeld I (SGB III) in € je männl. Empfänger",TRUE
+347,"Durchschnittliche monatliche Anspruchshöhe von Arbeitslosengeld I (SGB III) in € je weibl. Empfänger",TRUE
+348,"Durchschnittliche monatliche Höhe von SGBII-Leistungen in € je Bedarfsgemeinschaft",TRUE
+349,"Durchschnittliche monatliche Höhe von Arbeitslosengeld II (SGBII) in € je Bedarfsgemeinschaft",TRUE
+350,"Anteil Arbeitslosengeld II an SGBII-Leistungen in %",TRUE
+351,"Durchschnittliche monatliche Höhe von Leistungen für Unterkunft (SGBII) in € je Bedarfsgemeinschaft",TRUE
+352,"Anteil Leistungen für Unterkunft an SGBII-Leistungen in %",TRUE
+353,"Durchschnittliche monatliche Höhe von Leistungen für Wohngeld in € je Empfängerhaushalt",TRUE
+354,"Durchschn. Pkw-Fahrzeit zur nächsten BAB-Anschlussstelle in Minuten",TRUE
+355,"Durchschn. Pkw-Fahrzeit zum nächsten internationalen Flughafen in Deutschland in Minuten",TRUE
+356,"Durchschn. Pkw-Fahrzeit zum nächsten IC/ICE-Bahnhof in Minuten",TRUE
+357,"Durchschn. Pkw-Fahrzeit zum nächsten Oberzentrum in Minuten",TRUE
+358,"Durchschn. Pkw-Fahrzeit zum nächsten Mittel- oder Oberzentrum in Minuten",TRUE
+359,"Einwohnergewichtete Entfernung zum nächsten Supermarkt oder Discounter",TRUE
+360,"Anteil Einwohner mit max. 1000m Entfernung zum nächsten Supermarkt oder Discounter",TRUE
+361,"Einwohnergewichtete Entfernung zur nächsten Hausarztpraxis",TRUE
+362,"Anteil Einwohner mit max. 1000m Entfernung zur nächsten Hausarztpraxis",TRUE
+363,"Einwohnergewichtete Entfernung zur nächsten Apotheke",TRUE
+364,"Anteil Einwohner mit max. 1000m Entfernung zur nächsten Apotheke",TRUE
+365,"Einwohnergewichtete Entfernung zur nächsten Grundschule",TRUE
+366,"Anteil Einwohner mit max. 1000m Entfernung zur nächsten Grundschule",TRUE
+367,"Einwohnergewichtete Entfernung zur nächsten Haltestelle des ÖV mit mind. 20 Abfahrten am Tag",TRUE
+368,"Anteil Einwohner mit max. 1000m Entfernung zur nächsten Haltestelle des ÖV mit mind. 20 Abfahrten am Tag",TRUE
+369,"Anteil der Haushalte mit einer Bandbreitenverfügbarkeit (leitungsgebunden) mit mindestens 50 Mbit/s in %",TRUE
+370,"Anteil der Haushalte mit einer Bandbreitenverfügbarkeit (leitungsgebunden) mit mindestens 100 Mbit/s in %",TRUE
+371,"Anteil der Haushalte mit einer Bandbreitenverfügbarkeit (leitungsgebunden) mit mindestens 1.000 Mbit/s in %",TRUE
+372,"Pkw je 1.000 Einwohner",TRUE
+373,"Anteil Elektrofahrzeuge (BEV) am Pkw-Bestand in %",TRUE
+374,"Anteil von Hybridfahrzeugen am Pkw-Bestand in %",TRUE
+375,"Anteil von Plug-In-Hybriden (PHEV) am Pkw-Bestand in %",TRUE
+376,"Anteil von Benzinfahrzeugen am Pkw-Bestand in %",TRUE
+377,"Anteil von Dieselfahrzeugen am Pkw-Bestand in %",TRUE
+378,"Anteil von Gasfahrzeugen am Pkw-Bestand in %",TRUE
+379,"Öffentlich zugängliche Ladepunkte für Elektrofahrzeuge je 100.000 Einwohner",TRUE
+380,"Öffentlich zugängliche Ladepunkte je 100 Elektrofahrzeuge (BEV)",TRUE
+381,"Straßenverkehrsunfälle insgesamt je 100.000 Einwohner",TRUE
+382,"Verunglückte im Straßenverkehr je 100.000 Einwohner",TRUE
+383,"Getötete im Straßenverkehr je 100.000 Einwohner",TRUE
+384,"Anteil der Einpendler an den SV Beschäftigten am Arbeitsort in %",TRUE
+385,"Anteil der Auspendler an den SV Beschäftigten am Wohnort in %",TRUE
+386,"Pendlersaldo je 100 SV Beschäftigte am Arbeitsort",TRUE
+390,"Schlafgelegenheiten in Beherbergungsbetrieben je 1.000 Einwohner",TRUE
+391,"Gästeübernachtungen in Beherbergungsbetrieben je Einwohner",TRUE
+392,"Anteil Gästeübernachtungen aus dem Ausland in %",TRUE
+393,"Durchschnittliche Zahl der Übernachtungen in Beherbergungsbetrieben",TRUE
+394,"Anteil der Niederlassungen mit bis unter 10 SV-Beschäftigten an den Niederlassungen insgesamt in %",TRUE
+395,"Anteil der Niederlassungen mit 10 bis unter 50 SV-Beschäftigten an den Niederlassungen insgesamt in %",TRUE
+396,"Anteil der Niederlassungen mit 50 bis unter 250 SV-Beschäftigten an den Niederlassungen insgesamt in %",TRUE
+397,"Anteil der Niederlassungen mit mehr als 250 SV-Beschäftigten an den Niederlassungen insgesamt in %",TRUE
+398,"Bruttoinlandsprodukt in 1.000 € je Einwohner",TRUE
+399,"Bruttoinlandsprodukt in 1.000 € je Erwerbstätigen",TRUE
+400,"Bruttowertschöpfung insgesamt in 1.000 € je Erwerbstätigen",TRUE
+401,"Bruttowertschöpfung im Primären Sektor in 1.000 € je Erwerbstätigen im Primären Sektor",TRUE
+402,"Bruttowertschöpfung im Sekundären Sektor in 1.000 € je Erwerbstätigen im Sekundären Sektor",TRUE
+403,"Bruttowertschöpfung im Tertiären Sektor in 1.000 € je Erwerbstätigen im Tertiären Sektor",TRUE
+404,"Anteil Bruttowertschöpfung im Primären Sektor an der Bruttowertschöpfung in %",TRUE
+405,"Anteil Bruttowertschöpfung im Sekundären Sektor an der Bruttowertschöpfung in %",TRUE
+406,"Anteil Bruttowertschöpfung im Tertiären Sektor an der Bruttowertschöpfung in %",TRUE
+407,"Beantragte Unternehmensinsolvenzverfahren je 1.000 Betriebe",TRUE
+408,"Durchschnittliche voraussichtliche Gläubigerforderung je Unternehmensinsolvenzantrag in Euro",TRUE
+409,"Investitionen im Bergbau u. Verarb. Gewerbe in 1.000 € je tätiger Person",TRUE
+410,"Auslandsumsatz im Bergbau u. Verarb. Gewerbe in 1.000 € je tätiger Person",TRUE
+411,"Umsatz im Bergbau u. Verarb. Gewerbe in 1.000 € je tätiger Person",TRUE
+412,"Umsatz im Bauhauptgewerbe in 1.000 € je im Bauhauptgewerbe Tätigen",TRUE
+413,"Umsatz im Handwerk in 1.000 Euro je tätiger Person",TRUE
+420,"Zahl der Einwohner insgesamt",TRUE
+421,"Katasterfläche in km²",TRUE
+422,"Einwohner je km²",TRUE
+423,"Entwicklung der Zahl der Einwohner über die letzten 5 Jahre in %",TRUE
+424,"Anteil der Siedlungs- und Verkehrsfläche an der Fläche in %",TRUE
+425,"Einwohner je km² Siedlungs- und Verkehrsfläche",TRUE
+426,"Anzahl Gemeinde- bzw. Gemeindeverbandsverwaltungen",TRUE
+427,"Anzahl Kreisverwaltungen",TRUE
+428,"Anzahl  Finanzämter",TRUE
+429,"Anzahl  Polizeidienststellen",TRUE
+430,"Anzahl Polizeidienststellen die nicht täglich durchgehend erreichbar, sondern nur stundenweise besetzt sind",TRUE
+431,"Anzahl Polizeidienststellen die täglich durchgehend mit Polizisten besetzt und erreichbar sind",TRUE
+432,"Anzahl  Arbeitsmarktverwaltungen",TRUE
+433,"Anzahl Jobcenter",TRUE
+434,"Anzahl  Geschäftststellen und Agenturen für Arbeit",TRUE
+435,"Sonstige Arbeitsmarktverwaltungseinrichtungen",TRUE
+436,"Anzahl Gerichte",TRUE
+437,"Anzahl Amtsgerichte",TRUE
+438,"Anzahl der Nebenstellen von Amtsgerichten",TRUE
+439,"Anzahl Landgerichte",TRUE
+440,"Anzahl der Nebenstellen von Landgerichten",TRUE
+441,"Anzahl Oberlandesgerichte",TRUE
+442,"Anzahl der Nebenstellen von Oberlandesgerichten",TRUE
+443,"Anzahl Beschäftigte am Arbeitsort",TRUE
+444,"Anzahl Beschäftigte am Wohnort",TRUE
+445,"Beschäftigte am Arbeitsort je 1000 Einwohner",TRUE
+446,"Beschäftigte am Wohnort je 1000 Einwohner",TRUE
+447,"Anzahl Einpendler",TRUE
+448,"Anzahl Auspendler",TRUE
+449,"Anzahl Binnenpendler",TRUE
+450,"Pendlersaldo je 100 SV Beschäftigte am Arbeitsort",TRUE
+451,"Verhältnis der SV-Beschäftigten am Arbeitsort zu den SV-Beschäftigten am Wohnort",TRUE
+452,"Arbeitslosenanteil gemessen an den Personen im erwerbsfähigen Alter",TRUE
+453,"Anzahl ÖV-Haltestellen ",TRUE
+454,"Anzahl  Bahnhaltestellen",TRUE
+455,"Anzahl Bushaltestellen",TRUE
+456,"Anzahl U-/Strassenbahnhaltestellen",TRUE
+457,"Anzahl der ÖV-Haltestellen  mit einem Mindestangebot von 28 Abfahrten im ÖV an einem Werktag",TRUE
+458,"Anzahl der Bahnhaltestellen mit einem Mindestangebot von 28 Abfahrten im Bahnverkehr an einem Werktag",TRUE
+459,"Anzahl der Bushaltestellen mit einem Mindestangebot von 28 Abfahrten im Busverkehr an einem Werktag",TRUE
+460,"Anzahl der U- und Straßenbahnhaltestellen mit einem Mindestangebot von 28 Abfahrten im U- und Straßenbahnverkehr an einem Werktag",TRUE
+461,"Anzahl  der Abfahrten an ÖV-Haltepunkte an einem Werktag",TRUE
+462,"Anzahl  der Abfahrten im Bahnverkehr an einem Werktag",TRUE
+463,"Anzahl  der Abfahrten im Busverkehr an einem Werktag",TRUE
+464,"Anzahl  der Abfahrten  im U- und Straßenbahnverkehr an einem Werktag",TRUE
+465,"Durchschn. Pkw-Fahrzeit zum nächsten IC/ICE-Bahnhof in Minuten",TRUE
+466,"Durchschn. Pkw-Fahrzeit zur nächsten BAB-Anschlussstelle in Minuten",TRUE
+467,"Durchschn. Pkw-Fahrzeit zum nächsten internationalen Flughafen in Deutschland in Minuten",TRUE
+468,"Lkw-Fahrzeit zum nächsten Terminal für den kombinierten Ladungsverkehr in Minuten",TRUE
+469,"Pkw-Fahrzeit zum nächsten Mittel- oder Oberzentrum in Minuten",TRUE
+470,"Pkw-Fahrzeit zum nächsten Oberzentrum in Minuten",TRUE
+471,"Anteil der Haushalte mit einer Bandbreitenverfügbarkeit (leitungsgebunden) mit mindestens 50 Mbit/s in %",TRUE
+472,"Anteil der Haushalte mit einer Bandbreitenverfügbarkeit (leitungsgebunden) mit mindestens 100 Mbit/s in %",TRUE
+473,"Anteil der Haushalte mit einer Bandbreitenverfügbarkeit (leitungsgebunden) mit mindestens 1.000 Mbit/s in %",TRUE
+474,"Anzahl Postfilialen der Deutschen Post AG",TRUE
+475,"Anzahl Postagenturen der Deutschen Post AG im Einzelhandel",TRUE
+476,"Anzahl Postfillialen der Deutschen Post AG insgesamt",TRUE
+477,"Anzahl Krankenhäuser",TRUE
+478,"Anzahl der Krankenhäuser, die nicht an der 'Allgemeinen stationären Notfallversorgung' teilnehmen (Stufe 0)",TRUE
+479,"Anzahl der Krankenhäuser, die an der 'Allgemeinen stationären Notfallversorgung' teilnehmen und die Basisnotfallversorgung erfüllen (Stufe 1)",TRUE
+480,"Anzahl der Krankenhäuser, die an der 'Allgemeinen stationären Notfallversorgung' teilnehmen und die Erweiterte Notfallversorgung erfüllen (Stufe 2)",TRUE
+481,"Anzahl der Krankenhäuser, die an der 'Allgemeinen stationären Notfallversorgung' teilnehmen und die Umfassende Notfallversorgung erfüllen (Stufe 3)",TRUE
+482,"Anzahl der Krankenhäuser, die an der 'Speziellen stationären Notfallversorgung' teilnehmen und die Schwerverletztenversorgung erfüllen (Modul 1)",TRUE
+483,"Anzahl der Krankenhäuser, die an der 'Speziellen stationären Notfallversorgung' teilnehmen und die Notfallversorgung für Kinder erfüllen (Modul 2)",TRUE
+484,"Anzahl der Krankenhäuser, die an der 'Speziellen stationären Notfallversorgung' teilnehmen und die Spezialversorgung erfüllen (Modul 3)",TRUE
+485,"Anzahl der Krankenhäuser, die an der 'Speziellen stationären Notfallversorgung' teilnehmen und die Schlaganfallversorgung erfüllen (Modul 4)",TRUE
+486,"Anzahl der Krankenhäuser, die an der 'Speziellen stationären Notfallversorgung' teilnehmen und die Versorgung akuter Herzerkrankungen erfüllen (Modul 5)",TRUE
+487,"Anzahl  Krankenhausbetten",TRUE
+488,"Krankenhausbetten je 1.000 Einwohner",TRUE
+489,"Anteil Einwohner mit max. 1000m Entfernung zur nächsten Apotheke",TRUE
+490,"Ärzte je 10.000 Einwohner",TRUE
+491,"Einwohner je Arzt",TRUE
+492,"Hausärzte je 10.000 Einwohner",TRUE
+493,"Allgemeinärzte je 10.000 Einwohner",TRUE
+494,"Internisten je 10.000 Einwohner",TRUE
+495,"Kinderärzte je 10.000 Kinder bis zu 15 Jahren",TRUE
+496,"Anzahl Apotheken",TRUE
+497,"Anzahl Seniorenheime",TRUE
+498,"Anzahl Universitäten und Hochschulen  ",TRUE
+499,"Anzahl Studierende an Universitäten und Hochschulen  ",TRUE
+500,"Studierende an Universitäten und  Hochschulen je 1.000 Einwohner ",TRUE
+501,"Studierende an Fachhochschulen je 1.000 Einwohner",TRUE
+502,"Anzahl Grundschulen ",TRUE
+503,"Anzahl Schüler an Grundschulen ",TRUE
+504,"Schüler in Grundschulen je 1.000 Einwohner",TRUE
+505,"Anzahl allgemeinbildende Schulen ",TRUE
+506,"Anzahl Schüler in allgemeinbildenden Schulen ",TRUE
+507,"Schüler in allgemeinbildenden Schulen je 1.000 Einwohner",TRUE
+508,"Anzahl weiterführende Schulen ",TRUE
+509,"Anzahl Schüler in weiterführenden Schulen ",TRUE
+510,"Schüler an weiterführenden Schulen je 1.000 Einwohner",TRUE
+511,"Allgemeinbildende Schulen mit Förderschwerpunkt",TRUE
+512,"Schüler an allgemeinbildenden Schulen mit Förderschwerpunkt",TRUE
+513,"Schüler an allgemeinbildenden Schulen mit Förderschwerpunkt je 1.000 Einwohner",TRUE
+514,"Anzahl berufsbildende Schulen ",TRUE
+515,"Anzahl Schüler in berufsbildenden Schulen ",TRUE
+516,"Schüler in berufsbildenden Schulen je 1.000 Einwohner",TRUE
+517,"Anzahl Bibliotheken",TRUE
+518,"Anzahl Öffentliche Bibliotheken",TRUE
+519,"Anzahl Wissenschaftliche Bibliotheken",TRUE
+520,"Anzahl Spezialbibliotheken",TRUE
+521,"Anzahl Entleihungen physischer Medien",TRUE
+522,"Anzahl Kinos",TRUE
+523,"Anzahl Kinosäle",TRUE
+524,"Anzahl Kinositzplätze",TRUE
+525,"Anzahl Öffentliche Bäder",TRUE
+526,"Anzahl nicht öffentlicher Bäder",TRUE
+527,"Anzahl Bäder insgesamt",TRUE
+528,"Anzahl Kindertagesstätten",TRUE
+529,"Anteil der Leistungsberechtigten nach dem SGB II oder SGB XII",TRUE
+530,"Nicht erwerbsfähige SGBII-Leistungsberechtigte unter 15 Jahren je 100 Einwohner unter 15 Jahren",TRUE
+531,"Anteil der Bevölkerung mit Grundsicherung im Alter an den Einwohnern 65 Jahre und älter in %",TRUE
+532,"Überschuss der Sickstoff-Flächenbilanz der landwirtschaftlich genutzten Fläche in kg N /ha LN",TRUE
+533,"Todesfälle im Alter von unter 70 Jahren je 1.000 Einwohner im Alter von unter 70 Jahren",TRUE
+534,"Einwohnergewichtete Entfernung zum nächsten Hausarzt",TRUE
+535,"Einwohnergewichtete Entfernung zur nächsten Apotheke",TRUE
+536,"Personal in ambulanten Pflegediensten je Pflegebedürftigen",TRUE
+537,"Anzahl der verfügbaren stationären Plätze in Pflegeheimen je 1.000 Einwohner ab 65 Jahre",TRUE
+538,"Einwohnergewichtete Entfernung zur nächsten Grundschule",TRUE
+539,"Anteil der Schulabgänger ohne Hauptschulabschluss an den Schulabgängern in %",TRUE
+540,"Anteil der Kinder unter 3 Jahren in Kindertageseinrichtungen an den Kinder der entsprechenden Altersgruppe",TRUE
+541,"Anteil der integrativen Kindertageseinrichtungen an allen Kindertageseinrichtungen",TRUE
+542,"Verhältnis der Beschäftigungsquote von Frauen zur Beschäftigungsquote von Männern",TRUE
+543,"Anzahl Frauen mit Mandaten in Stadträten und Kreistagen an allen Mandaten in %",TRUE
+544,"Anteil des Abwassers der durch Denitrifikation und Phosphorelimination behandelt wird am gesamten Abwasser in %",TRUE
+545,"Öffentlich zugängliche Ladepunkte für Elektrofahrzeuge je 1.000 Einwohner",TRUE
+546,"Bruttoinlandsprodukt in € je Einwohner",TRUE
+547,"Anteil der Langzeitarbeitslosen an allen Erwerbspersonen in %",TRUE
+548,"SV Beschäftigte am Wohnort je 100 Einwohner im erwerbsfähigen Alter in %",TRUE
+549,"SV Beschäftigte am Wohnort im Alter von über 55 Jahren je 100 Einwohner dieser Altersgruppe in %",TRUE
+550,"Anteil erwerbstätiger ALGII-Bezieher an den Leistungsberechtigten in %",TRUE
+551,"Gewerbliche Neugründungen je 1.000 Einwohner",TRUE
+552,"SV Beschäftigte am Arbeitsort mit akademischem Berufsabschluss an den SV Beschäftigten in %",TRUE
+553,"Anteil der Haushalte mit einer Bandbreitenverfügbarkeit (leitungsgebunden) mit mindestens 100 Mbit/s in %",TRUE
+554,"Verhältnis der Beschäftigungsquote ausländischer Staatsbürger zur Beschäftigungsquote insgesamt",TRUE
+555,"Anzahl der eingebürgerten Personen an den Einwohnern ausländischer Staatsbürgerschaft",TRUE
+556,"Wiedervermietungsmieten inserierter Wohnungen (Angebotsmieten)",TRUE
+557,"Wohnfläche je Einwohner in m²",TRUE
+558,"Einwohnergewichtete Entfernung zum nächsten Supermarkt/Discounter",TRUE
+559,"Anzahl der Pkw je 1.000 Einwohner",TRUE
+560,"Anteil Elektrofahrzeuge (BEV) am Pkw-Bestand in %",TRUE
+561,"Verunglückte im Straßenverkehr je 1.000 Einwohner",TRUE
+562,"Anteil der Siedlungs- und Verkehrsfläche an der Gesamtfläche in %",TRUE
+563,"Änderung der Siedlungs- und Verkehrsfläche an der Gesamtfläche im Vergleich zum Vorjahr",TRUE
+564,"Siedlungs- und Verkehrsfläche je Einwohner in m²",TRUE
+565,"Erholungsfläche in m² je Einwohner",TRUE
+566,"Anteil fertiggestelle Wohngebäude mit erneuerbarer Heizenergie an allen Wohngebäuden in %",TRUE
+567,"Wasserabgabe an Letztverbraucher (Haushalte und Kleingewerbe) in l je Einwohner und Tag",TRUE
+568,"Aufkommen an Haushaltsabfällen (ohne Elektrogeräte) je Einwohner in t",TRUE
+569,"Straftaten je 1.000 Einwohner",TRUE
+570,"Steuereinnahmen der Gemeinden und Gemeindeverbände in Euro je Einwohner",TRUE
+571,"Kassenkredite im Kernhaushalt je Einwohner",TRUE

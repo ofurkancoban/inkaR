@@ -63,7 +63,34 @@ get_inkar_data <- function(
   lang = "de",
   format = "long"
 ) {
-  # Step 1: Get available time metadata (Zeitbezug)
+  # Step 1: Smart ID Resolution (Handle M_ID input)
+  # If variable matches a numeric M_ID, convert it to the API textual ID
+  if (exists("indicators", envir = asNamespace("inkaR"))) {
+    inds <- inkaR::indicators
+
+    # Case 1: Variable is an alphanumeric ID (e.g., "bip", "xbev")
+    # The API generally rejects these and needs the numeric M_ID.
+    if (variable %in% inds$ID) {
+       match_row <- inds[inds$ID == variable, ]
+       if (nrow(match_row) >= 1) {
+          # Use M_ID from the match
+          m_id_val <- match_row$M_ID[1]
+           message("Using unique M_ID '", m_id_val, "' for Indicator Code '", variable, "'")
+          variable <- as.character(m_id_val)
+       }
+    } else {
+        # Case 2: Variable might be the numeric M_ID itself (e.g., "1203", "11")
+        var_num <- suppressWarnings(as.numeric(variable))
+        if (!is.na(var_num) && var_num %in% inds$M_ID) {
+             # It IS a valid M_ID. Use it directly.
+             # Note: API accepts "11", "011", "1" etc.
+             message("Using M_ID '", var_num, "' directly.")
+             variable <- as.character(var_num)
+        }
+    }
+  }
+
+  # Step 1.5: Get available time metadata (Zeitbezug)
   # This is required to construct the TimeCollection for the main request
   times_df <- get_time_references(variable, level)
 

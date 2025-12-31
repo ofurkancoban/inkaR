@@ -26,10 +26,30 @@ get_indicators <- function(lang = c("de", "en")) {
     if (lang == "en") {
         if ("Name_EN" %in% names(df)) {
             df <- df |>
-                dplyr::mutate(Name = .data$Name_EN, Unit = .data$Unit_EN) |>
+                dplyr::mutate(
+                    Name = .data$Name_EN,
+                    Unit = .data$Unit_EN,
+                    Anmerkungen = if ("Anmerkungen_EN" %in% names(df)) {
+                        .data$Anmerkungen_EN
+                    } else {
+                        .data$Anmerkungen
+                    },
+                    `Statistische Grundlagen` = if (
+                        "Stat_Grund_EN" %in% names(df)
+                    ) {
+                        .data$Stat_Grund_EN
+                    } else {
+                        .data$`Statistische Grundlagen`
+                    }
+                ) |>
                 dplyr::select(
                     -dplyr::matches("_DE$"),
-                    -dplyr::all_of(c("Name_EN", "Unit_EN"))
+                    -dplyr::all_of(c(
+                        "Name_EN",
+                        "Unit_EN",
+                        "Anmerkungen_EN",
+                        "Stat_Grund_EN"
+                    ))
                 )
         }
     } else {
@@ -67,10 +87,11 @@ view_indicators <- function(lang = c("de", "en")) {
     # Custom formatting for German view based on user request
     if (lang == "de") {
         # Map standardized names back to user-preferred (Excel-like) headers
-        # Requested: M_ID, Kurzname, Name, Gemeinden, Kreise, Algorithmus, Kürzel, Anmerkungen, Statistische Grundlagen
         df <- df |>
+            dplyr::arrange(dplyr::desc(Active)) |> # Sort Active first
             dplyr::select(
                 M_ID,
+                Aktiv = Active, # NEW: Active Status
                 Kurzname = Name, # Name is Name_DE
                 Name = Description_DE, # Description_DE is the longer Name
                 Gemeinden,
@@ -83,7 +104,27 @@ view_indicators <- function(lang = c("de", "en")) {
                     "Statistische_Grundlagen"
                 ))
             )
+    } else if (lang == "en") {
+        # Custom formatting for English view to match DE structure
+        df <- df |>
+            dplyr::arrange(dplyr::desc(Active)) |> # Sort Active first
+            dplyr::select(
+                M_ID,
+                Active, # NEW: Active Status
+                `Short Name` = Name, # Mapping Name (EN) here
+                Name = Name, # Reusing Name as we don't have separate Desc yet
+                Communities = Gemeinden,
+                Circles = Kreise,
+                Algorithm = Algorithmus,
+                Abbreviation = ID,
+                Notes = Anmerkungen, # Now contains English content if available
+                `Statistical Principles` = `Statistische Grundlagen` # Now contains English content if available
+            )
     }
+
+    # Note: RStudio's View() always displays a row index/name column on the left.
+    # We cannot remove it, so we stick to the default numeric index (1, 2, 3...)
+    # to avoid confusion or duplication of the M_ID column.
 
     # Check if running in RStudio to use the viewer
     if (requireNamespace("utils", quietly = TRUE)) {

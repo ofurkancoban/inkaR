@@ -15,5 +15,5 @@ search_indicators(pattern, lang = c("de", "en"))
 A filtered tibble of indicators.
 }
 \description{
-Search for indicators by name or description.
+Search for indicators by name, description, or ID.
 }

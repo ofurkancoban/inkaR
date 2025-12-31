@@ -3,15 +3,7 @@
 #' @param data Raw list data from JSON
 #' @return A tibble
 #' @noRd
-#' Rename first matching column and remove others
-#'
-#'Helper to robustly rename *one* column from a set of candidates.
-#'If multiple candidates exist, only the first is renamed, others are dropped.
-#'
-#' @param df Data frame
-#' @param new_name New column name
-#' @param candidates Vector of potential old column names
-#' @noRd
+
 #' Rename first matching column and remove others
 #'
 #'Helper to robustly rename *one* column from a set of candidates.
@@ -37,7 +29,6 @@ rename_first_found <- function(df, new_name, candidates) {
 #' Convert API list response to Tibble
 #'
 #' @param data Raw list data from JSON
-#' @param lang Character. "de" for German columns (default), "en" for English.
 #' @return A tibble
 #' @noRd
 parse_inkar_json <- function(data, lang = "de") {

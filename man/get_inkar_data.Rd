@@ -4,7 +4,13 @@
 \alias{get_inkar_data}
 \title{Download Data from INKAR}
 \usage{
-get_inkar_data(variable, level = "KRE", year = NULL, lang = "de")
+get_inkar_data(
+  variable,
+  level = "KRE",
+  year = NULL,
+  lang = "de",
+  format = "long"
+)
 }
 \arguments{
 \item{variable}{Character. The indicator ID (Shortname), e.g., "011".}
@@ -14,6 +20,8 @@ get_inkar_data(variable, level = "KRE", year = NULL, lang = "de")
 \item{year}{Integer/Character. Specific year (e.g., 2021). If NULL, fetches all available years.}
 
 \item{lang}{Character. "de" (default) for German column names, "en" for English.}
+
+\item{format}{Character. "long" (default) for tidy format, "wide" for years as columns.}
 }
 \value{
 A tibble containing the data.
