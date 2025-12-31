@@ -9,7 +9,8 @@ get_inkar_data(
   level = "KRE",
   year = NULL,
   lang = "de",
-  format = "long"
+  format = "long",
+  csv = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ get_inkar_data(
 \item{lang}{Character. "de" (default) for German column names, "en" for English.}
 
 \item{format}{Character. "long" (default) for tidy format, "wide" for years as columns.}
+
+\item{csv}{Logical. If TRUE, saves the data to a CSV file in the current directory.}
 }
 \value{
 A tibble containing the data.

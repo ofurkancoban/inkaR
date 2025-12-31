@@ -54,6 +54,7 @@ get_time_references <- function(variable, level) {
 #' @param year Integer/Character. Specific year (e.g., 2021). If NULL, fetches all available years.
 #' @param lang Character. "de" (default) for German column names, "en" for English.
 #' @param format Character. "long" (default) for tidy format, "wide" for years as columns.
+#' @param csv Logical. If TRUE, saves the data to a CSV file in the current directory.
 #' @return A tibble containing the data.
 #' @export
 get_inkar_data <- function(
@@ -61,7 +62,8 @@ get_inkar_data <- function(
   level = "KRE",
   year = NULL,
   lang = "de",
-  format = "long"
+  format = "long",
+  csv = FALSE
 ) {
   # Step 1: Smart ID Resolution (Handle M_ID input)
   # If variable matches a numeric M_ID, convert it to the API textual ID
@@ -272,6 +274,14 @@ get_inkar_data <- function(
 
     target_cols <- if (lang == "de") final_cols_de else final_cols_en
 
+    # Capture indicator name for filename (before potentially removing it in wide format)
+    # The name is in 'Indikator' or 'indicator_name' depending on lang
+    col_ind_name_extract <- if (lang == "de") "Indikator" else "indicator_name"
+    raw_ind_name <- "Unknown"
+    if (col_ind_name_extract %in% names(df) && nrow(df) > 0) {
+      raw_ind_name <- as.character(df[[col_ind_name_extract]][1])
+    }
+
     # Reshape if format is 'wide'
     if (format == "wide") {
       # Determine time and value columns based on language
@@ -310,8 +320,27 @@ get_inkar_data <- function(
       }
     }
 
-    df <- df |>
+  df <- df |>
       dplyr::select(dplyr::any_of(target_cols), dplyr::everything())
+  }
+
+  # CSV Export if requested
+  if (csv) {
+    # Generate a sensible filename: inkar_{ID}_{LEVEL}_{NAME}.csv
+    # Sanitize variable/name for filename
+    safe_id <- gsub("[^a-zA-Z0-9]", "", variable)
+    
+    # Sanitize indicator name (spaces to underscores, remove special chars)
+    safe_name <- gsub("[^a-zA-Z0-9]", "_", raw_ind_name)
+    # Collapse multiple underscores
+    safe_name <- gsub("_+", "_", safe_name)
+    # Truncate if too long (filesystem limits)
+    if (nchar(safe_name) > 50) safe_name <- substr(safe_name, 1, 50)
+    
+    filename <- paste0("inkar_", safe_id, "_", level, "_", safe_name, ".csv")
+    
+    utils::write.csv(df, filename, row.names = FALSE)
+    message("Data saved to: ", filename)
   }
 
   return(df)
