@@ -1,11 +1,14 @@
 Package: inkaR
-Title: Download and Analyze INKAR Data
-Version: 0.1.1
+Title: Download and Analyze Spatial Development Data from INKAR
+Version: 0.4.0
 Authors@R: 
-    person("Omer Furkan", "Coban", , "oemer.furkan.coban@uni-oldenburg.de", role = c("aut", "cre"))
+    person("Omer Furkan", "Coban", email = "oemer.furkan.coban@uni-oldenburg.de", role = c("aut", "cre"), comment = c(ORCID = "0009-0005-3623-7178"))
 Description: A lightweight package to download spatial development indicators 
-    from the BBSR INKAR database. Provides a modern interface using 'httr2' 
-    and handles metadata lookup including bilingual support (DE/EN).
+    from the BBSR INKAR (Indikatoren und Karten zur Raum- und Stadtentwicklung) database. 
+    It provides a modern interface using 'httr2', robust caching, concurrent API querying 
+    for fast spatial dimension lookups, and native geospatial mapping integration.
+URL: https://github.com/ofurkancoban/inkaR
+BugReports: https://github.com/ofurkancoban/inkaR/issues
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -17,12 +20,18 @@ Imports:
     tibble,
     dplyr,
     rlang,
-    tidyr
+    tidyr,
+    utils
 Suggests: 
     readxl,
-    testthat,
+    testthat (>= 3.0.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    sf,
+    geodata,
+    ggplot2,
+    httptest2
 VignetteBuilder: knitr
 Depends: 
     R (>= 4.1.0)
+Config/testthat/edition: 3

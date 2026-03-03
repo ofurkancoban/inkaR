@@ -8,8 +8,8 @@ get_inkar_data(
   variable,
   level = "KRE",
   year = NULL,
-  lang = "de",
-  format = "long",
+  lang = c("de", "en"),
+  format = c("long", "wide"),
   csv = FALSE
 )
 }

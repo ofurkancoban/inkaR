@@ -2,7 +2,6 @@
 % Please edit documentation in R/inkaR-package.R
 \docType{package}
 \name{inkaR-package}
-\alias{inkaR}
 \alias{inkaR-package}
 \title{inkaR: Access the INKAR Database of the BBSR}
 \description{
@@ -56,8 +55,16 @@ or regions within a level.
 }
 
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/ofurkancoban/inkaR}
+  \item Report bugs at \url{https://github.com/ofurkancoban/inkaR/issues}
+}
+
+}
 \author{
-\strong{Maintainer}: Omer Furkan Coban \email{oemer.furkan.coban@uni-oldenburg.de}
+\strong{Maintainer}: Omer Furkan Coban \email{oemer.furkan.coban@uni-oldenburg.de} (\href{https://orcid.org/0009-0005-3623-7178}{ORCID})
 
 }
 \keyword{internal}

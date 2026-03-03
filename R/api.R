@@ -1,3 +1,70 @@
+#' Get cache directory
+#' @noRd
+get_cache_dir <- function() {
+    # If interactive or normal session, use persistent user dir
+    dir <- tools::R_user_dir("inkaR", which = "cache")
+    if (!dir.exists(dir)) {
+        dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+    }
+    dir
+}
+
+#' Get cached API response if valid
+#' @param key Cache key string
+#' @param ttl_hours Time-to-live in hours (default 24)
+#' @return Cached data or NULL if expired/missing
+#' @noRd
+get_cache <- function(key, ttl_hours = 24) {
+    file_path <- file.path(get_cache_dir(), paste0(key, ".qs"))
+    if (file.exists(file_path)) {
+        info <- file.info(file_path)
+        age_hours <- as.numeric(difftime(
+            Sys.time(),
+            info$mtime,
+            units = "hours"
+        ))
+        if (age_hours < ttl_hours) {
+            tryCatch(
+                {
+                    return(readRDS(file_path))
+                },
+                error = function(e) NULL
+            )
+        }
+    }
+    return(NULL)
+}
+
+#' Save API response to cache
+#' @param key Cache key string
+#' @param value Data to cache
+#' @noRd
+set_cache <- function(key, value) {
+    file_path <- file.path(get_cache_dir(), paste0(key, ".qs"))
+    tryCatch(
+        {
+            saveRDS(value, file_path)
+        },
+        error = function(e) NULL
+    )
+}
+
+#' Clear INKAR Cache
+#'
+#' Clears the persistent disk cache used for API responses (like time reference metadata).
+#' @export
+clear_inkar_cache <- function() {
+    dir <- get_cache_dir()
+    files <- list.files(dir, pattern = "\\.qs$", full.names = TRUE)
+    if (length(files) > 0) {
+        unlink(files)
+        message("Cleared ", length(files), " cached files from ", dir)
+    } else {
+        message("Cache is already empty.")
+    }
+    invisible(TRUE)
+}
+
 #' Internal request helper
 #'
 #' @param path API endpoint path

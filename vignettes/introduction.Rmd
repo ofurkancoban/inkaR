@@ -110,6 +110,34 @@ get_inkar_data("011", level = "KRE", csv = TRUE)
 # Output: Data saved to: inkar_011_KRE_Bruttoinlandsprodukt_....csv
 ```
 
+## 4. Mapping Data (Geospatial Integration)
+
+`inkaR` includes a built-in wrapper to easily visualize regional data on German administrative maps using the `ggplot2`, `sf`, and `geodata` packages.
+
+If you have those packages installed, you can map Kreise (Districts) or Länder (States) with a single command:
+
+```r
+# Download GDP for Kreise
+df <- get_inkar_data("011", level = "KRE", year = 2021)
+
+# Plot the data on a map
+plot_inkar(df)
+```
+
+**Note:** `plot_inkar()` automatically downloads high-quality polygon boundaries from the GADM database on the first run and joins them to your INKAR data using the `Kennziffer` IDs.
+
+## 5. Advanced Features & Architecture
+
+`inkaR` uses advanced engineering to ensure the package is exceptionally fast and resilient:
+
+1. **Persistent Disk Caching (`tools::R_user_dir`)**
+   The INKAR API can take 15+ seconds to resolve the spatial dimensions (`SelectLevel`) for a complex indicator (e.g. GDP). 
+   `inkaR` queries the API once and caches the configuration to your hard drive permanently. Future R sessions will read this disk-cache in < 0.1 seconds. Caches expire every 24 hours automatically. You can manually reset it using `clear_inkar_cache()`.
+2. **Parallel Probing (`httr2::req_perform_parallel`)**
+   When `inkaR` queries spatial levels from the server, it dispatches 6 asynchronous requests simultaneously. This concurrent approach slashes wait times from 15 seconds down to under 2 seconds.
+3. **Offline Resiliency (`httptest2`)**
+   The entire test suite (`testthat`) is fully mocked using `httptest2`. Tests will pass reliably in offline environments (like strict CI/CD servers or airplanes) without depending on the fragile INKAR backend.
+
 ## Reference: Spatial Levels
 
 Common spatial levels include:

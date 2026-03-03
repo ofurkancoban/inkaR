@@ -41,5 +41,9 @@ utils::globalVariables(c(
     "Stat_Grund_EN",
     "Unit_DE",
     "Unit_EN",
-    "M\\u00F6glich"
+    "M\u00f6glich",
+    "Schl\u00fcssel",
+    "IndikatorID",
+    "join_key",
+    "select_level"
 ))

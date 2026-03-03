@@ -2,18 +2,19 @@
 % Please edit documentation in R/metadata.R
 \name{search_indicators}
 \alias{search_indicators}
-\title{Search Indicators}
+\title{Search Indicators and Print Results}
 \usage{
 search_indicators(pattern, lang = c("de", "en"))
 }
 \arguments{
-\item{pattern}{Regex pattern to search for.}
+\item{pattern}{Text to search in names and descriptions.}
 
 \item{lang}{Language to search in ("de" or "en").}
 }
 \value{
-A filtered tibble of indicators.
+A filtered tibble of indicators (invisibly).
 }
 \description{
-Search for indicators by name, description, or ID.
+Search for indicators by keyword. Prints a formatted table and invisibly
+returns the matches so you can copy the ID for use in \code{inkaR()}.
 }

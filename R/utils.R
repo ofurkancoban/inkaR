@@ -66,7 +66,7 @@ parse_inkar_json <- function(data, lang = "de") {
         df <- df |>
             rename_first_found(
                 col_region_id,
-                c("Schl\\u00FCssel", "RaumID", "Raum")
+                c("Schl\u00fcssel", "RaumID", "Raum")
             ) |>
             rename_first_found(
                 col_region_name,
@@ -88,7 +88,9 @@ parse_inkar_json <- function(data, lang = "de") {
             df <- df |>
                 dplyr::mutate(
                     !!col_value := if (is.character(.data[[col_value]])) {
-                        as.numeric(gsub(",", ".", .data[[col_value]]))
+                        # Remove thousands separators (dots) first, then replace comma with dot
+                        clean_str <- gsub("\\.", "", .data[[col_value]])
+                        as.numeric(gsub(",", ".", clean_str))
                     } else {
                         as.numeric(.data[[col_value]])
                     }
