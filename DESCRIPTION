@@ -1,6 +1,6 @@
 Package: inkaR
 Title: Download and Analyze Spatial Development Data from INKAR
-Version: 0.4.1
+Version: 0.4.2
 Authors@R: 
     person("Omer Furkan", "Coban", email = "oemer.furkan.coban@uni-oldenburg.de", role = c("aut", "cre"), comment = c(ORCID = "0009-0005-3623-7178"))
 Description: A lightweight package to download spatial development indicators 
