@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# inkaR <img src="man/figures/logo.svg" align="right" height="139" />
+# inkaR <img src="man/figures/logo.png" align="right" height="139" width="auto" />
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/ofurkancoban/inkaR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ofurkancoban/inkaR/actions/workflows/R-CMD-check.yaml)
