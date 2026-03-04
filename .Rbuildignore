@@ -1,0 +1,13 @@
+^.*\.xlsx$
+^data-raw$
+^api_catalog\.csv$
+^\.gemini$
+^doc$
+^\.lintr$
+^README\.Rmd$
+^README\.html$
+^cran-comments\.md$
+^check_output\.txt$
+^README\.md$
+^CRAN-SUBMISSION$
+^\.github$
