@@ -25,9 +25,12 @@ directly, or call \code{inkaR()} with no arguments in an interactive session to
 open a searchable menu.
 }
 \examples{
-\dontrun{
+if (interactive()) {
+  df <- inkaR()  # opens interactive menu
+}
+
+\donttest{
   df <- inkaR("bip", level = "KRE", year = 2021)
   df <- inkaR("Bruttoinlandsprodukt", level = "KRE")
-  df <- inkaR()  # opens interactive menu
 }
 }

@@ -105,7 +105,7 @@ You can save the retrieved data directly to a CSV file. The filename is automati
 
 ```r
 # Download and save immediately
-get_inkar_data("011", level = "KRE", csv = TRUE)
+get_inkar_data("011", level = "KRE", csv = TRUE, export_dir = tempdir())
 
 # Output: Data saved to: inkar_011_KRE_Bruttoinlandsprodukt_....csv
 ```

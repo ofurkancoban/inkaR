@@ -10,7 +10,8 @@ get_inkar_data(
   year = NULL,
   lang = c("de", "en"),
   format = c("long", "wide"),
-  csv = FALSE
+  csv = FALSE,
+  export_dir = NULL
 )
 }
 \arguments{
@@ -24,7 +25,9 @@ get_inkar_data(
 
 \item{format}{Character. "long" (default) for tidy format, "wide" for years as columns.}
 
-\item{csv}{Logical. If TRUE, saves the data to a CSV file in the current directory.}
+\item{csv}{Logical. If TRUE, saves the data to a CSV file in the directory specified by \code{export_dir}.}
+
+\item{export_dir}{Character. Directory to save the CSV file if \code{csv = TRUE}. If \code{NULL} (default), it saves to the current working directory (\code{"."}).}
 }
 \value{
 A tibble containing the data.

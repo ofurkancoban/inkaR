@@ -22,13 +22,15 @@
 #' 3. **Export**: Add `csv = TRUE` to `get_inkar_data` to save the result immediately.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #'   # 1. View available indicators (German)
 #'   view_indicators()
 #'
 #'   # 2. View in English
 #'   view_indicators("en")
-#'
+#' }
+#' 
+#' \donttest{
 #'   # 3. Search for "GDP" (Bruttoinlandsprodukt)
 #'   search_indicators("GDP", lang = "en")
 #'
@@ -37,7 +39,7 @@
 #'   data <- get_inkar_data("011", level = "KRE", year = 2021, lang = "de", csv = FALSE)
 #'
 #'   # 5. Download and save directly as CSV
-#'   get_inkar_data("011", csv = TRUE)
+#'   get_inkar_data("011", csv = TRUE, export_dir = tempdir())
 #'
 #'   # 6. Download data for a year range
 #'   get_inkar_data("011", level = "KRE", year = 2010:2020)

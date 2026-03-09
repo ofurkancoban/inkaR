@@ -43,7 +43,8 @@ get_time_references <- function(variable, level) {
 #' @param year Integer/Character vector. Specific year (e.g., 2021) or range (e.g., 2010:2020). If NULL, fetches all available years.
 #' @param lang Character. "de" (default) for German column names, "en" for English.
 #' @param format Character. "long" (default) for tidy format, "wide" for years as columns.
-#' @param csv Logical. If TRUE, saves the data to a CSV file in the current directory.
+#' @param csv Logical. If TRUE, saves the data to a CSV file in the directory specified by `export_dir`.
+#' @param export_dir Character. Directory to save the CSV file if `csv = TRUE`. If `NULL` (default), it saves to the current working directory (`"."`).
 #' @return A tibble containing the data.
 #' @export
 get_inkar_data <- function(
@@ -52,7 +53,8 @@ get_inkar_data <- function(
   year = NULL,
   lang = c("de", "en"),
   format = c("long", "wide"),
-  csv = FALSE
+  csv = FALSE,
+  export_dir = NULL
 ) {
   # Input Validation
   valid_levels <- c("BND", "BLD", "ROR", "KRE", "GVB", "GEM")
@@ -442,7 +444,8 @@ get_inkar_data <- function(
       safe_name <- substr(safe_name, 1, 50)
     }
 
-    filename <- paste0("inkar_", safe_id, "_", level, "_", safe_name, ".csv")
+    dir_to_use <- if (is.null(export_dir)) "." else export_dir
+    filename <- file.path(dir_to_use, paste0("inkar_", safe_id, "_", level, "_", safe_name, ".csv"))
 
     utils::write.csv(df, filename, row.names = FALSE)
     message("Data saved to: ", filename)
@@ -595,10 +598,13 @@ get_geographies <- function(geography = NULL) {
 #' @return A tibble containing the downloaded data, or `NULL` if selection was cancelled.
 #' @export
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
+#'   df <- inkaR()  # opens interactive menu
+#' }
+#' 
+#' \donttest{
 #'   df <- inkaR("bip", level = "KRE", year = 2021)
 #'   df <- inkaR("Bruttoinlandsprodukt", level = "KRE")
-#'   df <- inkaR()  # opens interactive menu
 #' }
 inkaR <- function(variable = NULL, level = NULL, ...) {
   if (is.null(variable)) {

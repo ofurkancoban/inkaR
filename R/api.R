@@ -52,6 +52,7 @@ set_cache <- function(key, value) {
 #' Clear INKAR Cache
 #'
 #' Clears the persistent disk cache used for API responses (like time reference metadata).
+#' @return No return value, called for side effects.
 #' @export
 clear_inkar_cache <- function() {
     dir <- get_cache_dir()

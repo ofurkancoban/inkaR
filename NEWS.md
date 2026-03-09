@@ -1,3 +1,10 @@
+# inkaR 0.4.3
+
+* FIXED: Addressed CRAN feedback regarding single quotes in `DESCRIPTION`.
+* FIXED: Added missing `\value` tags to exported `.Rd` files (e.g., `clear_inkar_cache()`).
+* FIXED: Replaced `\dontrun{}` with `\donttest{}` or `if(interactive())` to ensure proper example testing.
+* FIXED: Ensured CSV exporting examples do not write to the user home directory (`tempdir()`).
+
 # inkaR 0.4.2
 
 ## Enhancements

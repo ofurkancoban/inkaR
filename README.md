@@ -110,11 +110,11 @@ shapes for the matched spatial level.)*
 
 ## Available Spatial Levels
 
--   `KRE`: Districts (Kreise / Kreisfreie Städte)
--   `GEM`: Municipalities (Gemeinden)
--   `ROR`: Spatial Planning Regions (Raumordnungsregionen)
--   `BLD`: Federal States (Bundesländer)
--   `BND`: Federal Territory (Bund)
+- `KRE`: Districts (Kreise / Kreisfreie Städte)
+- `GEM`: Municipalities (Gemeinden)
+- `ROR`: Spatial Planning Regions (Raumordnungsregionen)
+- `BLD`: Federal States (Bundesländer)
+- `BND`: Federal Territory (Bund)
 
 You can view complete structure relationships programmatically via
 `get_geographies()`.

@@ -6,6 +6,9 @@
 \usage{
 clear_inkar_cache()
 }
+\value{
+No return value, called for side effects.
+}
 \description{
 Clears the persistent disk cache used for API responses (like time reference metadata).
 }
