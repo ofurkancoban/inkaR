@@ -4,10 +4,12 @@
 \alias{plot_inkar}
 \title{Plot INKAR Data on German Maps}
 \usage{
-plot_inkar(data, year = NULL, mode = c("light", "dark"))
+plot_inkar(data, variable = NULL, year = NULL, mode = c("light", "dark"))
 }
 \arguments{
 \item{data}{A data frame returned by \code{get_inkar_data()}.}
+
+\item{variable}{Character. For wide-format data with multiple indicators, specify which indicator column to plot.}
 
 \item{year}{Integer/Character. If the data contains multiple years, specify which year to plot. If NULL and multiple years exist, the most recent year is plotted.}
 
