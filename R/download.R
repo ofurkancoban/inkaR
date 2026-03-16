@@ -606,17 +606,20 @@ get_geographies <- function(geography = NULL) {
 #'   try(df <- inkaR("bip", level = "KRE", year = 2021))
 #'   try(df <- inkaR("Bruttoinlandsprodukt", level = "KRE"))
 #' }
-inkaR <- function(variable = NULL, level = NULL, ...) {
+inkaR <- function(variable = NULL, level = NULL, lang = c("de", "en"), ...) {
+  lang <- match.arg(lang)
+  
   if (is.null(variable)) {
     # Check if running interactively
     if (interactive()) {
-      variable <- select_indicator()
+      variable <- select_indicator(lang = lang)
       if (is.null(variable)) {
         return(invisible(NULL))
       }
 
       # Interactive level selection if not specified
       if (is.null(level)) {
+        # Note: select_level could also be updated for English labels
         level <- select_level(variable) # nolint: object_usage_linter
         if (is.null(level)) return(invisible(NULL))
       }
@@ -629,5 +632,5 @@ inkaR <- function(variable = NULL, level = NULL, ...) {
     level <- "KRE"
   }
 
-  get_inkar_data(variable = variable, level = level, ...)
+  get_inkar_data(variable = variable, level = level, lang = lang, ...)
 }

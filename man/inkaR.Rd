@@ -4,7 +4,7 @@
 \alias{inkaR}
 \title{Download Data from INKAR (Alias)}
 \usage{
-inkaR(variable = NULL, level = NULL, ...)
+inkaR(variable = NULL, level = NULL, lang = c("de", "en"), ...)
 }
 \arguments{
 \item{variable}{Character. Indicator ID, shortname, or partial name.
