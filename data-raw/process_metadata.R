@@ -100,7 +100,7 @@ if (file.exists(status_file)) {
         # Heuristic Translation for Discovered Indicators
         vals <- active_api$Name[match(new_ids, active_api$ID)]
 
-        # Exhaustive Dictionary
+        # Exhaustive Dictionary with plural/case variations
         replacements <- list(
             "Anteil der" = "Share of",
             "Anteil" = "Share of",
@@ -154,6 +154,7 @@ if (file.exists(status_file)) {
             "Durchschnittliche" = "Average",
             "Average Age" = "Average Age",
             "Krankenhausbetten" = "Hospital beds",
+            "Kinderärzte" = "Pediatricians",
             "Ärzte" = "Physicians",
             "Hausärzte" = "General practitioners",
             "Auszubildende" = "Apprentices",
@@ -180,7 +181,18 @@ if (file.exists(status_file)) {
             "Gebäuden" = "Buildings",
             "Gebäude" = "Building",
 
-            # Prepositions
+            # Specific terms from user examples
+            "Kinder" = "Children",
+            "entsprechenden" = "corresponding",
+            "Altersgruppe" = "age group",
+            "Altersgruppen" = "age groups",
+            "Betreuungszeit" = "care time",
+            "Stunden" = "hours",
+            "pro Tag" = "per day",
+            "Tag" = "day",
+            "mehr" = "more",
+
+            # Prepositions (MUST use word boundaries)
             "unter" = "under",
             "über" = "over",
             "bis" = "to",
@@ -198,20 +210,32 @@ if (file.exists(status_file)) {
             "an der" = "of the",
             "an allen" = "of all",
             "zivilen" = "civilian",
-            "vergangenen" = "past",
             "letzten" = "last",
             "länger" = "longer",
-            "je" = "per"
+            "je" = "per",
+            "zu" = "at/to",
+            "der" = "of the",
+            "die" = "the",
+            "das" = "the",
+            "ein" = "a",
+            "eine" = "a",
+            "einer" = "a",
+            "einen" = "a",
+            "einem" = "a"
         )
 
-        # Sort by length descending to replace long terms before short ones
+        # Sort by length descending
         replacements <- replacements[order(nchar(names(replacements)), decreasing = TRUE)]
 
         for (german in names(replacements)) {
-            vals <- gsub(german, replacements[[german]], vals, ignore.case = TRUE)
+            # Use strict word boundaries to avoid things like "permits" -> "perwiths"
+            # We use perl=TRUE for lookaround if needed, but simple \b usually works.
+            # However \b doesn't work well with non-ASCII. We use a more robust regex.
+            pattern <- paste0("(?i)\\b", german, "\\b")
+            vals <- gsub(pattern, replacements[[german]], vals, perl = TRUE)
         }
 
-        # Clean up double spaces
+        # Clean up
         vals <- trimws(gsub("\\s+", " ", vals))
         vals
       },
