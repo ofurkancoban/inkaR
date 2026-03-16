@@ -120,15 +120,25 @@ view_indicators <- function(lang = c("de", "en")) {
     # We cannot remove it, so we stick to the default numeric index (1, 2, 3...)
     # to avoid confusion or duplication of the M_ID column.
 
-    # Check if running in RStudio to use the viewer
-    if (requireNamespace("utils", quietly = TRUE)) {
-        utils::View(
-            df,
-            title = paste0("INKAR Indicators (", toupper(lang), ")")
+    # Try to use the GUI viewer, catch errors if not available (e.g. in terminal/server)
+    view_success <- FALSE
+    if (interactive() && requireNamespace("utils", quietly = TRUE)) {
+        res <- try(
+            utils::View(
+                df,
+                title = paste0("INKAR Indicators (", toupper(lang), ")")
+            ),
+            silent = TRUE
         )
-    } else {
-        print(df)
-        message("RStudio Viewer not available. Printing data frame instead.")
+        if (!inherits(res, "try-error")) {
+            view_success <- TRUE
+        }
+    }
+
+    if (!view_success) {
+        message("\nNOTE: Graphical Data Viewer not available in this environment.")
+        message("Try: search_indicators(\"keyword\") or view the first 100 rows below:\n")
+        print(head(df, 100))
     }
 }
 
@@ -211,8 +221,7 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
 
     # Calculate safe widths based on current terminal width
     term_width <- getOption("width", 80)
-    # Reserve ~20 chars for ID and numbering, split remainder between two names
-    name_w <- floor((term_width - 25) / 2)
+    # Reserve ~20 chars for ID and numbering
 
     # Pre-filter by pattern if supplied (backward compatibility)
     if (!is.null(pattern) && nchar(trimws(pattern)) > 0) {
@@ -291,7 +300,6 @@ select_level <- function(variable = NULL) {
         reqs <- lapply(names(level_map), function(lv_name) {
             lv_id <- level_map[[lv_name]]
             # Always bypass local cache for this check to ensure fresh availability
-            cache_key <- paste("times", api_variable, lv_id, sep = "_")
             # We don't remove from persistent cache, we just force a fresh request
             
             body <- list(
