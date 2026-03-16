@@ -213,7 +213,9 @@ if (file.exists(status_file)) {
             "letzten" = "last",
             "länger" = "longer",
             "je" = "per",
-            "zu" = "at/to",
+            "bis zu" = "to",
+            "bis" = "to",
+            "zu" = "to",
             "der" = "of the",
             "die" = "the",
             "das" = "the",
@@ -221,23 +223,30 @@ if (file.exists(status_file)) {
             "eine" = "a",
             "einer" = "a",
             "einen" = "a",
-            "einem" = "a"
+            "einem" = "a",
+            "Haushalten" = "Households",
+            "Haushalte" = "Households",
+            "Haushalt" = "Household",
+            "Kindern" = "Children",
+            "Kinder" = "Children"
         )
 
         # Sort by length descending
         replacements <- replacements[order(nchar(names(replacements)), decreasing = TRUE)]
 
-        for (german in names(replacements)) {
-            # Use strict word boundaries to avoid things like "permits" -> "perwiths"
-            # We use perl=TRUE for lookaround if needed, but simple \b usually works.
-            # However \b doesn't work well with non-ASCII. We use a more robust regex.
-            pattern <- paste0("(?i)\\b", german, "\\b")
-            vals <- gsub(pattern, replacements[[german]], vals, perl = TRUE)
+        translate_text <- function(txt) {
+            for (german in names(replacements)) {
+                pattern <- paste0("(?i)\\b", german, "\\b")
+                txt <- gsub(pattern, replacements[[german]], txt, perl = TRUE)
+            }
+            # Final cleanup
+            txt <- trimws(gsub("\\s+", " ", txt))
+            return(txt)
         }
 
-        # Clean up
-        vals <- trimws(gsub("\\s+", " ", vals))
-        vals
+        # Apply to new IDs
+        vals <- active_api$Name[match(new_ids, active_api$ID)]
+        translate_text(vals)
       },
 
       Description_DE = NA_character_,
@@ -324,7 +333,155 @@ message(
   " indicators"
 )
 
-# --- 6. Saving ---
+# --- 6. Final Bilingual Refinement ---
+translate_german_to_english <- function(txt) {
+  if (length(txt) == 0) return(character(0))
+  
+  replacements <- list(
+    "Anteil der" = "Share of",
+    "Anteilswert" = "Share value",
+    "Anteil" = "Share of",
+    "Quote" = "Rate",
+    "Zahl der" = "Number of",
+    "Anzahl der" = "Number of",
+    "Anzahl" = "Number of",
+    "insgesamt" = "total",
+    "Bevölkerung" = "Population",
+    "Einwohnern" = "Inhabitants",
+    "Einwohner" = "Inhabitants",
+    "Erwerbspersonen" = "Labor Force",
+    "Erwerbstätigen" = "Employed",
+    "Erwerbstätige" = "Employed",
+    "Arbeitslosen" = "Unemployed",
+    "Arbeitslose" = "Unemployed",
+    "arbeitslosen" = "unemployed",
+    "Frauen" = "Women",
+    "Männer" = "Men",
+    "weibliche" = "Female",
+    "männliche" = "Male",
+    "weiblichen" = "Female",
+    "männlichen" = "Male",
+    "ausländischen" = "foreign",
+    "ausländischer" = "foreign",
+    "Ausländer" = "Foreigners",
+    "Baugenehmigungen" = "Building permits",
+    "Baugenehmigung" = "Building permit",
+    "Fertiggestellte" = "Completed",
+    "Wohngebäuden" = "Residential buildings",
+    "Wohngebäude" = "Residential buildings",
+    "Nichtwohngebäuden" = "Non-residential buildings",
+    "Wohnungen" = "Dwellings",
+    "Wohnung" = "Dwelling",
+    "Ein- und Zweifamilienhäusern" = "Single and two-family houses",
+    "Ein- und Zweifamilienhäuser" = "Single and two-family houses",
+    "Mehrfamilienhäusern" = "Multi-family houses",
+    "Mehrfamilienhäuser" = "Multi-family houses",
+    "sozialversicherungspflichtig" = "Social Security",
+    "Beschäftigte" = "Employees",
+    "Beschäftigten" = "Employees",
+    "Nebenjob" = "Side job",
+    "Bruttoinlandsprodukt" = "GDP",
+    "Verfügbares Einkommen" = "Disposable income",
+    "Entwicklung" = "Development",
+    "Prognostizierte" = "Projected",
+    "Einbürgerungen" = "Naturalizations",
+    "Zuzüge" = "In-migrations",
+    "Fortzüge" = "Out-migrations",
+    "Wanderungssaldo" = "Migration balance",
+    "Durchschnittliche" = "Average",
+    "Average Age" = "Average Age",
+    "Krankenhausbetten" = "Hospital beds",
+    "Kinderärzte" = "Pediatricians",
+    "Ärzte" = "Physicians",
+    "Hausärzte" = "General practitioners",
+    "Auszubildende" = "Apprentices",
+    "Studierende" = "Students",
+    "Schüler" = "Pupils",
+    "Straftaten" = "Offences",
+    "Kassenkredite" = "Cash credits",
+    "Steuereinnahmen" = "Tax revenues",
+    "Landwirtschaftsfläche" = "Agricultural area",
+    "Waldfläche" = "Forest area",
+    "Wasserfläche" = "Water area",
+    "Freifläche" = "Open space",
+    "Bauland" = "Building land",
+    "Kindertageseinrichtungen" = "Daycare centers",
+    "Tageseinrichtungen" = "Daycare centers",
+    "Kindertagesstätten" = "Daycare centers",
+    "Leistungsberechtigten" = "Eligible for benefits",
+    "Leistungsberechtigte" = "Eligible for benefits",
+    "Bedarfsgemeinschaften" = "Benefit communities",
+    "Bedarfsgemeinschaft" = "Benefit community",
+    "Wohngeld" = "Housing benefit",
+    "Dienstleistungssektor" = "Service sector",
+    "Gästeübernachtungen" = "Overnight stays",
+    "Gebäuden" = "Buildings",
+    "Gebäude" = "Building",
+    "Kinder" = "Children",
+    "Kindern" = "Children",
+    "entsprechenden" = "corresponding",
+    "Altersgruppe" = "age group",
+    "Altersgruppen" = "age groups",
+    "Betreuungszeit" = "care time",
+    "Stunden" = "hours",
+    "pro Tag" = "per day",
+    "Tag" = "day",
+    "mehr" = "more",
+    "unter" = "under",
+    "über" = "over",
+    "bis zu" = "to",
+    "bis" = "to",
+    "zu" = "to",
+    "Jahren" = "years",
+    "Jahre" = "years",
+    "und älter" = "and older",
+    "und" = "and",
+    "von" = "from",
+    "mit" = "with",
+    "ohne" = "without",
+    "für" = "for",
+    "neue" = "new",
+    "neuen" = "new",
+    "an den" = "of the",
+    "an der" = "of the",
+    "an allen" = "of all",
+    "zivilen" = "civilian",
+    "letzten" = "last",
+    "länger" = "longer",
+    "je" = "per",
+    "der" = "of the",
+    "die" = "the",
+    "das" = "the",
+    "ein" = "a",
+    "eine" = "a",
+    "einer" = "a",
+    "einen" = "a",
+    "einem" = "a",
+    "Haushalten" = "Households",
+    "Haushalte" = "Households",
+    "Haushalt" = "Household"
+  )
+  
+  # Sort by length descending
+  replacements <- replacements[order(nchar(names(replacements)), decreasing = TRUE)]
+  
+  for (german in names(replacements)) {
+    pattern <- paste0("(?i)\\b", german, "\\b")
+    txt <- gsub(pattern, replacements[[german]], txt, perl = TRUE)
+  }
+  
+  # Final cleanup (including double 'to to')
+  txt <- gsub("\\bto to\\b", "to", txt, ignore.case = TRUE)
+  txt <- trimws(gsub("\\s+", " ", txt))
+  return(txt)
+}
+
+# Apply re-translation to all non-manual EN names
+# If Name_EN came from heuristic (which is mostly everything not manually curated), refresh it.
+indicators <- indicators |>
+  mutate(Name_EN = translate_german_to_english(Name_DE))
+
+# --- 7. Saving ---
 usethis::use_data(indicators, overwrite = TRUE)
 
 message("Processed ", nrow(indicators), " indicators.")

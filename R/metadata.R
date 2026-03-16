@@ -227,69 +227,77 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
         }
     }
 
-    # Menu Labels - No truncation as requested
-    options <- paste0(
-        df$Name,
-        " (ID: ",
-        df$ID,
-        ")"
-    )
+    options <- paste0(df$Name, " (ID: ", df$ID, ")")
 
-    # Simple Pagination Logic
+    # GUI detection - Use standard select.list for scrollable/searchable GUI
+    is_gui <- .Platform$GUI == "RStudio" ||
+        (interactive() && capabilities("tcltk") && !is.null(getOption("viewer")))
+
+    if (is_gui) {
+        choice <- utils::select.list(options, title = "INKAR - Select Indicator", graphics = TRUE)
+        if (length(choice) == 0 || choice == "") return(invisible(NULL))
+        match_id <- regmatches(choice, regexec("\\(ID: ([^\\)]+)\\)$", choice))
+        return(if (length(match_id[[1]]) > 1) match_id[[1]][2] else NULL)
+    }
+
+    # Terminal Mode: Custom Pager for better Enter compatibility
     page_size <- 50
     start_idx <- 1
     total_items <- length(options)
 
     repeat {
         end_idx <- min(start_idx + page_size - 1, total_items)
-        current_options <- options[start_idx:end_idx]
+        page_options <- options[start_idx:end_idx]
 
-        # Add Navigation if needed
-        nav_options <- current_options
-        if (total_items > page_size) {
-            nav_options <- c(
-                current_options,
-                if (end_idx < total_items) "[NEXT 50...]" else NULL,
-                if (start_idx > 1) "[PREVIOUS 50...]" else NULL,
-                "[CANCEL]"
-            )
+        # Print Page
+        cat("\033[2J\033[H") # Clear screen
+        cat(sprintf("INKAR - Select Indicator (%d-%d of %d)\n\n", start_idx, end_idx, total_items))
+
+        for (i in seq_along(page_options)) {
+            cat(sprintf("%2d: %s\n", i, page_options[i]))
         }
 
-        title_msg <- sprintf(
-            "INKAR - Select Indicator (%d-%d of %d) [ENTER for NEXT PAGE]",
-            start_idx, end_idx, total_items
-        )
+        cat("\n")
+        msg <- if (end_idx < total_items) {
+            "Select number/ID, [Enter] for next page, or [q] to quit: "
+        } else {
+            "Select number/ID, or [q] to quit: "
+        }
 
-        # Temporarily increase width to prevent select.list from truncating labels
-        old_width <- getOption("width")
-        options(width = 1000)
-        choice <- utils::select.list(nav_options, title = title_msg)
-        options(width = old_width)
+        input <- trimws(readline(msg))
 
-        if (length(choice) == 0) {
-            # User pressed ENTER with no selection OR cancelled in GUI
+        if (tolower(input) == "q") {
+            return(invisible(NULL))
+        } else if (input == "") {
+            # NEXT PAGE
             if (end_idx < total_items) {
                 start_idx <- start_idx + page_size
-                next
             } else {
+                message("End of list.")
                 return(invisible(NULL))
             }
-        }
-
-        if (choice == "[CANCEL]") {
-            return(invisible(NULL))
-        } else if (choice == "[NEXT 50...]") {
-            start_idx <- start_idx + page_size
-        } else if (choice == "[PREVIOUS 50...]") {
-            start_idx <- max(1, start_idx - page_size)
         } else {
-            # Find which indicator was selected
-            # Extract ID from the choice string "Name... (ID: ID_HERE)"
-            match_id <- regmatches(choice, regexec("\\(ID: ([^\\)]+)\\)$", choice))
-            if (length(match_id[[1]]) > 1) {
-                return(match_id[[1]][2])
+            # Check if it's a number from the current page
+            num <- suppressWarnings(as.integer(input))
+            if (!is.na(num) && num >= 1 && num <= length(page_options)) {
+                choice <- page_options[num]
+            } else {
+                # Check if it's an ID (exact match)
+                if (input %in% df$ID) {
+                    return(input)
+                }
+                # Try to find ID in the page options
+                choice <- page_options[grepl(sprintf("\\(ID: %s\\)$", input), page_options)]
+                if (length(choice) == 0) {
+                    message("Invalid selection: ", input)
+                    Sys.sleep(1)
+                    next
+                }
+                choice <- choice[1]
             }
-            return(NULL)
+
+            match_id <- regmatches(choice, regexec("\\(ID: ([^\\)]+)\\)$", choice))
+            return(if (length(match_id[[1]]) > 1) match_id[[1]][2] else NULL)
         }
     }
 }
