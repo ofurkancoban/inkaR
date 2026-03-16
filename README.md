@@ -21,7 +21,14 @@ data across Germany.
 
 ## Installation
 
-You can install the development version of inkaR from
+You can install the released version of inkaR from
+[CRAN](https://CRAN.R-project.org/package=inkaR) with:
+
+``` r
+install.packages("inkaR")
+```
+
+And the development version from
 [GitHub](https://github.com/ofurkancoban/inkaR) with:
 
 ``` r
