@@ -46,26 +46,15 @@ get_indicators <- function(lang = c("de", "en")) {
                     } else {
                         .data$`Statistische Grundlagen`
                     }
-                ) |>
-                dplyr::select(
-                    -dplyr::matches("_DE$"),
-                    -dplyr::all_of(c(
-                        "Name_EN",
-                        "Unit_EN",
-                        "Anmerkungen_EN",
-                        "Stat_Grund_EN"
-                    ))
                 )
+            # We keep Name_DE, Name_EN for bilingual features like search/selection
         }
     } else {
         # Default is DE
         if ("Name_DE" %in% names(df)) {
             df <- df |>
-                dplyr::mutate(Name = .data$Name_DE, Unit = .data$Unit_DE) |>
-                dplyr::select(
-                    -dplyr::matches("_EN$"),
-                    -dplyr::all_of(c("Name_DE", "Unit_DE"))
-                )
+                dplyr::mutate(Name = .data$Name_DE, Unit = .data$Unit_DE)
+            # We keep Name_DE, Name_EN for bilingual features like search/selection
         }
     }
 
@@ -158,12 +147,17 @@ search_indicators <- function(pattern, lang = c("de", "en")) {
 
     desc_col <- if ("Description_DE" %in% names(df)) "Description_DE" else NULL
 
+    # Bilingual Search: Search in primary Name, ID and secondary names if they exist
     hits <- df |>
         dplyr::filter(
             grepl(pattern, .data$Name, ignore.case = TRUE) |
                 grepl(pattern, .data$ID, ignore.case = TRUE) |
+                (if ("Name_DE" %in% names(df)) grepl(pattern, .data$Name_DE, ignore.case = TRUE) else FALSE) |
+                (if ("Name_EN" %in% names(df)) grepl(pattern, .data$Name_EN, ignore.case = TRUE) else FALSE) |
                 (if (!is.null(desc_col)) {
                     grepl(pattern, .data[[desc_col]], ignore.case = TRUE)
+                } else if ("Description_EN" %in% names(df)) {
+                    grepl(pattern, .data$Description_EN, ignore.case = TRUE)
                 } else {
                     FALSE
                 })
@@ -209,6 +203,17 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
     lang <- match.arg(lang)
     df <- get_indicators(lang)
 
+    # Helper to truncate text for terminal display
+    truncate_text <- function(x, width) {
+        width <- max(10, as.integer(width))
+        ifelse(nchar(x) > width, paste0(substr(x, 1, width - 3), "..."), x)
+    }
+
+    # Calculate safe widths based on current terminal width
+    term_width <- getOption("width", 80)
+    # Reserve ~20 chars for ID and numbering, split remainder between two names
+    name_w <- floor((term_width - 25) / 2)
+
     # Pre-filter by pattern if supplied (backward compatibility)
     if (!is.null(pattern) && nchar(trimws(pattern)) > 0) {
         search_in <- paste(
@@ -223,12 +228,33 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
         }
     }
 
-    options <- paste0(
-        df$Name,
-        " (ID: ",
-        df$ID,
-        ")"
-    )
+    # Bilingual Menu Labels with Truncation
+    if (lang == "en" && "Name_DE" %in% names(df)) {
+        options <- paste0(
+            truncate_text(df$Name_EN, name_w),
+            " | ",
+            truncate_text(df$Name_DE, name_w),
+            " (ID: ",
+            df$ID,
+            ")"
+        )
+    } else if (lang == "de" && "Name_EN" %in% names(df)) {
+        options <- paste0(
+            truncate_text(df$Name_DE, name_w),
+            " | ",
+            truncate_text(df$Name_EN, name_w),
+            " (ID: ",
+            df$ID,
+            ")"
+        )
+    } else {
+        options <- paste0(
+            truncate_text(df$Name, term_width - 20),
+            " (ID: ",
+            df$ID,
+            ")"
+        )
+    }
 
     choice <- utils::select.list(options, title = "INKAR - Select Indicator")
 
