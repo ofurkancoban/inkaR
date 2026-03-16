@@ -237,7 +237,7 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
         }
     }
 
-    # Menu Labels - Simplified to one language to fit terminal better
+    # Truncate labels for terminal
     options <- paste0(
         truncate_text(df$Name, term_width - 20),
         " (ID: ",
@@ -245,17 +245,49 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
         ")"
     )
 
-    choice <- utils::select.list(options, title = "INKAR - Select Indicator")
+    # Simple Pagination Logic
+    page_size <- 50
+    start_idx <- 1
+    total_items <- length(options)
 
-    if (choice == "") {
-        message("Selection cancelled.")
-        return(invisible(NULL))
+    repeat {
+        end_idx <- min(start_idx + page_size - 1, total_items)
+        current_options <- options[start_idx:end_idx]
+
+        # Add Navigation if needed
+        nav_options <- current_options
+        if (total_items > page_size) {
+            nav_options <- c(
+                current_options,
+                if (end_idx < total_items) "[NEXT 50...]" else NULL,
+                if (start_idx > 1) "[PREVIOUS 50...]" else NULL,
+                "[CANCEL]"
+            )
+        }
+
+        title_msg <- sprintf(
+            "INKAR - Select Indicator (%d-%d of %d)",
+            start_idx, end_idx, total_items
+        )
+
+        choice <- utils::select.list(nav_options, title = title_msg)
+
+        if (choice == "" || choice == "[CANCEL]") {
+            return(NULL)
+        } else if (choice == "[NEXT 50...]") {
+            start_idx <- start_idx + page_size
+        } else if (choice == "[PREVIOUS 50...]") {
+            start_idx <- max(1, start_idx - page_size)
+        } else {
+            # Find which indicator was selected
+            # Extract ID from the choice string "Name... (ID: ID_HERE)"
+            match_id <- regmatches(choice, regexec("\\(ID: ([^\\)]+)\\)$", choice))
+            if (length(match_id[[1]]) > 1) {
+                return(match_id[[1]][2])
+            }
+            return(NULL)
+        }
     }
-
-    m <- regexec("\\(ID: ([^)]+)\\)", choice)
-    id <- regmatches(choice, m)[[1]][2]
-    message("Selected Indicator ID: ", id)
-    return(id)
 }
 
 #' Interactively Select a Spatial Level

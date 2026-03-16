@@ -100,68 +100,109 @@ if (file.exists(status_file)) {
         # Heuristic Translation for Discovered Indicators
         vals <- active_api$Name[match(new_ids, active_api$ID)]
 
-        # Basic replacements
-        vals <- gsub("Anteil der", "Share of", vals)
-        vals <- gsub("Anteil", "Share of", vals)
-        vals <- gsub("Zahl der", "Number of", vals)
-        vals <- gsub("Anzahl der", "Number of", vals)
-        vals <- gsub("Anzahl", "Number of", vals)
-        vals <- gsub("insgesamt", "Total", vals)
-        vals <- gsub("Einwohner", "Inhabitants", vals)
-        vals <- gsub("Bevölkerung", "Population", vals)
-        vals <- gsub("Erwerbstätigen", "Employed", vals)
-        vals <- gsub("Erwerbstätige", "Employed", vals)
-        vals <- gsub("Erwerbspersonen", "Labor Force", vals)
-        vals <- gsub("Arbeitslosen", "Unemployed", vals)
-        vals <- gsub("Arbeitslose", "Unemployed", vals)
-        vals <- gsub("Frauen", "Women", vals)
-        vals <- gsub("Männer", "Men", vals)
-        vals <- gsub("weiblichen", "Female", vals)
-        vals <- gsub("männlichen", "Male", vals)
-        vals <- gsub("weibliche", "Female", vals)
-        vals <- gsub("männliche", "Male", vals)
-        vals <- gsub("Jugendliche", "Youth", vals)
-        vals <- gsub("unter", "under", vals)
-        vals <- gsub("Jahren", "years", vals)
-        vals <- gsub("Jahre", "years", vals)
-        vals <- gsub("bis", "to", vals)
-        vals <- gsub("und älter", "and older", vals)
-        vals <- gsub("Ausländer", "Foreigners", vals)
-        vals <- gsub("ausländischen", "Foreign", vals)
-        vals <- gsub("Wanderungssaldo", "Migration Balance", vals)
-        vals <- gsub("Geborene", "Births", vals)
-        vals <- gsub("Gestorbene", "Deaths", vals)
-        vals <- gsub("Haushalte", "Households", vals)
-        vals <- gsub("Bodenfläche", "Land Area", vals)
-        vals <- gsub("Siedlungs- und Verkehrsfläche", "Settlement and Transport Area", vals)
-        vals <- gsub("Bruttoinlandsprodukt", "GDP", vals)
-        vals <- gsub("Verfügbares Einkommen", "Disposable Income", vals)
-        vals <- gsub("je 1000", "per 1,000", vals)
-        vals <- gsub("je 100", "per 100", vals)
-        vals <- gsub("je", "per", vals)
-        vals <- gsub("an den", "of the", vals)
-        vals <- gsub("an der", "of the", vals)
-        vals <- gsub("an allen", "of all", vals)
-        vals <- gsub("zivilen", "civilian", vals)
-        vals <- gsub("per 1.000", "per 1,000", vals)
-        vals <- gsub("von", "from", vals)
-        vals <- gsub("über", "over", vals)
-        vals <- gsub("und", "and", vals)
-        vals <- gsub("mit", "with", vals)
-        vals <- gsub("ohne", "without", vals)
-        vals <- gsub("Berufsausbildung", "Vocational Training", vals)
-        vals <- gsub("Anforderungsniveau", "Requirement Level", vals)
-        vals <- gsub("offenen Stellen", "Open Vacancies", vals)
-        vals <- gsub("neue Wohnungen", "New Dwellings", vals)
-        vals <- gsub("Wohngebäuden", "Residential Buildings", vals)
-        vals <- gsub("Ein- und Zweifamilienhäusern", "Single and Two-Family Houses", vals)
-        vals <- gsub("Mehrfamilienhäusern", "Multi-Family Houses", vals)
-        vals <- gsub("sozialversicherungspflichtig", "Social Security", vals)
-        vals <- gsub("Beschäftigte", "Employees", vals)
-        vals <- gsub("Verhältnis", "Ratio", vals)
-        vals <- gsub("Durchschnittselter", "Average Age", vals)
-        vals <- gsub("Durchschnittliche", "Average", vals)
-        vals <- gsub("insgeamt", "Total", vals)
+        # Dictionary for replacements (most specific first)
+        replacements <- list(
+            # Core Keywords
+            "Anteil der" = "Share of",
+            "Anteil" = "Share of",
+            "Zahl der" = "Number of",
+            "Anzahl der" = "Number of",
+            "Anzahl" = "Number of",
+            "insgesamt" = "Total",
+            "Einwohner" = "Inhabitants",
+            "Bevölkerung" = "Population",
+            "Erwerbstätigen" = "Employed",
+            "Erwerbstätige" = "Employed",
+            "Erwerbspersonen" = "Labor Force",
+            "Arbeitslosen" = "Unemployed",
+            "Arbeitslose" = "Unemployed",
+            "Frauen" = "Women",
+            "Männer" = "Men",
+            "weiblichen" = "Female",
+            "männlichen" = "Male",
+            "weibliche" = "Female",
+            "männliche" = "Male",
+            "Foreigners" = "Foreigners", # Keep if already translated
+            "Ausländer" = "Foreigners",
+            "ausländischen" = "Foreign",
+            "ausländischer" = "Foreign",
+
+            # Complex Terms
+            "Baugenehmigungen" = "Building permits",
+            "Fertiggestellte" = "Completed",
+            "Wohnungen" = "Dwellings",
+            "Wohngebäuden" = "Residential buildings",
+            "Wohngebäude" = "Residential buildings",
+            "Gebäuden" = "buildings",
+            "Gebäude" = "buildings",
+            "Wohn- und Nichtwohngebäuden" = "Residential and non-residential buildings",
+            "Ein- und Zweifamilienhäusern" = "Single and two-family houses",
+            "Ein- und Zweifamilienhäuser" = "Single and two-family houses",
+            "Mehrfamilienhäusern" = "Multi-family houses",
+            "Mehrfamilienhäuser" = "Multi-family houses",
+            "Wohnungen" = "Dwellings",
+            "sozialversicherungspflichtig" = "Social Security",
+            "Beschäftigte" = "Employees",
+            "Nebenjob" = "Side job",
+            "Bruttoinlandsprodukt" = "GDP",
+            "Verfügbares Einkommen" = "Disposable Income",
+            "Katalog der" = "Catalog of",
+            "Entwicklung der" = "Development of the",
+            "Prognostizierte" = "Projected",
+            "Einbürgerungen" = "Naturalizations",
+            "Zuzüge" = "In-migrations",
+            "Fortzüge" = "Out-migrations",
+            "Wanderungssaldo" = "Migration balance",
+            "Durchschnittliche" = "Average",
+            "Durchschnittsalter" = "Average Age",
+            "Krankenhausbetten" = "Hospital beds",
+            "Ärzte" = "Physicians",
+            "Hausärzte" = "General practitioners",
+            "Auszubildende" = "Apprentices",
+            "Studierende" = "Students",
+            "Schüler" = "Pupils",
+            "Straftaten" = "Offences",
+            "Kassenkredite" = "Cash credits",
+            "Steuereinnahmen" = "Tax revenues",
+            "Landwirtschaftsfläche" = "Agricultural area",
+            "Waldfläche" = "Forest area",
+            "Wasserfläche" = "Water area",
+            "Freifläche" = "Open space",
+            "Bauland" = "Building land",
+
+            # Units & Prepositions
+            "unter" = "under",
+            "über" = "over",
+            "bis" = "to",
+            "Jahren" = "years",
+            "Jahre" = "years",
+            "und älter" = "and older",
+            "per 1.000" = "per 1,000",
+            "per 100" = "per 100",
+            "von" = "from",
+            "mit" = "with",
+            "ohne" = "without",
+            "und" = "and",
+            "für" = "for",
+            "neue" = "new",
+            "neuen" = "new",
+            "je 1000" = "per 1,000",
+            "je 100" = "per 100",
+            "je" = "per",
+            "an den" = "of the",
+            "an der" = "of the",
+            "an allen" = "of all",
+            "zivilen" = "civilian",
+            "vergangenen" = "past",
+            "letzten" = "last"
+        )
+
+        for (german in names(replacements)) {
+            # Use word boundaries for small prepositions to avoid u-n-d-e-r -> a-n-d-e-r bug
+            # and for case-insensitive matching
+            pattern <- if (nchar(german) <= 4) paste0("\\b", german, "\\b") else german
+            vals <- gsub(pattern, replacements[[german]], vals, ignore.case = TRUE, perl = TRUE)
+        }
 
         # Suffix
         paste(vals, "[Auto-EN]")
