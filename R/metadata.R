@@ -228,33 +228,13 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
         }
     }
 
-    # Bilingual Menu Labels with Truncation
-    if (lang == "en" && "Name_DE" %in% names(df)) {
-        options <- paste0(
-            truncate_text(df$Name_EN, name_w),
-            " | ",
-            truncate_text(df$Name_DE, name_w),
-            " (ID: ",
-            df$ID,
-            ")"
-        )
-    } else if (lang == "de" && "Name_EN" %in% names(df)) {
-        options <- paste0(
-            truncate_text(df$Name_DE, name_w),
-            " | ",
-            truncate_text(df$Name_EN, name_w),
-            " (ID: ",
-            df$ID,
-            ")"
-        )
-    } else {
-        options <- paste0(
-            truncate_text(df$Name, term_width - 20),
-            " (ID: ",
-            df$ID,
-            ")"
-        )
-    }
+    # Menu Labels - Simplified to one language to fit terminal better
+    options <- paste0(
+        truncate_text(df$Name, term_width - 20),
+        " (ID: ",
+        df$ID,
+        ")"
+    )
 
     choice <- utils::select.list(options, title = "INKAR - Select Indicator")
 
