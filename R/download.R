@@ -603,8 +603,8 @@ get_geographies <- function(geography = NULL) {
 #' }
 #' 
 #' \donttest{
-#'   df <- inkaR("bip", level = "KRE", year = 2021)
-#'   df <- inkaR("Bruttoinlandsprodukt", level = "KRE")
+#'   try(df <- inkaR("bip", level = "KRE", year = 2021))
+#'   try(df <- inkaR("Bruttoinlandsprodukt", level = "KRE"))
 #' }
 inkaR <- function(variable = NULL, level = NULL, ...) {
   if (is.null(variable)) {

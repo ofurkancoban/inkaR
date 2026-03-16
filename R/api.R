@@ -104,7 +104,21 @@ inkar_request <- function(
 #' @return Parsed list or data frame
 #' @noRd
 perform_request <- function(req) {
-    resp <- httr2::req_perform(req)
+    resp <- tryCatch(
+        {
+            httr2::req_perform(req)
+        },
+        error = function(e) {
+            if (grepl("SSL certificate problem", e$message)) {
+                message("SSL certificate verification failed. This may happen on some systems (e.g. Fedora) with incomplete CA bundles.")
+                message("Error: ", e$message)
+                return(NULL)
+            }
+            stop(e)
+        }
+    )
+
+    if (is.null(resp)) return(NULL)
 
     if (httr2::resp_is_error(resp)) {
         # Try to print body for debugging

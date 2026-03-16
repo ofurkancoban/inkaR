@@ -1,5 +1,12 @@
 # CRAN Comments
 
+## Resubmission for v0.4.4
+
+This is a resubmission addressing an additional issue found in the CRAN check results for v0.4.3:
+* **Fixed SSL certificate issue**: Some CRAN builders (Fedora) experienced `SSL certificate problem: unable to get local issuer certificate` when accessing `www.inkar.de`.
+* **Improved API resiliency**: Modified `perform_request()` in `R/api.R` to catch SSL verification errors and return `NULL` with a informative message rather than halting execution.
+* **Resilient Examples**: Wrapped network-dependent examples in `try()` blocks to ensure `R CMD check` passes even if the builder environment has limited network/SSL capabilities.
+
 ## Resubmission for v0.4.3
 
 This is a resubmission addressing feedback from CRAN maintainer Konstanze Lauseker:

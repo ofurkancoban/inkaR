@@ -1,3 +1,8 @@
+# inkaR 0.4.4
+
+* FIXED: Added graceful handling for SSL certificate verification issues on specific CRAN builders (e.g., Fedora).
+* IMPROVED: Wrapped network-dependent examples in `try()` to ensure CRAN checks pass even with environment-specific network limitations.
+
 # inkaR 0.4.3
 
 * FIXED: Addressed CRAN feedback regarding single quotes in `DESCRIPTION`.

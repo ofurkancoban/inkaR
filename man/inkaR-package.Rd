@@ -43,17 +43,17 @@ if (interactive()) {
 
 \donttest{
   # 3. Search for "GDP" (Bruttoinlandsprodukt)
-  search_indicators("GDP", lang = "en")
+  try(search_indicators("GDP", lang = "en"))
 
   # 4. Download data for GDP (011) for Districts (KRE)
   #    Note: You can use Shortnames ("011"), numeric M_IDs (11), or simple codes ("bip")
-  data <- get_inkar_data("011", level = "KRE", year = 2021, lang = "de", csv = FALSE)
+  try(data <- get_inkar_data("011", level = "KRE", year = 2021, lang = "de", csv = FALSE))
 
   # 5. Download and save directly as CSV
-  get_inkar_data("011", csv = TRUE, export_dir = tempdir())
+  try(get_inkar_data("011", csv = TRUE, export_dir = tempdir()))
 
   # 6. Download data for a year range
-  get_inkar_data("011", level = "KRE", year = 2010:2020)
+  try(get_inkar_data("011", level = "KRE", year = 2010:2020))
 }
 
 }
