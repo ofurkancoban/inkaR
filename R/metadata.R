@@ -213,16 +213,6 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
     lang <- match.arg(lang)
     df <- get_indicators(lang)
 
-    # Helper to truncate text for terminal display
-    truncate_text <- function(x, width) {
-        width <- max(10, as.integer(width))
-        ifelse(nchar(x) > width, paste0(substr(x, 1, width - 3), "..."), x)
-    }
-
-    # Calculate safe widths based on current terminal width
-    term_width <- getOption("width", 80)
-    # Reserve ~20 chars for ID and numbering
-
     # Pre-filter by pattern if supplied (backward compatibility)
     if (!is.null(pattern) && nchar(trimws(pattern)) > 0) {
         search_in <- paste(
@@ -266,16 +256,22 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
         }
 
         title_msg <- sprintf(
-            "INKAR - Select Indicator (%d-%d of %d)",
+            "INKAR - Select Indicator (%d-%d of %d) [Enter for NEXT]",
             start_idx, end_idx, total_items
         )
 
         choice <- utils::select.list(nav_options, title = title_msg)
 
-        if (choice == "" || choice == "[CANCEL]") {
+        if (choice == "[CANCEL]") {
             return(NULL)
-        } else if (choice == "[NEXT 50...]") {
-            start_idx <- start_idx + page_size
+        } else if (choice == "[NEXT 50...]" || choice == "") {
+            # Advanced to next page if Choice is NEXT or user pressed ENTER (choice == "")
+            if (end_idx < total_items) {
+                start_idx <- start_idx + page_size
+            } else {
+                # If we are at the end and press Enter/Cancel, exit
+                return(NULL)
+            }
         } else if (choice == "[PREVIOUS 50...]") {
             start_idx <- max(1, start_idx - page_size)
         } else {
