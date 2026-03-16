@@ -4,7 +4,7 @@
 \alias{inkaR}
 \title{Download Data from INKAR (Alias)}
 \usage{
-inkaR(variable = NULL, level = NULL, lang = c("de", "en"), ...)
+inkaR(variable = NULL, level = NULL, year = NULL, lang = c("de", "en"), ...)
 }
 \arguments{
 \item{variable}{Character. Indicator ID, shortname, or partial name.
@@ -13,8 +13,12 @@ If \code{NULL} (default), opens an interactive selection menu (interactive sessi
 \item{level}{Character. Spatial level code (e.g., \code{"KRE"} for Kreise).
 If \code{NULL} and \code{variable} is also \code{NULL}, an interactive level menu is shown.}
 
+\item{year}{Integer/Character vector. Specific year (e.g. 2021) or range.}
+
+\item{lang}{Character. "de" (default) for German column names, "en" for English.}
+
 \item{...}{Additional arguments passed to \code{\link[=get_inkar_data]{get_inkar_data()}}, such as
-\code{year}, \code{lang}, \code{format}, or \code{csv}.}
+\code{format} or \code{csv}.}
 }
 \value{
 A tibble containing the downloaded data, or \code{NULL} if selection was cancelled.

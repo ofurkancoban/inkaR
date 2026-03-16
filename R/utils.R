@@ -117,3 +117,30 @@ parse_inkar_json <- function(data, lang = "de") {
 
     return(df)
 }
+
+#' Record Indicator Usage History
+#' @param id The indicator ID used.
+#' @noRd
+record_usage <- function(id) {
+    history_file <- file.path(Sys.getenv("HOME"), ".inkaR_history")
+    history <- character()
+    if (file.exists(history_file)) {
+        history <- readLines(history_file, warn = FALSE)
+    }
+    # Add to front, unique
+    history <- unique(c(id, history))
+    # Keep last 100
+    if (length(history) > 100) history <- history[1:100]
+    writeLines(history, history_file)
+}
+
+#' Get Frequent Indicators
+#' @return Vector of frequent/recent indicator IDs.
+#' @noRd
+get_usage_history <- function() {
+    history_file <- file.path(Sys.getenv("HOME"), ".inkaR_history")
+    if (file.exists(history_file)) {
+        return(readLines(history_file, warn = FALSE))
+    }
+    return(character())
+}

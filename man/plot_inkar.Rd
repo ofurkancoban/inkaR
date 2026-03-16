@@ -4,12 +4,14 @@
 \alias{plot_inkar}
 \title{Plot INKAR Data on German Maps}
 \usage{
-plot_inkar(data, year = NULL)
+plot_inkar(data, year = NULL, mode = c("light", "dark"))
 }
 \arguments{
 \item{data}{A data frame returned by \code{get_inkar_data()}.}
 
 \item{year}{Integer/Character. If the data contains multiple years, specify which year to plot. If NULL and multiple years exist, the most recent year is plotted.}
+
+\item{mode}{Character. "light" (default) or "dark" theme.}
 }
 \value{
 A \code{ggplot2} object displaying the mapped data.

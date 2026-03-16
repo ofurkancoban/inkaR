@@ -73,6 +73,78 @@ get_inkar_data <- function(
     }
   }
 
+  # Multi-Indicator Support: If 'variable' is a vector, loop and merge
+  if (length(variable) > 1) {
+    cli::cli_alert_info("Downloading multiple indicators: {.val {variable}}")
+    results <- lapply(variable, function(v) {
+      get_inkar_data(
+        variable = v,
+        level = level,
+        year = year,
+        lang = lang,
+        format = "long", # Always long for merging
+        csv = FALSE, 
+        export_dir = export_dir
+      )
+    })
+    
+    # Filter out NULLs (failed selections)
+    results <- results[!sapply(results, is.null)]
+    if (length(results) == 0) return(invisible(NULL))
+    
+    # Check if they are empty
+    results <- results[sapply(results, nrow) > 0]
+    if (length(results) == 0) {
+      warning("No data found for any of the selected indicators.")
+      return(tibble::tibble())
+    }
+    
+    final_df <- dplyr::bind_rows(results)
+    
+    # HORIZONTAL JOIN (Wide) for multiple indicators
+    if (format == "wide") {
+      cli::cli_alert_info("Pivoting data to analytical wide format (indicators as columns)...")
+      
+      col_id <- if (lang == "de") "Kennziffer" else "region_id"
+      col_name <- if (lang == "de") "Raumeinheit" else "region_name"
+      col_level <- if (lang == "de") "Aggregat" else "level_name"
+      col_time <- if (lang == "de") "Zeit" else "year"
+      col_ind_key <- if (lang == "de") "Indikator" else "indicator_name"
+      col_value <- if (lang == "de") "Wert" else "value"
+      
+      # For multiple indicators in wide format, we want:
+      # region, year, Ind1, Ind2...
+      # We drop metadata that varies per indicator (M_ID, description, unit) to keep the join clean
+      # or we keep them if they are identical? Usually safer to pivot just the values.
+      
+      final_df <- final_df |>
+        dplyr::select(
+          dplyr::all_of(col_id),
+          dplyr::all_of(col_name),
+          dplyr::all_of(col_level),
+          dplyr::all_of(col_time),
+          dplyr::all_of(col_ind_key),
+          dplyr::all_of(col_value)
+        ) |>
+        tidyr::pivot_wider(
+          names_from = dplyr::all_of(col_ind_key),
+          values_from = dplyr::all_of(col_value)
+        )
+    }
+    
+    # Save to CSV if requested for the combined set
+    if (csv) {
+      dir <- if (is.null(export_dir)) "." else export_dir
+      prefix <- if (format == "wide") "inkar_wide_" else "inkar_long_"
+      filename <- paste0(prefix, format(Sys.time(), "%Y%m%d_%H%M%S"), ".csv")
+      path <- file.path(dir, filename)
+      utils::write.csv(final_df, path, row.names = FALSE)
+      cli::cli_alert_success("Combined data saved to {.path {path}}")
+    }
+    
+    return(final_df)
+  }
+
   # Step 1: Smart ID Resolution (Handle various input types)
   if (exists("indicators", envir = asNamespace("inkaR"))) {
     inds <- inkaR::indicators
@@ -593,8 +665,10 @@ get_geographies <- function(geography = NULL) {
 #'   If `NULL` (default), opens an interactive selection menu (interactive sessions only).
 #' @param level Character. Spatial level code (e.g., `"KRE"` for Kreise).
 #'   If `NULL` and `variable` is also `NULL`, an interactive level menu is shown.
+#' @param year Integer/Character vector. Specific year (e.g. 2021) or range.
+#' @param lang Character. "de" (default) for German column names, "en" for English.
 #' @param ... Additional arguments passed to [get_inkar_data()], such as
-#'   `year`, `lang`, `format`, or `csv`.
+#'   `format` or `csv`.
 #' @return A tibble containing the downloaded data, or `NULL` if selection was cancelled.
 #' @export
 #' @examples
@@ -606,7 +680,7 @@ get_geographies <- function(geography = NULL) {
 #'   try(df <- inkaR("bip", level = "KRE", year = 2021))
 #'   try(df <- inkaR("Bruttoinlandsprodukt", level = "KRE"))
 #' }
-inkaR <- function(variable = NULL, level = NULL, lang = c("de", "en"), ...) {
+inkaR <- function(variable = NULL, level = NULL, year = NULL, lang = c("de", "en"), ...) {
   lang <- match.arg(lang)
   
   if (is.null(variable)) {
@@ -619,10 +693,17 @@ inkaR <- function(variable = NULL, level = NULL, lang = c("de", "en"), ...) {
 
       # Interactive level selection if not specified
       if (is.null(level)) {
-        # Note: select_level could also be updated for English labels
-        level <- select_level(variable) # nolint: object_usage_linter
+        level <- select_level(variable)
         if (is.null(level)) return(invisible(NULL))
       }
+
+      # Interactive year selection if not provided
+      if (is.null(year)) {
+        year <- select_years(variable, level)
+        if (length(year) == 0) return(invisible(NULL))
+      }
+      
+      return(get_inkar_data(variable = variable, level = level, year = year, lang = lang, ...))
     } else {
       stop("Argument 'variable' is missing, with no default.")
     }
@@ -632,5 +713,5 @@ inkaR <- function(variable = NULL, level = NULL, lang = c("de", "en"), ...) {
     level <- "KRE"
   }
 
-  get_inkar_data(variable = variable, level = level, lang = lang, ...)
+  get_inkar_data(variable = variable, level = level, year = year, lang = lang, ...)
 }

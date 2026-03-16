@@ -8,16 +8,30 @@
 [![R-CMD-check](https://github.com/ofurkancoban/inkaR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ofurkancoban/inkaR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The `inkaR` package provides a modern, fast, and lightweight R interface
-to download spatial development indicators from the [BBSR
-INKAR](https://www.inkar.de/) (Indikatoren und Karten zur Raum- und
-Stadtentwicklung) database.
+The `inkaR` package provides a professional, fast, and feature-rich R
+interface to download and analyze spatial development indicators from
+the [BBSR INKAR](https://www.inkar.de/) (Indikatoren und Karten zur
+Raum- und Stadtentwicklung) database.
 
 Designed for researchers and data scientists, `inkaR` abstracts away the
-complex JSON API of INKAR into simple, tidy data frames (`tibbles`). It
-features intelligent persistent caching, parallel API queries, and
-native geospatial mapping integration to instantly visualize regional
-data across Germany.
+complex JSON API of INKAR into clean, analytical data frames. Version
+0.6.0 introduces a premium interactive wizard, multi-indicator support
+with automatic joining, and high-end visualization themes.
+
+## Key Features
+
+1.  **Interactive Selection Wizard**: Run `inkaR()` without arguments
+    for a guided terminal session.
+2.  **Multi-Indicator Support**: Download and merge multiple variables
+    at once (Vertical or Horizontal joins).
+3.  **Bilingual Fuzzy Search**: Intelligent, error-tolerant search for
+    both German and English indicator names.
+4.  **Usage History & Favorites**: Highlighting frequently used
+    indicators for a personalized experience.
+5.  **Professional Visualizations**: Dedicated ggplot2 themes
+    (`theme_inkaR`) for publication-ready maps.
+6.  **Optimized Performance**: Intelligent persistent caching and
+    parallel API discovery.
 
 ## Installation
 
@@ -36,84 +50,52 @@ And the development version from
 devtools::install_github("ofurkancoban/inkaR")
 ```
 
-## Features
+## Quick Start
 
-1.  **Modern Architecture**: Uses `httr2` for bulletproof HTTP requests
-    and retry logic.
-2.  **Offline Caching**: Automatically saves API metadata to disk
-    (`tools::R_user_dir()`), speeding up repeated spatial lookups by up
-    to 10x.
-3.  **Parallel Networking**: Uses asynchronous queries
-    (`req_perform_parallel`) to ping 6 spatial levels simultaneously,
-    dropping discovery delays from 15 seconds to under 2 seconds.
-4.  **Offline Resiliency**: Includes `httptest2` integration so the
-    entire test suite works without internet access, perfect for CI/CD
-    environments.
-5.  **Geospatial Mapping**: Built-in support to render data directly
-    onto German administrative maps using `ggplot2` and `geodata`.
+### 1. Interactive Selection (Wizard Mode)
 
-## Basic Usage
-
-The workflow consists of finding an indicator ID, ensuring its spatial
-level is available, and downloading it.
-
-### 1. View Available Indicators
+Simply call `inkaR()` in an interactive R session. A professional
+selection wizard will guide you through: - **Indicator Discovery**:
+Search with keywords (supports fuzzy matching). - **Spatial Level
+Selection**: Automatically probes the API for available levels
+(Districts, States, etc.). - **Year Selection**: Choose specific years
+or download the entire time series.
 
 ``` r
 library(inkaR)
-
-# Open an interactive viewer to search for indicators like 'BIP' or 'Population'
-# Supports bilingual metadata: lang = "de" or lang = "en"
-view_indicators(lang = "en")
+# Launch the Interactive Wizard
+df <- inkaR() 
 ```
 
-### 2. Download Data
+### 2. Analytical Multi-Indicator Download
 
-Once you locate your target indicator ID (e.g., “011” for Gross Domestic
-Product) and a spatial group (e.g., “KRE” for Districts), download the
-data:
+You can download multiple datasets and join them automatically. Choose
+between a “Long” (stacked) format or a “Wide” (analytical) format with
+indicators as columns.
 
 ``` r
-library(inkaR)
-# Download Gross Domestic Product (BIP) for all German Districts (2021)
-df <- get_inkar_data("011", level = "KRE", year = 2021)
+# Horizontal Join: Indicators as side-by-side columns
+df_wide <- inkaR(
+  variable = c("bip", "xbev"), 
+  level    = "KRE", 
+  year     = 2021, 
+  lang     = "en", 
+  format   = "wide"
+)
 
-head(df)
-#>   Kennziffer            Raumeinheit Aggregat M_ID
-#> 1      01001       Flensburg, Stadt   Kreise   11
-#> 2      01002 Kiel, Landeshauptstadt   Kreise   11
-#> 3      01003     Lübeck, Hansestadt   Kreise   11
-#> 4      01004      Neumünster, Stadt   Kreise   11
-#> 5      01051           Dithmarschen   Kreise   11
-#> 6      01053    Herzogtum Lauenburg   Kreise   11
-#>                                              Indikator
-#> 1 Bruttoinlandsprodukt (BIP) absolut in Millionen Euro
-#> 2 Bruttoinlandsprodukt (BIP) absolut in Millionen Euro
-#> 3 Bruttoinlandsprodukt (BIP) absolut in Millionen Euro
-#> 4 Bruttoinlandsprodukt (BIP) absolut in Millionen Euro
-#> 5 Bruttoinlandsprodukt (BIP) absolut in Millionen Euro
-#> 6 Bruttoinlandsprodukt (BIP) absolut in Millionen Euro
-#>                                           Beschreibung    Einheit Zeit     Wert
-#> 1 Bruttoinlandsprodukt (BIP) absolut in Millionen Euro 1.000 Euro 2021  3992237
-#> 2 Bruttoinlandsprodukt (BIP) absolut in Millionen Euro 1.000 Euro 2021 12468565
-#> 3 Bruttoinlandsprodukt (BIP) absolut in Millionen Euro 1.000 Euro 2021 11196036
-#> 4 Bruttoinlandsprodukt (BIP) absolut in Millionen Euro 1.000 Euro 2021  3918518
-#> 5 Bruttoinlandsprodukt (BIP) absolut in Millionen Euro 1.000 Euro 2021  5082480
-#> 6 Bruttoinlandsprodukt (BIP) absolut in Millionen Euro 1.000 Euro 2021  5010598
+# Ready for direct calculation:
+# df_wide$bip_per_capita <- df_wide$bip / df_wide$`Total population`
 ```
 
-### 3. Native Mapping
+### 3. Professional Mapping
 
-If you have the optional `sf`, `ggplot2`, and `geodata` packages
-installed, `inkaR` can seamlessly map your downloaded data:
+`inkaR` integrates seamlessly with `sf` and `ggplot2` to render premium
+maps.
 
 ``` r
-# Renders a high-quality map of the data
-plot_inkar(df)
+# Plot with the premium High-End theme (Dark or Light mode)
+plot_inkar(df_wide, mode = "dark")
 ```
-
-*(Note: The first plot call will automatically download GADM boundary
-shapes for the matched spatial level.)*
 
 ## Available Spatial Levels
 
@@ -123,5 +105,4 @@ shapes for the matched spatial level.)*
 - `BLD`: Federal States (Bundesländer)
 - `BND`: Federal Territory (Bund)
 
-You can view complete structure relationships programmatically via
-`get_geographies()`.
+You can explore the full spatial hierarchy via `get_geographies()`.
