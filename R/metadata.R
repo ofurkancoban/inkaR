@@ -124,10 +124,10 @@ view_indicators <- function(lang = c("de", "en")) {
     view_success <- FALSE
     if (interactive() && requireNamespace("utils", quietly = TRUE)) {
         res <- try(
-            utils::View(
+            suppressWarnings(utils::View(
                 df,
                 title = paste0("INKAR Indicators (", toupper(lang), ")")
-            ),
+            )),
             silent = TRUE
         )
         if (!inherits(res, "try-error")) {
