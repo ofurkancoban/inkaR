@@ -254,7 +254,8 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
         cat(sprintf("INKAR - Select Indicator (%d-%d of %d)\n\n", start_idx, end_idx, total_items))
 
         for (i in seq_along(page_options)) {
-            cat(sprintf("%2d: %s\n", i, page_options[i]))
+            global_idx <- start_idx + i - 1
+            cat(sprintf("%3d: %s\n", global_idx, page_options[i]))
         }
 
         cat("\n")
@@ -277,10 +278,10 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
                 return(invisible(NULL))
             }
         } else {
-            # Check if it's a number from the current page
+            # Check if it's a number from the FULL list
             num <- suppressWarnings(as.integer(input))
-            if (!is.na(num) && num >= 1 && num <= length(page_options)) {
-                choice <- page_options[num]
+            if (!is.na(num) && num >= 1 && num <= total_items) {
+                choice <- options[num]
             } else {
                 # Check if it's an ID (exact match)
                 if (input %in% df$ID) {
