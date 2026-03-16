@@ -256,22 +256,30 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
         }
 
         title_msg <- sprintf(
-            "INKAR - Select Indicator (%d-%d of %d) [Enter for NEXT]",
+            "INKAR - Select Indicator (%d-%d of %d) [ENTER for NEXT PAGE]",
             start_idx, end_idx, total_items
         )
 
+        # Temporarily increase width to prevent select.list from truncating labels
+        old_width <- getOption("width")
+        options(width = 1000)
         choice <- utils::select.list(nav_options, title = title_msg)
+        options(width = old_width)
 
-        if (choice == "[CANCEL]") {
-            return(NULL)
-        } else if (choice == "[NEXT 50...]" || choice == "") {
-            # Advanced to next page if Choice is NEXT or user pressed ENTER (choice == "")
+        if (length(choice) == 0) {
+            # User pressed ENTER with no selection OR cancelled in GUI
             if (end_idx < total_items) {
                 start_idx <- start_idx + page_size
+                next
             } else {
-                # If we are at the end and press Enter/Cancel, exit
-                return(NULL)
+                return(invisible(NULL))
             }
+        }
+
+        if (choice == "[CANCEL]") {
+            return(invisible(NULL))
+        } else if (choice == "[NEXT 50...]") {
+            start_idx <- start_idx + page_size
         } else if (choice == "[PREVIOUS 50...]") {
             start_idx <- max(1, start_idx - page_size)
         } else {

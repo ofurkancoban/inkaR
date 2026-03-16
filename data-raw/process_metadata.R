@@ -100,61 +100,59 @@ if (file.exists(status_file)) {
         # Heuristic Translation for Discovered Indicators
         vals <- active_api$Name[match(new_ids, active_api$ID)]
 
-        # Dictionary for replacements (most specific first)
+        # Exhaustive Dictionary
         replacements <- list(
-            # Core Keywords
             "Anteil der" = "Share of",
             "Anteil" = "Share of",
+            "Quote" = "Rate",
             "Zahl der" = "Number of",
             "Anzahl der" = "Number of",
             "Anzahl" = "Number of",
-            "insgesamt" = "Total",
-            "Einwohner" = "Inhabitants",
+            "insgesamt" = "total",
             "Bevölkerung" = "Population",
+            "Einwohnern" = "Inhabitants",
+            "Einwohner" = "Inhabitants",
+            "Erwerbspersonen" = "Labor Force",
             "Erwerbstätigen" = "Employed",
             "Erwerbstätige" = "Employed",
-            "Erwerbspersonen" = "Labor Force",
             "Arbeitslosen" = "Unemployed",
             "Arbeitslose" = "Unemployed",
+            "arbeitslosen" = "unemployed",
             "Frauen" = "Women",
             "Männer" = "Men",
-            "weiblichen" = "Female",
-            "männlichen" = "Male",
             "weibliche" = "Female",
             "männliche" = "Male",
-            "Foreigners" = "Foreigners", # Keep if already translated
+            "weiblichen" = "Female",
+            "männlichen" = "Male",
+            "ausländischen" = "foreign",
+            "ausländischer" = "foreign",
             "Ausländer" = "Foreigners",
-            "ausländischen" = "Foreign",
-            "ausländischer" = "Foreign",
-
-            # Complex Terms
             "Baugenehmigungen" = "Building permits",
+            "Baugenehmigung" = "Building permit",
             "Fertiggestellte" = "Completed",
-            "Wohnungen" = "Dwellings",
             "Wohngebäuden" = "Residential buildings",
             "Wohngebäude" = "Residential buildings",
-            "Gebäuden" = "buildings",
-            "Gebäude" = "buildings",
-            "Wohn- und Nichtwohngebäuden" = "Residential and non-residential buildings",
+            "Nichtwohngebäuden" = "Non-residential buildings",
+            "Wohnungen" = "Dwellings",
+            "Wohnung" = "Dwelling",
             "Ein- und Zweifamilienhäusern" = "Single and two-family houses",
             "Ein- und Zweifamilienhäuser" = "Single and two-family houses",
             "Mehrfamilienhäusern" = "Multi-family houses",
             "Mehrfamilienhäuser" = "Multi-family houses",
-            "Wohnungen" = "Dwellings",
             "sozialversicherungspflichtig" = "Social Security",
             "Beschäftigte" = "Employees",
+            "Beschäftigten" = "Employees",
             "Nebenjob" = "Side job",
             "Bruttoinlandsprodukt" = "GDP",
-            "Verfügbares Einkommen" = "Disposable Income",
-            "Katalog der" = "Catalog of",
-            "Entwicklung der" = "Development of the",
+            "Verfügbares Einkommen" = "Disposable income",
+            "Entwicklung" = "Development",
             "Prognostizierte" = "Projected",
             "Einbürgerungen" = "Naturalizations",
             "Zuzüge" = "In-migrations",
             "Fortzüge" = "Out-migrations",
             "Wanderungssaldo" = "Migration balance",
             "Durchschnittliche" = "Average",
-            "Durchschnittsalter" = "Average Age",
+            "Average Age" = "Average Age",
             "Krankenhausbetten" = "Hospital beds",
             "Ärzte" = "Physicians",
             "Hausärzte" = "General practitioners",
@@ -169,75 +167,52 @@ if (file.exists(status_file)) {
             "Wasserfläche" = "Water area",
             "Freifläche" = "Open space",
             "Bauland" = "Building land",
+            "Kindertageseinrichtungen" = "Daycare centers",
+            "Tageseinrichtungen" = "Daycare centers",
+            "Kindertagesstätten" = "Daycare centers",
+            "Leistungsberechtigten" = "Eligible for benefits",
+            "Leistungsberechtigte" = "Eligible for benefits",
+            "Bedarfsgemeinschaften" = "Benefit communities",
+            "Bedarfsgemeinschaft" = "Benefit community",
+            "Wohngeld" = "Housing benefit",
+            "Dienstleistungssektor" = "Service sector",
+            "Gästeübernachtungen" = "Overnight stays",
+            "Gebäuden" = "Buildings",
+            "Gebäude" = "Building",
 
-            # Units & Prepositions
+            # Prepositions
+            "unter" = "under",
             "über" = "over",
             "bis" = "to",
             "Jahren" = "years",
             "Jahre" = "years",
             "und älter" = "and older",
-            "per 1.000" = "per 1,000",
-            "per 100" = "per 100",
+            "und" = "and",
             "von" = "from",
             "mit" = "with",
             "ohne" = "without",
-            "und" = "and",
             "für" = "for",
             "neue" = "new",
             "neuen" = "new",
-            "je 1000" = "per 1,000",
-            "je 100" = "per 100",
-            "je" = "per",
             "an den" = "of the",
             "an der" = "of the",
             "an allen" = "of all",
             "zivilen" = "civilian",
             "vergangenen" = "past",
             "letzten" = "last",
-
-            # Daycare and Education
-            "Kindertageseinrichtungen" = "Daycare centers",
-            "Tageseinrichtungen" = "Daycare centers",
-            "Kindertagesstätten" = "Daycare centers",
-            "allgemeinbildende Schulen" = "General education schools",
-            "berufsbildende Schulen" = "Vocational schools",
-            "weiterführende Schulen" = "Secondary schools",
-
-            # Benefits & Social
-            "Leistungsberechtigten" = "Eligible for benefits",
-            "Leistungsberechtigte" = "Eligible for benefits",
-            "Bedarfsgemeinschaften" = "Benefit communities",
-            "Bedarfsgemeinschaft" = "Benefit community",
-            "Mindestsicherungsleistungen" = "Minimum security benefits",
-            "Asylbewerbergesetz" = "Asylum Seekers Benefits Act",
-            "Regelleistungen" = "Standard benefits",
-            "Grundsicherung" = "Basic security",
-            "Wohngeld" = "Housing benefit",
-            "Elterngeldbezieher" = "Parental benefit recipients",
-            "Schutzsuchender" = "Seekers of protection",
-
-            # Industry & Infrastructure
-            "Bergbau u. Verarb. Gewerbe" = "Mining and manufacturing",
-            "Bauhauptgewerbe" = "Construction",
-            "Handwerk" = "Skilled trades",
-            "Dienstleistungssektor" = "Service sector",
-            "Niederlassungen" = "Branches",
-            "Pkw" = "Passenger cars",
-            "Beherbergungsbetrieben" = "Accommodation establishments",
-            "Gästeübernachtungen" = "Overnight stays",
-            "Erneuerbarer" = "Renewable",
-            "Heizen" = "Heating",
-            "Bauüberhang" = "Construction overhang"
+            "länger" = "longer",
+            "je" = "per"
         )
 
+        # Sort by length descending to replace long terms before short ones
+        replacements <- replacements[order(nchar(names(replacements)), decreasing = TRUE)]
+
         for (german in names(replacements)) {
-            # Use word boundaries for small prepositions to avoid u-n-d-e-r -> a-n-d-e-r bug
-            # and for case-insensitive matching
-            pattern <- if (nchar(german) <= 4) paste0("\\b", german, "\\b") else german
-            vals <- gsub(pattern, replacements[[german]], vals, ignore.case = TRUE, perl = TRUE)
+            vals <- gsub(german, replacements[[german]], vals, ignore.case = TRUE)
         }
 
-        # No suffix
+        # Clean up double spaces
+        vals <- trimws(gsub("\\s+", " ", vals))
         vals
       },
 
