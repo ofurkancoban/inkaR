@@ -138,7 +138,7 @@ view_indicators <- function(lang = c("de", "en")) {
     if (!view_success) {
         message("\nNOTE: Graphical Data Viewer not available in this environment.")
         message("Try: search_indicators(\"keyword\") or view the first 100 rows below:\n")
-        print(head(df, 100))
+        print(utils::head(df, 100))
     }
 }
 
