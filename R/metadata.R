@@ -237,9 +237,9 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
         }
     }
 
-    # Truncate labels for terminal
+    # Menu Labels - No truncation as requested
     options <- paste0(
-        truncate_text(df$Name, term_width - 20),
+        df$Name,
         " (ID: ",
         df$ID,
         ")"

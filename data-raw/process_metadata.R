@@ -171,7 +171,6 @@ if (file.exists(status_file)) {
             "Bauland" = "Building land",
 
             # Units & Prepositions
-            "unter" = "under",
             "über" = "over",
             "bis" = "to",
             "Jahren" = "years",
@@ -194,7 +193,41 @@ if (file.exists(status_file)) {
             "an allen" = "of all",
             "zivilen" = "civilian",
             "vergangenen" = "past",
-            "letzten" = "last"
+            "letzten" = "last",
+
+            # Daycare and Education
+            "Kindertageseinrichtungen" = "Daycare centers",
+            "Tageseinrichtungen" = "Daycare centers",
+            "Kindertagesstätten" = "Daycare centers",
+            "allgemeinbildende Schulen" = "General education schools",
+            "berufsbildende Schulen" = "Vocational schools",
+            "weiterführende Schulen" = "Secondary schools",
+
+            # Benefits & Social
+            "Leistungsberechtigten" = "Eligible for benefits",
+            "Leistungsberechtigte" = "Eligible for benefits",
+            "Bedarfsgemeinschaften" = "Benefit communities",
+            "Bedarfsgemeinschaft" = "Benefit community",
+            "Mindestsicherungsleistungen" = "Minimum security benefits",
+            "Asylbewerbergesetz" = "Asylum Seekers Benefits Act",
+            "Regelleistungen" = "Standard benefits",
+            "Grundsicherung" = "Basic security",
+            "Wohngeld" = "Housing benefit",
+            "Elterngeldbezieher" = "Parental benefit recipients",
+            "Schutzsuchender" = "Seekers of protection",
+
+            # Industry & Infrastructure
+            "Bergbau u. Verarb. Gewerbe" = "Mining and manufacturing",
+            "Bauhauptgewerbe" = "Construction",
+            "Handwerk" = "Skilled trades",
+            "Dienstleistungssektor" = "Service sector",
+            "Niederlassungen" = "Branches",
+            "Pkw" = "Passenger cars",
+            "Beherbergungsbetrieben" = "Accommodation establishments",
+            "Gästeübernachtungen" = "Overnight stays",
+            "Erneuerbarer" = "Renewable",
+            "Heizen" = "Heating",
+            "Bauüberhang" = "Construction overhang"
         )
 
         for (german in names(replacements)) {
@@ -204,8 +237,8 @@ if (file.exists(status_file)) {
             vals <- gsub(pattern, replacements[[german]], vals, ignore.case = TRUE, perl = TRUE)
         }
 
-        # Suffix
-        paste(vals, "[Auto-EN]")
+        # No suffix
+        vals
       },
 
       Description_DE = NA_character_,
