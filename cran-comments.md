@@ -1,5 +1,12 @@
 # CRAN Comments
 
+## Resubmission for v0.6.1
+
+This is a resubmission addressing feedback from CRAN maintainer Uwe Ligges:
+
+* **Fixed DESCRIPTION**: Single-quoted software names in Title and Description ('INKAR', 'BBSR', 'ggplot2') to comply with CRAN policies.
+* **Fixed Misspellings**: Corrected/Quoted 'ggplot2' usage to resolve spelling notes.
+
 ## New Feature Release: v0.6.0
 
 This major update introduces a professional, bilingual interface and analytical multi-indicator support:
