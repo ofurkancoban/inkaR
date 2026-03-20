@@ -15,7 +15,7 @@ Raum- und Stadtentwicklung) database.
 
 Designed for researchers and data scientists, `inkaR` abstracts away the
 complex JSON API of INKAR into clean, analytical data frames. Version
-0.6.0 introduces a premium interactive wizard, multi-indicator support
+0.6.1 introduces a premium interactive wizard, multi-indicator support
 with automatic joining, and high-end visualization themes.
 
 ## Key Features
