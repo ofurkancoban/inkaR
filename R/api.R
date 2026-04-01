@@ -1,8 +1,20 @@
 #' Get cache directory
+#'
+#' In interactive sessions, uses the persistent user cache directory via
+#' \code{tools::R_user_dir()} so that cached API responses survive across
+#' R sessions.  In non-interactive environments (e.g. \code{R CMD check},
+#' CI, batch scripts) we fall back to \code{tempdir()} so that no files
+#' are left behind in the user's home directory — a requirement of the
+#' CRAN repository policy.
+#'
+#' @return Path to the cache directory (created if it does not exist).
 #' @noRd
 get_cache_dir <- function() {
-    # If interactive or normal session, use persistent user dir
-    dir <- tools::R_user_dir("inkaR", which = "cache")
+    dir <- if (interactive()) {
+        tools::R_user_dir("inkaR", which = "cache")
+    } else {
+        file.path(tempdir(), "inkaR")
+    }
     if (!dir.exists(dir)) {
         dir.create(dir, recursive = TRUE, showWarnings = FALSE)
     }

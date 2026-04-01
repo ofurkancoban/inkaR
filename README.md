@@ -1,11 +1,11 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# inkaR <img src="man/figures/logo.png" align="right" height="250" width="auto" />
+# inkaR `<img src="man/figures/logo.png" align="right" height="250" width="auto" />`
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/ofurkancoban/inkaR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ofurkancoban/inkaR/actions/workflows/R-CMD-check.yaml)
+
 <!-- badges: end -->
 
 The `inkaR` package provides a professional, fast, and feature-rich R
@@ -20,32 +20,32 @@ with automatic joining, and high-end visualization themes.
 
 ## Key Features
 
-1.  **Interactive Selection Wizard**: Run `inkaR()` without arguments
-    for a guided terminal session.
-2.  **Multi-Indicator Support**: Download and merge multiple variables
-    at once (Vertical or Horizontal joins).
-3.  **Bilingual Fuzzy Search**: Intelligent, error-tolerant search for
-    both German and English indicator names.
-4.  **Usage History & Favorites**: Highlighting frequently used
-    indicators for a personalized experience.
-5.  **Professional Visualizations**: Dedicated ggplot2 themes
-    (`theme_inkaR`) for publication-ready maps.
-6.  **Optimized Performance**: Intelligent persistent caching and
-    parallel API discovery.
+1. **Interactive Selection Wizard**: Run `inkaR()` without arguments
+   for a guided terminal session.
+2. **Multi-Indicator Support**: Download and merge multiple variables
+   at once (Vertical or Horizontal joins).
+3. **Bilingual Fuzzy Search**: Intelligent, error-tolerant search for
+   both German and English indicator names.
+4. **Usage History & Favorites**: Highlighting frequently used
+   indicators for a personalized experience.
+5. **Professional Visualizations**: Dedicated ggplot2 themes
+   (`theme_inkaR`) for publication-ready maps.
+6. **Optimized Performance**: Intelligent persistent caching and
+   parallel API discovery.
 
 ## Installation
 
 You can install the released version of inkaR from
 [CRAN](https://CRAN.R-project.org/package=inkaR) with:
 
-``` r
+```r
 install.packages("inkaR")
 ```
 
 And the development version from
 [GitHub](https://github.com/ofurkancoban/inkaR) with:
 
-``` r
+```r
 # install.packages("devtools")
 devtools::install_github("ofurkancoban/inkaR")
 ```
@@ -61,7 +61,7 @@ Selection**: Automatically probes the API for available levels
 (Districts, States, etc.). - **Year Selection**: Choose specific years
 or download the entire time series.
 
-``` r
+```r
 library(inkaR)
 # Launch the Interactive Wizard
 df <- inkaR() 
@@ -73,7 +73,7 @@ You can download multiple datasets and join them automatically. Choose
 between a “Long” (stacked) format or a “Wide” (analytical) format with
 indicators as columns.
 
-``` r
+```r
 # Horizontal Join: Indicators as side-by-side columns
 df_wide <- inkaR(
   variable = c("bip", "xbev"), 
@@ -92,7 +92,7 @@ df_wide <- inkaR(
 `inkaR` integrates seamlessly with `sf` and `ggplot2` to render premium
 maps.
 
-``` r
+```r
 # Plot with the premium High-End theme (Dark or Light mode)
 plot_inkar(df_wide, mode = "dark")
 ```

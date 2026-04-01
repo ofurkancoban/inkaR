@@ -1,5 +1,17 @@
 # inkaR News
 
+## inkaR 0.6.2
+
+### Bug Fixes
+
+* **CRAN Archive Fix**: `get_cache_dir()` no longer writes to `~/.cache/R/inkaR/`
+  during non-interactive sessions (e.g. `R CMD check`). In non-interactive
+  environments the cache now uses `tempdir()` (cleaned up at session end),
+  while interactive sessions continue to use the persistent
+  `tools::R_user_dir("inkaR", which = "cache")` directory. This resolves the
+  NOTE that caused the package to be archived on CRAN
+  (`checking for new files in some other directories`).
+
 ## inkaR 0.6.0
 
 ### New Features

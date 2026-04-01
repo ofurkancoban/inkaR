@@ -3,3 +3,7 @@
 /Meta/
 .gitignore
 .Rbuildignore
+.Rapp.history
+.Rhistory
+inkaR.Rcheck/
+*.tar.gz

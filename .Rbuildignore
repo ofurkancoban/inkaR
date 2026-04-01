@@ -11,3 +11,5 @@
 ^README\.md$
 ^CRAN-SUBMISSION$
 ^\.github$
+^\.Rapp\.history$
+^\.Rhistory$
