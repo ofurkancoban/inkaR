@@ -1,6 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# inkaR `<img src="https://github.com/ofurkancoban/inkaR/blob/main/man/figures/logo.png?raw=true" align="right" height="250" width="auto" />`
+# inkaR <img src="https://raw.githubusercontent.com/ofurkancoban/inkaR/main/man/figures/logo.png" align="right" height="250">
 
 <!-- badges: start -->
 
