@@ -1,11 +1,18 @@
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ofurkancoban/inkaR/main/man/figures/logo.png" height="250">
+</p>
 
-# inkaR <img src="https://raw.githubusercontent.com/ofurkancoban/inkaR/main/man/figures/logo.png" align="right" height="250">
+# inkaR
+
+<p align="center">
+  <strong>Professional R Interface for BBSR INKAR Spatial Development Data</strong>
+</p>
 
 <!-- badges: start -->
-
-[![R-CMD-check](https://github.com/ofurkancoban/inkaR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ofurkancoban/inkaR/actions/workflows/R-CMD-check.yaml)
-
+[![R-CMD-check](https://github.com/ofurkancoban/inkaR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ofurkancoban/inkaR/actions/workflows/R-CMD-check.yaml) [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version-last-release/inkaR)](https://cran.r-project.org/package=inkaR) [![CRAN checks](https://badges.cranchecks.info/summary/inkaR.svg)](https://cranchecks.info/package/inkaR)
+[![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Minimum R Version](https://img.shields.io/badge/R-%3E%3D%204.1.0-blue.svg)](https://www.r-project.org/)
+[![CRAN Downloads](https://cranlogs.r-pkg.org/badges/inkaR)](https://CRAN.R-project.org/package=inkaR) [![CRAN Weekly Downloads](https://cranlogs.r-pkg.org/badges/last-week/inkaR)](https://CRAN.R-project.org/package=inkaR) [![CRAN Daily Downloads](https://cranlogs.r-pkg.org/badges/last-day/inkaR)](https://CRAN.R-project.org/package=inkaR) [![CRAN Total Downloads](https://cranlogs.r-pkg.org/badges/grand-total/inkaR)](https://CRAN.R-project.org/package=inkaR)
+[![GitHub issues](https://img.shields.io/github/issues/ofurkancoban/inkaR)](https://github.com/ofurkancoban/inkaR/issues) [![Repo Size](https://img.shields.io/github/repo-size/ofurkancoban/inkaR)](https://github.com/ofurkancoban/inkaR)
 <!-- badges: end -->
 
 The `inkaR` package provides a professional, fast, and feature-rich R
@@ -18,32 +25,32 @@ complex JSON API of INKAR into clean, analytical data frames. Version
 0.6.1 introduces a premium interactive wizard, multi-indicator support
 with automatic joining, and high-end visualization themes.
 
-## Key Features
+## Deeply Integrated Features 💎
 
-1. **Interactive Selection Wizard**: Run `inkaR()` without arguments
+- 🪄 **Interactive Selection Wizard**: Run `inkaR()` without arguments
    for a guided terminal session.
-2. **Multi-Indicator Support**: Download and merge multiple variables
+- 🔗 **Multi-Indicator Support**: Download and merge multiple variables
    at once (Vertical or Horizontal joins).
-3. **Bilingual Fuzzy Search**: Intelligent, error-tolerant search for
+- 🔍 **Bilingual Fuzzy Search**: Intelligent, error-tolerant search for
    both German and English indicator names.
-4. **Usage History & Favorites**: Highlighting frequently used
+- ⭐ **Usage History & Favorites**: Highlighting frequently used
    indicators for a personalized experience.
-5. **Professional Visualizations**: Dedicated ggplot2 themes
+- 🎨 **Professional Visualizations**: Dedicated ggplot2 themes
    (`theme_inkaR`) for publication-ready maps.
-6. **Optimized Performance**: Intelligent persistent caching and
+- 🚀 **Optimized Performance**: Intelligent persistent caching and
    parallel API discovery.
 
-## Installation
+## Installation 📦
 
-You can install the released version of inkaR from
+You can install the released version of **inkaR** from
 [CRAN](https://CRAN.R-project.org/package=inkaR) with:
 
 ```r
 install.packages("inkaR")
 ```
 
-And the development version from
-[GitHub](https://github.com/ofurkancoban/inkaR) with:
+Or get the latest development version from
+[GitHub](https://github.com/ofurkancoban/inkaR):
 
 ```r
 # install.packages("devtools")
@@ -106,3 +113,23 @@ plot_inkar(df_wide, mode = "dark")
 - `BND`: Federal Territory (Bund)
 
 You can explore the full spatial hierarchy via `get_geographies()`.
+
+---
+
+## Scientific Attribution 🎓
+
+If you use `inkaR` in your research, please cite it to support the project and ensure reproducibility:
+
+**APA Style:**
+> Coban, O. F. (2026). inkaR: Download and Analyze Spatial Development Data from BBSR INKAR. R package version 0.6.2. https://github.com/ofurkancoban/inkaR
+
+**BibTeX:**
+```bibtex
+@Manual{,
+  title = {inkaR: Download and Analyze Spatial Development Data from BBSR INKAR},
+  author = {Omer Furkan Coban},
+  year = {2026},
+  note = {R package version 0.6.2},
+  url = {https://github.com/ofurkancoban/inkaR},
+}
+```

@@ -4,8 +4,8 @@ Version: 0.6.2
 Authors@R: 
     person("Omer Furkan", "Coban", email = "oemer.furkan.coban@uni-oldenburg.de", role = c("aut", "cre"), comment = c(ORCID = "0009-0005-3623-7178"))
 Description: A professional R interface to download and analyze spatial 
-    development indicators from the 'BBSR' 'INKAR' (Indikatoren und Karten zur Raum- 
-    und Stadtentwicklung) database. Features a bilingual interactive wizard, 
+    development indicators from the 'BBSR' 'INKAR' (Indicators and Maps for Spatial 
+    and Urban Development) database. Features a bilingual interactive wizard, 
     fuzzy search, multi-indicator downloads with automatic tidy merging (long/wide), 
     robust disk caching, and premium 'ggplot2' themes for regional mapping.
 URL: https://github.com/ofurkancoban/inkaR
