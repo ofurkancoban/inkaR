@@ -2,7 +2,9 @@
   <img src="https://raw.githubusercontent.com/ofurkancoban/inkaR/main/man/figures/logo.png" height="250">
 </p>
 
-# inkaR
+<p align="center" style="font-size: 23px;">
+  inkaR
+</p>
 
 <p align="center">
   <strong>Professional R Interface for BBSR INKAR Spatial Development Data</strong>
