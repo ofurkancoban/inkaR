@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/ofurkancoban/inkaR/main/man/figures/logo.png" height="250">
 </p>
 
-<p align="center" style="font-size: 23px;">
+<p align="center" style="font-size: 35px; font-weight: bold;">
   inkaR
 </p>
 
