@@ -14,10 +14,12 @@ knitr::opts_chunk$set(
 ```
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ofurkancoban/inkaR/main/man/figures/logo.png" height="250">
+  <img src="https://raw.githubusercontent.com/ofurkancoban/inkaR/main/man/figures/logo.png" height="350">
 </p>
 
-# inkaR
+<h1 align="center" style="font-style: italic;">
+  inkaR
+</h1>
 
 <p align="center">
   <strong>Professional R Interface for BBSR INKAR Spatial Development Data</strong>
