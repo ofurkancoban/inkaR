@@ -123,7 +123,7 @@ You can explore the full spatial hierarchy via `get_geographies()`.
 If you use `inkaR` in your research, please cite it to support the project and ensure reproducibility:
 
 **APA Style:**
-> Coban, O. F. (2026). inkaR: Download and Analyze Spatial Development Data from BBSR INKAR. R package version 0.6.2. https://cran.r-project.org/web/packages/inkaR
+> Coban, O. F. (2026). inkaR: Download and Analyze Spatial Development Data from BBSR INKAR. R package version 0.6.6. https://cran.r-project.org/web/packages/inkaR
 
 **BibTeX:**
 ```bibtex
@@ -131,7 +131,7 @@ If you use `inkaR` in your research, please cite it to support the project and e
   title = {inkaR: Download and Analyze Spatial Development Data from BBSR INKAR},
   author = {Omer Furkan Coban},
   year = {2026},
-  note = {R package version 0.6.2},
+  note = {R package version 0.6.6},
   url = {https://cran.r-project.org/web/packages/inkaR},
 }
 ```
