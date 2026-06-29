@@ -1121,12 +1121,77 @@ for (id_key in names(override_dict)) {
   }
 }
 
+# --- Unit_EN: Map all unique Unit_DE values to English ---
+unit_map <- c(
+  "%"                  = "%",
+  "1.000 Euro"         = "thousand euros",
+  "Euro"               = "euros",
+  "ha"                 = "ha",
+  "Jahre"              = "years",
+  "je 1.000 Einwohner" = "per 1,000 inhabitants",
+  "je 100 Einwohner"   = "per 100 inhabitants",
+  "je Einwohner"       = "per inhabitant",
+  "qkm"                = "km²"
+)
+
+indicators <- indicators |>
+  mutate(Unit_EN = dplyr::recode(.data$Unit_DE, !!!unit_map))
+
+# --- Excel EN integration ---
+# "Uebersicht der Indikatoren_EN.xlsx" contains Google-Translate English versions
+# of indicator Name, Description, Anmerkungen and Stat_Grundlagen for 413 indicators.
+# These M_IDs cover inactive indicators (1101+) and the first 11 active ones (1-11).
+# We join by M_ID to populate Description_EN, Anmerkungen_EN, and Stat_Grund_EN,
+# and to fix broken Name_EN entries (leftover German words) in the inactive group.
+xl_en_path <- "Uebersicht der Indikatoren_EN.xlsx"
+if (file.exists(xl_en_path) && requireNamespace("readxl", quietly = TRUE)) {
+  xl_raw <- readxl::read_excel(xl_en_path, sheet = " Spatial observation DE",
+                               skip = 1, col_names = FALSE)
+  names(xl_raw) <- c("Name", "Description", "Algorithmus", "M_ID", "ID",
+                     "Anmerkungen", "Stat_Grundlagen", "Kreise_years", "Gemeinden_years")
+  xl_raw$M_ID <- suppressWarnings(as.numeric(xl_raw$M_ID))
+  xl_en <- xl_raw[!is.na(xl_raw$M_ID), c("M_ID", "Name", "Description", "Anmerkungen", "Stat_Grundlagen")]
+
+  indicators <- indicators |>
+    dplyr::left_join(
+      xl_en |> dplyr::rename(
+        Name_EN_xl      = Name,
+        Description_EN  = Description,
+        Anmerkungen_EN_xl = Anmerkungen,
+        Stat_Grund_EN_xl  = Stat_Grundlagen
+      ),
+      by = "M_ID"
+    ) |>
+    dplyr::mutate(
+      Name_EN = dplyr::if_else(!is.na(Name_EN_xl) & Name_EN_xl != "",
+                               Name_EN_xl, Name_EN),
+      Description_EN = Description_EN,
+      Anmerkungen_EN = dplyr::if_else(!is.na(Anmerkungen_EN_xl) & Anmerkungen_EN_xl != "",
+                                      Anmerkungen_EN_xl, Anmerkungen_EN),
+      Stat_Grund_EN  = dplyr::if_else(!is.na(Stat_Grund_EN_xl) & Stat_Grund_EN_xl != "",
+                                      Stat_Grund_EN_xl, Stat_Grund_EN)
+    ) |>
+    dplyr::select(-Name_EN_xl, -Anmerkungen_EN_xl, -Stat_Grund_EN_xl)
+
+  message(sprintf("Excel EN joined: %d indicators with Description_EN",
+                  sum(!is.na(indicators$Description_EN))))
+} else {
+  message("Excel EN file not found — skipping Description_EN/Anmerkungen_EN/Stat_Grund_EN enrichment.")
+}
+
 # --- Check for failures ---
 ads <- indicators$Name_EN[indicators$Active]
 bad <- ads[grepl("[^ -~]", ads)] # Non-ASCII check
 if (length(bad) > 0) {
-  message("WARNING: Some non-ASCII characters remain.")
+  message("WARNING: Some non-ASCII characters remain in Name_EN.")
 }
+
+unit_covered <- mean(!is.na(indicators$Unit_EN[!is.na(indicators$Unit_DE)]))
+message(sprintf("Unit_EN coverage: %.1f%% of indicators with Unit_DE", unit_covered * 100))
+
+# TODO: Enrich Description_DE from the German Excel file once a column-level
+# mapping between M_ID and the German long-description field is confirmed.
+# Currently Description_DE originates from the API response only (sparse).
 
 # --- Save Data ---
 usethis::use_data(indicators, overwrite = TRUE)

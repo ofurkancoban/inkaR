@@ -66,9 +66,11 @@ get_indicators <- function(lang = c("de", "en")) {
 #' Opens the available indicators in the RStudio data viewer for easy filtering and searching.
 #'
 #' @param lang Language code: "de" (German) or "en" (English).
+#' @param theme Optional character. Filter to a specific theme/domain before
+#'   opening the viewer. Use [get_themes()] to list available themes.
 #' @return Invokes `View()` on the data frame.
 #' @export
-view_indicators <- function(lang = c("de", "en")) {
+view_indicators <- function(lang = c("de", "en"), theme = NULL) {
     # Allow unquoted input (e.g. view_indicators(de))
     lang_arg <- substitute(lang)
     if (is.symbol(lang_arg)) {
@@ -77,6 +79,14 @@ view_indicators <- function(lang = c("de", "en")) {
 
     lang <- match.arg(lang)
     df <- get_indicators(lang = lang)
+
+    if (!is.null(theme) && "Theme" %in% names(df)) {
+        df <- df[!is.na(df$Theme) & grepl(theme, df$Theme, ignore.case = TRUE), ]
+        if (nrow(df) == 0) {
+            cli::cli_alert_warning("No indicators found for theme: {.val {theme}}")
+            return(invisible(NULL))
+        }
+    }
 
     # Custom formatting for German view based on user request
     if (lang == "de") {
@@ -91,7 +101,7 @@ view_indicators <- function(lang = c("de", "en")) {
                 Gemeinden,
                 Kreise,
                 Algorithmus,
-                "K\\u00FCrzel" = ID,
+                "K\u00fcrzel" = ID,
                 Anmerkungen,
                 `Statistische Grundlagen` = dplyr::any_of(c(
                     "Statistische Grundlagen",
@@ -105,8 +115,7 @@ view_indicators <- function(lang = c("de", "en")) {
             dplyr::select(
                 M_ID,
                 Active, # NEW: Active Status
-                `Short Name` = Name, # Mapping Name (EN) here
-                Name = Name, # Reusing Name as we don't have separate Desc yet
+                `Short Name` = Name,
                 Communities = Gemeinden,
                 Circles = Kreise,
                 Algorithm = Algorithmus,
@@ -149,11 +158,21 @@ view_indicators <- function(lang = c("de", "en")) {
 #'
 #' @param pattern Text to search in names and descriptions.
 #' @param lang Language to search in ("de" or "en").
+#' @param theme Optional character. Filter to a specific theme/domain before
+#'   searching. Use [get_themes()] to list available themes.
 #' @return A filtered tibble of indicators (invisibly).
 #' @export
-search_indicators <- function(pattern, lang = c("de", "en")) {
+search_indicators <- function(pattern, lang = c("de", "en"), theme = NULL) {
     lang <- match.arg(lang)
     df <- get_indicators(lang = lang)
+
+    if (!is.null(theme) && "Theme" %in% names(df)) {
+        df <- df[!is.na(df$Theme) & grepl(theme, df$Theme, ignore.case = TRUE), ]
+        if (nrow(df) == 0) {
+            cli::cli_alert_warning("No indicators found for theme: {.val {theme}}")
+            return(invisible(tibble::tibble()))
+        }
+    }
 
     desc_col <- if ("Description_DE" %in% names(df)) "Description_DE" else NULL
 
@@ -174,8 +193,35 @@ search_indicators <- function(pattern, lang = c("de", "en")) {
         )
 
     if (nrow(hits) == 0) {
-        message("No indicators found for: '", pattern, "'")
-        return(invisible(tibble::tibble()))
+        # Fuzzy fallback via Jaro-Winkler if stringdist is available
+        if (requireNamespace("stringdist", quietly = TRUE)) {
+            name_col    <- if ("Name_EN" %in% names(df) && lang == "en") df$Name_EN else df$Name_DE
+            dists_name  <- stringdist::stringdist(tolower(pattern), tolower(name_col), method = "jw")
+            dists_id    <- stringdist::stringdist(tolower(pattern), tolower(df$ID), method = "jw")
+            dists       <- pmin(dists_name, dists_id)
+            best_idx    <- which(dists < 0.25)
+            if (length(best_idx) > 0) {
+                best_idx <- best_idx[order(dists[best_idx])]
+                hits <- df[best_idx[seq_len(min(5, length(best_idx)))], ]
+                cli::cli_alert_info("No exact match for {.val {pattern}}. Showing closest matches:")
+            }
+        } else {
+            # Base R fallback using adist
+            name_col    <- if ("Name_EN" %in% names(df) && lang == "en") df$Name_EN else df$Name_DE
+            dists_name  <- as.vector(utils::adist(tolower(pattern), tolower(name_col), method = "osa")) / max(nchar(pattern), 1)
+            dists_id    <- as.vector(utils::adist(tolower(pattern), tolower(df$ID), method = "osa")) / max(nchar(pattern), 1)
+            dists       <- pmin(dists_name, dists_id)
+            best_idx    <- which(dists < 0.4)
+            if (length(best_idx) > 0) {
+                best_idx <- best_idx[order(dists[best_idx])]
+                hits <- df[best_idx[seq_len(min(5, length(best_idx)))], ]
+                cli::cli_alert_info("No exact match for {.val {pattern}}. Showing closest matches (Base R fallback):")
+            }
+        }
+        if (nrow(hits) == 0) {
+            message("No indicators found for: '", pattern, "'")
+            return(invisible(tibble::tibble()))
+        }
     }
 
     # Print formatted table
@@ -370,6 +416,27 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
                         record_usage(best)
                         return(best)
                     }
+                } else {
+                    # Base R fallback
+                    dists_id <- as.vector(utils::adist(tolower(input), tolower(df$ID), method = "osa")) / max(nchar(input), 1)
+                    dists_name <- as.vector(utils::adist(tolower(input), tolower(df$Name), method = "osa")) / max(nchar(input), 1)
+                    
+                    min_id <- min(dists_id, na.rm = TRUE)
+                    min_name <- min(dists_name, na.rm = TRUE)
+                    
+                    if (min_id < 0.3) {
+                        best <- df$ID[which.min(dists_id)]
+                        cli::cli_alert_info("Exact match not found. Selecting closest match (Base R fallback): {.val {best}}")
+                        Sys.sleep(1)
+                        record_usage(best)
+                        return(best)
+                    } else if (min_name < 0.3) {
+                        best <- df$ID[which.min(dists_name)]
+                        cli::cli_alert_info("Indicator name matched (Base R fallback): {.val {df$Name[which.min(dists_name)]}} (ID: {best})")
+                        Sys.sleep(1)
+                        record_usage(best)
+                        return(best)
+                    }
                 }
             } else {
                 # For multiple inputs, if all are not exact, show error
@@ -452,7 +519,7 @@ select_level <- function(variable = NULL) {
             lv_name <- combos$lv_name[i]
             api_var <- combos$api_var[i]
             
-            if (!inherits(resp, "error") && !httr2::resp_is_error(resp)) {
+            if (!is.null(resp) && !inherits(resp, "error") && !httr2::resp_is_error(resp)) {
                 content <- httr2::resp_body_json(resp, simplifyVector = TRUE)
                 if (is.character(content) && length(content) == 1) {
                     try({ content <- jsonlite::fromJSON(content, simplifyVector = TRUE) }, silent = TRUE)
@@ -542,10 +609,17 @@ select_years <- function(variable, level) {
     }
 
     cli::cli_alert_info("Checking available years for {length(api_variables)} indicator(s)...")
-    
-    # Simple strategy: fetch all and union
+
+    # Simple strategy: fetch all and union (results are cached via get_cache/set_cache)
     all_years <- c()
     for (v in api_variables) {
+        cache_key    <- paste("years", v, level, sep = "_")
+        cached_years <- get_cache(cache_key)
+        if (!is.null(cached_years)) {
+            all_years <- c(all_years, cached_years)
+            next
+        }
+
         body <- list(
             IndicatorCollection = list(list(Gruppe = v)),
             TimeCollection = "",
@@ -554,15 +628,23 @@ select_years <- function(variable, level) {
         resp <- inkar_request("Wizard/GetM%C3%B6glich") |>
             httr2::req_method("POST") |>
             httr2::req_body_json(body) |>
-            httr2::req_perform()
-        
-        content <- httr2::resp_body_json(resp, simplifyVector = TRUE)
-        if (is.character(content)) content <- jsonlite::fromJSON(content)
-        
+            perform_request()
+
+        if (is.null(resp)) next
+        content <- resp
+        if (is.character(content) && length(content) == 1) {
+            tryCatch(
+                { content <- jsonlite::fromJSON(content, simplifyVector = TRUE) },
+                error = function(e) NULL
+            )
+        }
+
         moglich_key <- "M\u00f6glich"
         if (!is.null(content[[moglich_key]])) {
-            times <- dplyr::bind_rows(content[[moglich_key]])
-            all_years <- c(all_years, as.character(times$ZeitID))
+            times      <- dplyr::bind_rows(content[[moglich_key]])
+            v_years    <- as.character(times$ZeitID)
+            set_cache(cache_key, v_years)
+            all_years  <- c(all_years, v_years)
         }
     }
     
@@ -615,4 +697,71 @@ select_years <- function(variable, level) {
     
     # Filter 'All available' out if specific years were also selected (though we returned above if it was there)
     return(years[years %in% selected_choices])
+}
+
+#' List Available Indicator Themes
+#'
+#' Returns the unique theme/domain values present in the local `indicators`
+#' dataset. Pass one of these values to the `theme` argument of
+#' [search_indicators()] or [view_indicators()] to narrow results.
+#'
+#' @return A sorted character vector of theme names.
+#' @export
+#' @examples
+#' get_themes()
+get_themes <- function() {
+  if (!exists("indicators", envir = asNamespace("inkaR"))) return(character())
+  df <- inkaR::indicators
+  if (!"Theme" %in% names(df)) return(character())
+  sort(unique(df$Theme[!is.na(df$Theme) & nzchar(df$Theme)]))
+}
+
+#' Refresh Local Indicators Metadata
+#'
+#' Checks the INKAR API for new indicators not present in the local
+#' \code{indicators} dataset. The check is informational only; reinstall
+#' the package to permanently add new indicators to local metadata.
+#'
+#' @param lang Character. Language for messages: \code{"de"} or \code{"en"}.
+#' @return Invisibly returns the local \code{indicators} tibble.
+#' @export
+update_indicators <- function(lang = c("de", "en")) {
+    lang <- match.arg(lang)
+    cli::cli_alert_info("Fetching latest indicator list from INKAR API...")
+
+    req <- inkar_request("Wizard/GetM%C3%B6glich") |>
+        httr2::req_method("POST") |>
+        httr2::req_body_json(list(
+            IndicatorCollection = list(),
+            TimeCollection      = "",
+            SpaceCollection     = list(list(level = "KRE"))
+        ))
+
+    resp <- tryCatch(perform_request(req), error = function(e) NULL)
+    if (is.null(resp)) {
+        cli::cli_alert_warning(
+            "Could not reach INKAR API. Local indicators dataset remains unchanged ({nrow(inkaR::indicators)} indicators)."
+        )
+        return(invisible(inkaR::indicators))
+    }
+
+    moglich_key <- "M\u00f6glich"
+    if (!is.null(resp[[moglich_key]])) {
+        api_df   <- dplyr::bind_rows(resp[[moglich_key]])
+        local_ids <- inkaR::indicators$M_ID
+        api_ids   <- suppressWarnings(as.numeric(api_df$IndID))
+        new_ids   <- setdiff(api_ids[!is.na(api_ids)], local_ids)
+        if (length(new_ids) > 0) {
+            cli::cli_alert_success(
+                "Found {length(new_ids)} new indicator(s) not in local metadata: {.val {new_ids}}"
+            )
+            cli::cli_alert_info("Reinstall the package to include them permanently.")
+        } else {
+            cli::cli_alert_success(
+                "Local indicators are up to date ({nrow(inkaR::indicators)} indicators)."
+            )
+        }
+    }
+
+    invisible(inkaR::indicators)
 }

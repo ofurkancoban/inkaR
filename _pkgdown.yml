@@ -1,0 +1,71 @@
+url: https://ofurkancoban.github.io/inkaR/
+
+template:
+  bootstrap: 5
+
+home:
+  title: "inkaR — BBSR INKAR Interface for R"
+  description: >
+    Download and analyze spatial development indicators from the BBSR INKAR database.
+
+navbar:
+  structure:
+    left:  [intro, reference, articles]
+    right: [search, github]
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/ofurkancoban/inkaR
+
+reference:
+  - title: "Download Data"
+    desc: "Functions to fetch indicator data from the INKAR API."
+    contents:
+      - inkar
+      - inkaR
+      - inkaR-package
+      - get_inkar_data
+      - get_geographies
+
+  - title: "Browse & Search Indicators"
+    desc: "Explore the local indicator metadata without hitting the API."
+    contents:
+      - get_indicators
+      - search_indicators
+      - view_indicators
+      - get_themes
+      - update_indicators
+      - indicators
+
+  - title: "Interactive Wizard"
+    desc: "Step-by-step guided selection for interactive sessions."
+    contents:
+      - select_indicator
+      - select_level
+      - select_years
+
+  - title: "Analysis Helpers"
+    desc: "Filter and compare downloaded data."
+    contents:
+      - compare_regions
+      - compare_region
+      - compare_districts
+      - compare_district
+      - inkar_trends
+
+  - title: "Visualization"
+    desc: "Map and chart downloaded data."
+    contents:
+      - plot_inkar
+      - theme_inkaR
+
+  - title: "Caching"
+    desc: "Manage the local API response cache."
+    contents:
+      - clear_inkar_cache
+
+articles:
+  - title: "Getting Started"
+    navbar: ~
+    contents:
+      - introduction

@@ -27,7 +27,7 @@ get_cache_dir <- function() {
 #' @return Cached data or NULL if expired/missing
 #' @noRd
 get_cache <- function(key, ttl_hours = 24) {
-    file_path <- file.path(get_cache_dir(), paste0(key, ".qs"))
+    file_path <- file.path(get_cache_dir(), paste0(key, ".rds"))
     if (file.exists(file_path)) {
         info <- file.info(file_path)
         age_hours <- as.numeric(difftime(
@@ -52,7 +52,7 @@ get_cache <- function(key, ttl_hours = 24) {
 #' @param value Data to cache
 #' @noRd
 set_cache <- function(key, value) {
-    file_path <- file.path(get_cache_dir(), paste0(key, ".qs"))
+    file_path <- file.path(get_cache_dir(), paste0(key, ".rds"))
     tryCatch(
         {
             saveRDS(value, file_path)
@@ -68,7 +68,7 @@ set_cache <- function(key, value) {
 #' @export
 clear_inkar_cache <- function() {
     dir <- get_cache_dir()
-    files <- list.files(dir, pattern = "\\.qs$", full.names = TRUE)
+    files <- list.files(dir, pattern = "\\.rds$", full.names = TRUE)
     if (length(files) > 0) {
         unlink(files)
         message("Cleared ", length(files), " cached files from ", dir)
@@ -100,9 +100,8 @@ inkar_request <- function(
     req <- httr2::request(base_url) |>
         httr2::req_url_path_append(path) |>
         httr2::req_url_query(!!!query) |>
-        httr2::req_user_agent(
-            "inkaR R Package"
-        ) |>
+        httr2::req_user_agent("inkaR R Package") |>
+        httr2::req_timeout(30) |>
         httr2::req_retry(max_tries = 3) |>
         # Do not throw R error on HTTP error immediately, so we can parse body
         httr2::req_error(is_error = function(resp) FALSE)

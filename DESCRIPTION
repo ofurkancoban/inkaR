@@ -1,21 +1,23 @@
 Package: inkaR
 Title: Download and Analyze Spatial Development Data from 'INKAR'
-Version: 0.6.2
+Version: 0.6.6
 Authors@R: 
     person("Omer Furkan", "Coban", email = "oemer.furkan.coban@uni-oldenburg.de", role = c("aut", "cre"), comment = c(ORCID = "0009-0005-3623-7178"))
-Description: A professional R interface to download and analyze spatial 
-    development indicators from the 'BBSR' 'INKAR' (Indicators and Maps for Spatial 
-    and Urban Development) database. Features a bilingual interactive wizard, 
-    fuzzy search, multi-indicator downloads with automatic tidy merging (long/wide), 
-    robust disk caching, and premium 'ggplot2' themes for regional mapping.
+Description: A professional R interface to download and analyze spatial
+    development indicators from the 'BBSR' 'INKAR' (Indicators and Maps for Spatial
+    and Urban Development) database. Features a bilingual interactive wizard,
+    fuzzy and normalized indicator search, multi-indicator downloads with automatic
+    tidy merging (long/wide), guaranteed consistent output schema, robust disk
+    caching with automatic retry, and 'ggplot2' themes for regional mapping.
 URL: https://github.com/ofurkancoban/inkaR
 BugReports: https://github.com/ofurkancoban/inkaR/issues
 License: MIT + file LICENSE
 Encoding: UTF-8
+Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-Imports: 
+Imports:
     httr2,
     jsonlite,
     tibble,
@@ -23,17 +25,19 @@ Imports:
     rlang,
     utils,
     cli,
-    stringdist,
     tidyr
-Suggests: 
-    readxl,
+Suggests:
+    stringdist,
     testthat (>= 3.0.0),
+    withr,
     knitr,
     rmarkdown,
     sf,
     geodata,
     ggplot2,
-    httptest2
+    httptest2,
+    pkgdown,
+    lifecycle
 VignetteBuilder: knitr
 Depends: 
     R (>= 4.1.0)

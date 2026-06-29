@@ -122,25 +122,66 @@ parse_inkar_json <- function(data, lang = "de") {
 #' @param id The indicator ID used.
 #' @noRd
 record_usage <- function(id) {
-    history_file <- file.path(Sys.getenv("HOME"), ".inkaR_history")
+    if (!interactive()) return(invisible(NULL))
+    dir <- tryCatch(
+        {
+            tools::R_user_dir("inkaR", which = "config")
+        },
+        error = function(e) {
+            file.path(tempdir(), "inkaR")
+        }
+    )
+    if (!dir.exists(dir)) {
+        tryCatch(
+            {
+                dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+            },
+            error = function(e) NULL
+        )
+    }
+    history_file <- file.path(dir, "usage_history.txt")
     history <- character()
     if (file.exists(history_file)) {
-        history <- readLines(history_file, warn = FALSE)
+        history <- tryCatch(
+            {
+                readLines(history_file, warn = FALSE)
+            },
+            error = function(e) character()
+        )
     }
     # Add to front, unique
     history <- unique(c(id, history))
     # Keep last 100
     if (length(history) > 100) history <- history[1:100]
-    writeLines(history, history_file)
+    tryCatch(
+        {
+            writeLines(history, history_file)
+        },
+        error = function(e) NULL
+    )
 }
 
 #' Get Frequent Indicators
 #' @return Vector of frequent/recent indicator IDs.
 #' @noRd
 get_usage_history <- function() {
-    history_file <- file.path(Sys.getenv("HOME"), ".inkaR_history")
+    if (!interactive()) return(character())
+    dir <- tryCatch(
+        {
+            tools::R_user_dir("inkaR", which = "config")
+        },
+        error = function(e) {
+            file.path(tempdir(), "inkaR")
+        }
+    )
+    history_file <- file.path(dir, "usage_history.txt")
     if (file.exists(history_file)) {
-        return(readLines(history_file, warn = FALSE))
+        return(tryCatch(
+            {
+                readLines(history_file, warn = FALSE)
+            },
+            error = function(e) character()
+        ))
     }
     return(character())
 }

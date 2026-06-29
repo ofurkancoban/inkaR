@@ -45,7 +45,6 @@
 #'   try(get_inkar_data("011", level = "KRE", year = 2010:2020))
 #' }
 #'
-#' @keywords internal
 "_PACKAGE"
 
 ## usethis namespace: start

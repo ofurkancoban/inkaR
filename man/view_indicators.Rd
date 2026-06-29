@@ -4,10 +4,13 @@
 \alias{view_indicators}
 \title{View Indicators in RStudio Viewer}
 \usage{
-view_indicators(lang = c("de", "en"))
+view_indicators(lang = c("de", "en"), theme = NULL)
 }
 \arguments{
 \item{lang}{Language code: "de" (German) or "en" (English).}
+
+\item{theme}{Optional character. Filter to a specific theme/domain before
+opening the viewer. Use \code{\link[=get_themes]{get_themes()}} to list available themes.}
 }
 \value{
 Invokes \code{View()} on the data frame.

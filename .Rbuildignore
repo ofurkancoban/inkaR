@@ -13,3 +13,8 @@
 ^\.github$
 ^\.Rapp\.history$
 ^\.Rhistory$
+^\.r_plot_config\.json$
+^inkaR\.Rcheck$
+^inkaR_.*\.tar\.gz$
+^_pkgdown\.yml$
+^docs$

@@ -10,141 +10,284 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
     collapse = TRUE,
-    comment = "#>"
+    comment = "#>",
+    eval = FALSE
 )
 ```
 
 ## Overview
 
-The `inkaR` package provides a modern, user-friendly interface to access statistical data from the [BBSR INKAR](https://www.inkar.de/) database (Indikatoren und Karten zur Raum- und Stadtentwicklung). 
+The `inkaR` package provides a modern R interface to the [BBSR INKAR](https://www.inkar.de/) database —
+**Indikatoren und Karten zur Raum- und Stadtentwicklung** (Indicators and Maps for Spatial and Urban Development).
+INKAR is published by the German Federal Institute for Research on Building, Urban Affairs and Spatial Development (BBSR)
+and contains hundreds of regional indicators at multiple spatial levels across Germany.
 
-Key features include:
-- **Easy Data Access**: Download data using simple IDs or short codes.
-- **Bilingual Support**: Work with metadata in German (default) or English.
-- **Offline Search**: Quickly find indicators without needing to query the API repeatedly.
-- **Direct Export**: Save data directly to CSV files matching your workflow.
+Key features:
+
+- **Browse & Search**: Find indicators offline with `view_indicators()` and `search_indicators()`.
+- **Interactive Wizard**: Step-by-step guided download with `select_indicator()`, `select_level()`, and `select_years()`.
+- **Bilingual Output**: All results available in German (default) or English (`lang = "en"`).
+- **Disk Caching**: API responses are cached locally — repeated calls return instantly.
+- **Mapping**: Visualize downloaded data on German administrative maps with `plot_inkar()`.
 
 ## Installation
 
-You can install the package from your local source or GitHub:
-
 ```r
-# If installing from local source
-devtools::install()
+# From GitHub
+remotes::install_github("ofurkancoban/inkaR")
+
 library(inkaR)
 ```
 
-## 1. Finding Indicators
+---
 
-The INKAR database contains hundreds of indicators. `inkaR` provides tools to find what you need.
+## 1. Browsing Indicators
 
-### List All Indicators
+The INKAR database contains hundreds of indicators. `inkaR` ships a local metadata table
+(`indicators`) so you can explore and filter without hitting the API.
 
-To see a sortable, searchable list of all available indicators:
+### View the full list
+
+Opens a searchable, sortable table in the RStudio viewer:
 
 ```r
-# Opens a viewer in RStudio
-view_indicators()
-
-# View English metadata
-view_indicators(lang = "en")
+view_indicators()          # German names (default)
+view_indicators("en")      # English names
 ```
 
-### Search by Text
-
-If you are looking for a specific topic, like "GDP" or "Population":
+### Search by keyword
 
 ```r
-# Search in English names/descriptions
 search_indicators("GDP", lang = "en")
-
-# Search in German (default)
-search_indicators("Arbeitslosigkeit")
+search_indicators("Arbeitslosigkeit")   # German search
 ```
 
-The search results includes the `ID` (Shortname) and `M_ID` which you will need to download data.
+Each result shows the `ID` (short code) and `M_ID` (numeric API key) you need to download data.
 
-## 2. Downloading Data
-
-Use `get_inkar_data()` to fetch statistics. You need:
-1. **variable**: The indicator ID (e.g., "011" for GDP).
-2. **level**: The spatial level (e.g., "KRE" for Districts/Kreise).
-
-### Basic Download
+### Retrieve as a data frame
 
 ```r
-# Download GDP (011) for Districts (KRE) for the latest available year
+df_meta <- get_indicators("en")
+head(df_meta)
+```
+
+---
+
+## 2. Interactive Wizard
+
+For guided, step-by-step downloads — especially useful in the RStudio console:
+
+```r
+# Step 1 – pick an indicator (searchable menu)
+id <- select_indicator(lang = "en")
+
+# Step 2 – pick the spatial level (e.g. KRE, GEM, BLD)
+level <- select_level(id)
+
+# Step 3 – pick the year(s)
+years <- select_years(id, level)
+
+# Step 4 – download
+df <- get_inkar_data(id, level = level, year = years, lang = "en")
+```
+
+Each step can also be called independently when you already know some parameters:
+
+```r
+select_indicator("employment")   # pre-filters by keyword before showing the menu
+```
+
+---
+
+## 3. Downloading Data
+
+`get_inkar_data()` is the main download function.
+
+### Basic download
+
+```r
+# GDP (ID "011") for Districts (Kreise) — latest available year
 df <- get_inkar_data("011", level = "KRE")
 head(df)
+#>   Kennziffer        Raumeinheit Aggregat  Zeit              Indikator     Wert
+#> 1      01001    Flensburg (KSt)      KRE  2022 Bruttoinlandsprodukt_... 1234.5
 ```
 
-### Specifying Years
-
-You can request a specific year or a range of years:
+### Specify year(s)
 
 ```r
 # Single year
 df_2021 <- get_inkar_data("011", level = "KRE", year = 2021)
 
-# Year range
-df_range <- get_inkar_data("011", level = "KRE", year = 2015:2020)
+# Range of years
+df_range <- get_inkar_data("011", level = "KRE", year = 2015:2021)
 ```
 
-### Bilingual Output
-
-By default, column names are in German (matching the original source). You can switch to English:
+### English output
 
 ```r
-df_en <- get_inkar_data("011", level = "KRE", lang = "en")
-# Columns: region_id, region_name, indicator_name, year, value
+df_en <- get_inkar_data("011", level = "KRE", year = 2021, lang = "en")
+head(df_en)
+#>   region_id        region_name level_name year         indicator_name   value
+#> 1     01001  Flensburg (KSt)        KRE  2021  Gross domestic pro... 1234.5
 ```
 
-## 3. Exporting Data
+Column names in English mode:
 
-You can save the retrieved data directly to a CSV file. The filename is automatically generated based on the indicator name, level, and timestamp.
+| Column           | Description                       |
+|------------------|-----------------------------------|
+| `region_id`      | Administrative key (Kennziffer)   |
+| `region_name`    | Region name                       |
+| `level_name`     | Spatial level (e.g. KRE)          |
+| `year`           | Reference year                    |
+| `indicator_name` | English indicator label           |
+| `value`          | Numeric value                     |
+
+### Multiple indicators at once
+
+Pass a vector of IDs to download and merge automatically:
 
 ```r
-# Download and save immediately
+df_multi <- get_inkar_data(c("011", "q_alo"), level = "KRE", year = 2021, lang = "en")
+```
+
+Results are merged by region and year into a wide-format tibble.
+
+### Export to CSV
+
+```r
 get_inkar_data("011", level = "KRE", csv = TRUE, export_dir = tempdir())
-
-# Output: Data saved to: inkar_011_KRE_Bruttoinlandsprodukt_....csv
+# Saves: inkar_011_KRE_Bruttoinlandsprodukt_<timestamp>.csv
 ```
 
-## 4. Mapping Data (Geospatial Integration)
+---
 
-`inkaR` includes a built-in wrapper to easily visualize regional data on German administrative maps using the `ggplot2`, `sf`, and `geodata` packages.
+## 4. Spatial Levels
 
-If you have those packages installed, you can map Kreise (Districts) or Länder (States) with a single command:
+Common levels:
+
+| Code  | German name              | English                       |
+|-------|--------------------------|-------------------------------|
+| `KRE` | Kreise / Kreisfreie Staedte | Districts                  |
+| `GEM` | Gemeinden                | Municipalities                |
+| `ROR` | Raumordnungsregionen     | Spatial Planning Regions      |
+| `BLD` | Bundeslaender            | Federal States                |
+| `BND` | Bund                     | Federal Territory (Germany)   |
+
+Not all indicators are available at every level. Use `select_level()` to see which levels
+a given indicator supports, or call `get_geographies()` to list all available levels:
 
 ```r
-# Download GDP for Kreise
-df <- get_inkar_data("011", level = "KRE", year = 2021)
-
-# Plot the data on a map
-plot_inkar(df)
+get_geographies()
 ```
 
-**Note:** `plot_inkar()` automatically downloads high-quality polygon boundaries from the GADM database on the first run and joins them to your INKAR data using the `Kennziffer` IDs.
+---
 
-## 5. Advanced Features & Architecture
+## 5. Mapping
 
-`inkaR` uses advanced engineering to ensure the package is exceptionally fast and resilient:
+`plot_inkar()` visualizes a downloaded data frame on German administrative boundaries.
+It requires the `ggplot2`, `sf`, and `geodata` packages.
 
-1. **Persistent Disk Caching (`tools::R_user_dir`)**
-   The INKAR API can take 15+ seconds to resolve the spatial dimensions (`SelectLevel`) for a complex indicator (e.g. GDP). 
-   `inkaR` queries the API once and caches the configuration to your hard drive permanently. Future R sessions will read this disk-cache in < 0.1 seconds. Caches expire every 24 hours automatically. You can manually reset it using `clear_inkar_cache()`.
-2. **Parallel Probing (`httr2::req_perform_parallel`)**
-   When `inkaR` queries spatial levels from the server, it dispatches 6 asynchronous requests simultaneously. This concurrent approach slashes wait times from 15 seconds down to under 2 seconds.
-3. **Offline Resiliency (`httptest2`)**
-   The entire test suite (`testthat`) is fully mocked using `httptest2`. Tests will pass reliably in offline environments (like strict CI/CD servers or airplanes) without depending on the fragile INKAR backend.
+### Automatic Maps via GADM
+By default, the function downloads boundaries from [GADM](https://gadm.org/) and caches them. It supports:
+- `BND`: Federal Territory (Germany as a whole - GADM Level 0)
+- `BLD`: Federal States (GADM Level 1)
+- `KRE`: Districts (GADM Level 2)
+- `GEM`: Municipalities (GADM Level 3)
 
-## Reference: Spatial Levels
+```r
+# Download GDP for Districts
+df <- get_inkar_data("011", level = "KRE", year = 2021, lang = "en")
 
-Common spatial levels include:
-- `KRE`: Districts (Kreise / Kreisfreie Städte)
-- `GEM`: Municipalities (Gemeinden)
-- `ROR`: Spatial Planning Regions (Raumordnungsregionen)
-- `BLD`: Federal States (Bundesländer)
-- `BND`: Federal Territory (Bund)
+# Plot — light theme (default)
+plot_inkar(df)
 
-Use `get_geographies()` to see all available levels.
+# Dark theme
+plot_inkar(df, mode = "dark")
+```
+
+Below is an example of the dark mode map output generated by `plot_inkar()`:
+
+![](map_output.jpg)
+
+
+### Custom Geometries
+If you want to use custom boundaries (e.g. `ROR` Raumordnungsregionen, or custom shapefiles), you can pass an `sf` object directly to the `geom` parameter. `plot_inkar()` will skip the GADM download and merge your data with the custom spatial data frame:
+
+```r
+# Load your custom spatial data frame (e.g. from an sf shapefile)
+# my_shapes <- sf::read_sf("path/to/shapes.shp")
+
+# Plot using custom geometry
+# plot_inkar(df, geom = my_shapes)
+```
+
+---
+
+## 6. Caching
+
+`inkaR` caches API responses to your user data directory (`tools::R_user_dir("inkaR", "cache")`).
+Caches expire after 24 hours. To clear them manually:
+
+```r
+clear_inkar_cache()
+```
+
+---
+
+## 7. Analysis Helpers
+
+### Filter to specific regions or districts
+You can filter downloaded datasets to specific regions using either the plural or singular helpers. For districts, you can also filter by their administrative key (Kennziffer/ID):
+
+```r
+df <- get_inkar_data("011", level = "KRE", lang = "en")
+
+# Filter regions (by name)
+df_cities <- compare_regions(df, c("Berlin", "Hamburg", "München"))
+df_city   <- compare_region(df, "Berlin") # Singular alias
+
+# Filter districts (by name or district ID/Kennziffer)
+df_districts <- compare_districts(df, c("01001", "Hamburg"))
+df_district  <- compare_district(df, "02000") # Singular alias
+```
+
+### Plot trends over time
+
+```r
+inkar_trends(df, regions = c("Berlin", "Hamburg"))
+```
+
+### Theme-filtered search
+
+```r
+get_themes()                                   # list all themes
+search_indicators("employment", theme = "Arbeitsmarkt")
+view_indicators("en", theme = "Bevölkerung")
+```
+
+---
+
+## Quick Reference
+
+| Function              | Purpose                                          |
+|-----------------------|--------------------------------------------------|
+| `inkar()`             | English shortcut — latest year, EN output        |
+| `get_inkar_data()`    | Download indicator data from the API             |
+| `inkaR()`             | Full-featured download with interactive wizard   |
+| `view_indicators()`   | Browse all indicators in a viewer table          |
+| `search_indicators()` | Search indicators by keyword                     |
+| `get_indicators()`    | Return indicator metadata as a data frame        |
+| `get_themes()`        | List indicator themes/domains                    |
+| `select_indicator()`  | Interactive menu to pick an indicator            |
+| `select_level()`      | Interactive menu to pick a spatial level         |
+| `select_years()`      | Interactive menu to pick year(s)                 |
+| `get_geographies()`   | List available spatial levels                    |
+| `compare_regions()`   | Filter downloaded data to named regions          |
+| `compare_region()`    | Singular alias for `compare_regions()`           |
+| `compare_districts()` | Filter data by district names or IDs             |
+| `compare_district()`  | Singular alias for `compare_districts()`          |
+| `inkar_trends()`      | Line chart of indicator values over time         |
+| `plot_inkar()`        | Plot downloaded data on a map                    |
+| `clear_inkar_cache()` | Clear the local API response cache               |
+

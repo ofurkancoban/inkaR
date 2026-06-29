@@ -7,3 +7,4 @@
 .Rhistory
 inkaR.Rcheck/
 *.tar.gz
+..Rcheck/

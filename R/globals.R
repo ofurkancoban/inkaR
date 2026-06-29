@@ -26,7 +26,7 @@ utils::globalVariables(c(
     "region_name",
     "Wert",
     "Indikatorwert",
-    "Schl\\u00FCssel",
+    "Schl\u00fcssel",
     "Raumeinheit",
     "Raumbezug",
     "Jahr",
@@ -42,8 +42,15 @@ utils::globalVariables(c(
     "Unit_DE",
     "Unit_EN",
     "M\u00f6glich",
-    "Schl\u00fcssel",
     "IndikatorID",
     "join_key",
-    "select_level"
+    "select_level",
+    "col_label",
+    "desc_en",
+    "desc_de",
+    "unit_en",
+    "unit_de",
+    "Name_DE",
+    "Description_EN",
+    ".hl_alpha"
 ))

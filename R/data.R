@@ -10,6 +10,7 @@
 #'   \item{Name_DE}{German name of the indicator}
 #'   \item{Name_EN}{English name (translated or placeholder)}
 #'   \item{Description_DE}{Detailed German description}
+#'   \item{Description_EN}{Detailed English description (available for 413 indicators)}
 #'   \item{Theme}{Group/Domain of the indicator}
 #'   \item{Active}{Logical. TRUE if verified as active in the API}
 #'   \item{Algorithmus}{Algorithm used (if any)}

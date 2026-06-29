@@ -4,7 +4,16 @@
 \alias{plot_inkar}
 \title{Plot INKAR Data on German Maps}
 \usage{
-plot_inkar(data, variable = NULL, year = NULL, mode = c("light", "dark"))
+plot_inkar(
+  data,
+  variable = NULL,
+  year = NULL,
+  mode = c("light", "dark"),
+  highlight = NULL,
+  breaks = c("equal", "quantile"),
+  title = NULL,
+  geom = NULL
+)
 }
 \arguments{
 \item{data}{A data frame returned by \code{get_inkar_data()}.}
@@ -14,11 +23,23 @@ plot_inkar(data, variable = NULL, year = NULL, mode = c("light", "dark"))
 \item{year}{Integer/Character. If the data contains multiple years, specify which year to plot. If NULL and multiple years exist, the most recent year is plotted.}
 
 \item{mode}{Character. "light" (default) or "dark" theme.}
+
+\item{highlight}{Character vector. Region names (partial match) to highlight;
+all other regions are shown at reduced opacity.}
+
+\item{breaks}{Character. Color scale break method: \code{"equal"} (default) or
+\code{"quantile"} for quantile-based color breaks.}
+
+\item{title}{Character. Custom plot title. Defaults to the indicator name.}
+
+\item{geom}{Optional \code{sf} object (spatial data frame) to use for plotting. If supplied,
+GADM geometries are not downloaded, and the data is merged directly with this object.}
 }
 \value{
 A \code{ggplot2} object displaying the mapped data.
 }
 \description{
 Automatically projects regional INKAR data onto administrative boundaries of Germany using
-the \code{geodata} and \code{sf} packages. Supports Kreise (KRE) and Bundesländer (BLD) levels.
+the \code{geodata} and \code{sf} packages. Supports Bund (BND), Bundeslaender (BLD), Kreise (KRE),
+and Gemeinden (GEM) levels. Alternatively, a custom \code{sf} geometry can be provided.
 }

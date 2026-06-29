@@ -1,5 +1,53 @@
 # inkaR News
 
+## inkaR 0.6.6
+
+### New Functions
+
+* **`compare_districts()`** / **`compare_district()`**: Filter downloaded datasets by district IDs (Kennziffer) or names.
+* **`compare_region()`**: Singular alias for `compare_regions()`.
+
+### Enhancements
+
+* **`plot_inkar()` upgrades**:
+  * Added support for `BND` (Germany level 0) and `GEM` (Municipalities level 3) boundaries.
+  * Added `geom` parameter to plot data on custom `sf` boundaries (e.g. `ROR` spatial planning regions).
+  * Added a viridis map output image to the introduction vignette.
+* **Base R Fuzzy Fallback**: Added a fallback using built-in `utils::adist()` when the `stringdist` package is not available.
+* **CRAN Policy compliance**: Relocated usage history tracking from `~/.inkaR_history` to `tools::R_user_dir("inkaR", which = "config")` in interactive sessions, and disabled it entirely in non-interactive sessions.
+* **API stability**: Added a null-response check to parallel request loops to handle timeouts gracefully.
+* **Documentation**: Built a complete `pkgdown` package documentation website.
+
+## inkaR 0.6.5
+
+
+### New Functions
+
+* **`inkar()`**: English-first shortcut alias for `get_inkar_data()` with `lang = "en"` and `year = "latest"` as defaults.
+* **`compare_regions()`**: Filter a downloaded data frame to specific regions by partial name match.
+* **`inkar_trends()`**: Plot time series as a `ggplot2` line chart for selected regions.
+* **`get_themes()`**: List unique indicator themes from the local metadata for use with `theme` filtering.
+
+### Enhancements
+
+* **`year = "latest"`**: `get_inkar_data()` now accepts `year = "latest"` to automatically download only the most recent available year.
+* **`plot_inkar()` improvements**: New `highlight`, `breaks` (equal/quantile), and `title` parameters for richer map customization.
+* **`search_indicators()` / `view_indicators()`**: New `theme` parameter to pre-filter by indicator domain (see `get_themes()`).
+* **pkgdown support**: Added `_pkgdown.yml` for documentation website generation.
+
+## inkaR 0.6.4
+
+### New Features
+
+* **Smart ID resolver**: `get_inkar_data()` now resolves indicator IDs through five fallback tiers (exact, numeric, normalized, partial name, fuzzy).
+* **Schema guarantee**: All 9 expected output columns are always present, even when the API returns partial data.
+* **Readable wide-format column names**: Multi-indicator wide-format output now uses indicator names (e.g., `Gross_domestic_product`) instead of opaque IDs (`ind_11`).
+* **Retry & timeout**: API requests now include a 30-second timeout and automatic retry.
+* **Progress bar**: Multi-indicator downloads show a `cli` progress bar.
+* **Improved fuzzy search**: `search_indicators()` now compares against `Name_EN` only and uses a tighter Jaro-Winkler threshold.
+* **`update_indicators()` stability**: Gracefully handles API 500 errors instead of crashing.
+* **BLD-level warning**: Informative message when BLD-level data is unavailable for a given indicator.
+
 ## inkaR 0.6.2
 
 ### Bug Fixes

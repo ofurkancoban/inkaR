@@ -4,12 +4,15 @@
 \alias{search_indicators}
 \title{Search Indicators and Print Results}
 \usage{
-search_indicators(pattern, lang = c("de", "en"))
+search_indicators(pattern, lang = c("de", "en"), theme = NULL)
 }
 \arguments{
 \item{pattern}{Text to search in names and descriptions.}
 
 \item{lang}{Language to search in ("de" or "en").}
+
+\item{theme}{Optional character. Filter to a specific theme/domain before
+searching. Use \code{\link[=get_themes]{get_themes()}} to list available themes.}
 }
 \value{
 A filtered tibble of indicators (invisibly).
