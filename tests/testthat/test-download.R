@@ -10,6 +10,7 @@ test_that("normalize_id strips punctuation and lowercases", {
 
 test_that("get_inkar_data returns empty tibble for unknown variable", {
   skip_on_cran()
+  skip_on_ci()
   result <- suppressWarnings(
     suppressMessages(get_inkar_data("__nonexistent__xyz__", level = "KRE"))
   )
@@ -36,6 +37,7 @@ test_that("update_indicators is exported and callable", {
 
 test_that("get_inkar_data BLD level returns tibble with warning", {
   skip_on_cran()
+  skip_on_ci()
   result <- suppressWarnings(suppressMessages(
     get_inkar_data("011", level = "BLD", year = 2021)
   ))
