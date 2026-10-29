@@ -5,16 +5,22 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>inkaR — BBSR INKAR Interface for R • inkaR</title>
+<title>inkaR: BBSR INKAR Interface for R • inkaR</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="inkaR — BBSR INKAR Interface for R">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="inkaR: BBSR INKAR Interface for R">
 <meta name="description" content="Download and analyze spatial development indicators from the BBSR INKAR database.
 ">
 <meta property="og:description" content="Download and analyze spatial development indicators from the BBSR INKAR database.
 ">
+<meta property="og:image" content="https://ofurkancoban.github.io/inkaR/logo.svg">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -24,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="index.html">inkaR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +51,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ofurkancoban/inkaR"><span class="fa fab fa-github"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ofurkancoban/inkaR" aria-label="GitHub"><span class="fa fab fa-github"></span></a></li>
       </ul>
 </div>
 
@@ -54,17 +60,19 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><p align="center">
-<img src="https://raw.githubusercontent.com/ofurkancoban/inkaR/main/man/figures/logo.png" height="350"></p>
-<div class="page-header"><h1 align="center" style="font-style: italic;">
+<img src="https://raw.githubusercontent.com/ofurkancoban/inkaR/main/man/figures/logo.png" height="350" alt="inkaR logo"></p>
+<div class="page-header">
+<img src="logo.svg" class="logo" alt=""><h1 align="center" style="font-style: italic;">
 inkaR
-</h1></div>
+</h1>
+</div>
 <p align="center">
 <strong>Professional R Interface for BBSR INKAR Spatial Development Data</strong>
 </p>
 <!-- badges: start -->
 
 <p>The <code>inkaR</code> package provides a professional, fast, and feature-rich R interface to download and analyze spatial development indicators from the <a href="https://www.inkar.de/" class="external-link">BBSR INKAR</a> (Indikatoren und Karten zur Raum- und Stadtentwicklung) database.</p>
-<p>Designed for researchers and data scientists, <code>inkaR</code> abstracts away the complex JSON API of INKAR into clean, analytical data frames. Version 0.6.1 introduces a premium interactive wizard, multi-indicator support with automatic joining, and high-end visualization themes.</p>
+<p>Designed for researchers and data scientists, <code>inkaR</code> abstracts away the complex JSON API of INKAR into clean, analytical data frames. It offers an interactive wizard, multi-indicator downloads with automatic joining, and maps that draw every region at each spatial level.</p>
 <div class="section level2">
 <h2 id="deeply-integrated-features-">Deeply Integrated Features 💎<a class="anchor" aria-label="anchor" href="#deeply-integrated-features-"></a>
 </h2>
@@ -94,7 +102,15 @@ inkaR
 <div class="section level3">
 <h3 id="id_1-interactive-selection-wizard-mode">1. Interactive Selection (Wizard Mode)<a class="anchor" aria-label="anchor" href="#id_1-interactive-selection-wizard-mode"></a>
 </h3>
-<p>Simply call <code><a href="reference/inkaR.html">inkaR()</a></code> in an interactive R session. A professional selection wizard will guide you through: - <strong>Indicator Discovery</strong>: Search with keywords (supports fuzzy matching). - <strong>Spatial Level Selection</strong>: Automatically probes the API for available levels (Districts, States, etc.). - <strong>Year Selection</strong>: Choose specific years or download the entire time series.</p>
+<p>Simply call <code><a href="reference/inkaR.html">inkaR()</a></code> in an interactive R session. A professional selection wizard will guide you through:</p>
+<ul>
+<li>
+<strong>Indicator Discovery</strong>: Search with keywords (supports fuzzy matching).</li>
+<li>
+<strong>Spatial Level Selection</strong>: Automatically probes the API for available levels (Districts, States, etc.).</li>
+<li>
+<strong>Year Selection</strong>: Choose specific years or download the entire time series.</li>
+</ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ofurkancoban/inkaR" class="external-link">inkaR</a></span><span class="op">)</span></span>
 <span><span class="co"># Launch the Interactive Wizard</span></span>
@@ -114,16 +130,16 @@ inkaR
 <span>  format   <span class="op">=</span> <span class="st">"wide"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Ready for direct calculation:</span></span>
-<span><span class="co"># df_wide$bip_per_capita &lt;- df_wide$bip / df_wide$`Total population`</span></span></code></pre></div>
+<span><span class="co"># One column per indicator, named by its short ID; GDP is in thousand euros:</span></span>
+<span><span class="va">df_wide</span><span class="op">$</span><span class="va">gdp_per_capita</span> <span class="op">&lt;-</span> <span class="va">df_wide</span><span class="op">$</span><span class="va">bip</span> <span class="op">/</span> <span class="va">df_wide</span><span class="op">$</span><span class="va">xbev</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="id_3-professional-mapping">3. Professional Mapping<a class="anchor" aria-label="anchor" href="#id_3-professional-mapping"></a>
 </h3>
-<p><code>inkaR</code> integrates seamlessly with <code>sf</code> and <code>ggplot2</code> to render premium maps.</p>
+<p><code>inkaR</code> integrates seamlessly with <code>sf</code> and <code>ggplot2</code> to render premium maps. Boundaries come from Eurostat GISCO with the same territorial status as INKAR, so every region is drawn; <code><a href="reference/get_inkar_geometry.html">get_inkar_geometry()</a></code> returns them as an <code>sf</code> object for your own analysis.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot with the premium High-End theme (Dark or Light mode)</span></span>
-<span><span class="fu"><a href="reference/plot_inkar.html">plot_inkar</a></span><span class="op">(</span><span class="va">df_wide</span>, mode <span class="op">=</span> <span class="st">"dark"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/plot_inkar.html">plot_inkar</a></span><span class="op">(</span><span class="va">df_wide</span>, variable <span class="op">=</span> <span class="st">"bip"</span>, mode <span class="op">=</span> <span class="st">"dark"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -134,6 +150,8 @@ inkaR
 <code>KRE</code>: Districts (Kreise / Kreisfreie Städte)</li>
 <li>
 <code>GEM</code>: Municipalities (Gemeinden)</li>
+<li>
+<code>GVB</code>: Municipal associations (Gemeindeverbände)</li>
 <li>
 <code>ROR</code>: Spatial Planning Regions (Raumordnungsregionen)</li>
 <li>
@@ -148,14 +166,17 @@ inkaR
 <h2 id="scientific-attribution-">Scientific Attribution 🎓<a class="anchor" aria-label="anchor" href="#scientific-attribution-"></a>
 </h2>
 <p>If you use <code>inkaR</code> in your research, please cite it to support the project and ensure reproducibility:</p>
-<p><strong>APA Style:</strong> &gt; Coban, O. F. (2026). inkaR: Download and Analyze Spatial Development Data from BBSR INKAR. R package version 0.6.6. <a href="https://cran.r-project.org/web/packages/inkaR" class="external-link uri">https://cran.r-project.org/web/packages/inkaR</a></p>
+<p><strong>APA Style:</strong></p>
+<blockquote>
+<p>Coban, O. F. (2026). inkaR: Download and Analyze Spatial Development Data from BBSR INKAR. R package version 0.7.0. <a href="https://CRAN.R-project.org/package=inkaR" class="external-link uri">https://CRAN.R-project.org/package=inkaR</a></p>
+</blockquote>
 <p><strong>BibTeX:</strong></p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode bibtex"><code class="sourceCode bibtex"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="va">@Manual</span>{,</span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="dt">title</span> = {inkaR: Download and Analyze Spatial Development Data from BBSR INKAR},</span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="dt">author</span> = {Omer Furkan Coban},</span>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="dt">year</span> = {2026},</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="dt">note</span> = {R package version 0.6.6},</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="dt">url</span> = {https://cran.r-project.org/web/packages/inkaR},</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  <span class="dt">note</span> = {R package version 0.7.0},</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  <span class="dt">url</span> = {https://CRAN.R-project.org/package=inkaR},</span>
 <span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 

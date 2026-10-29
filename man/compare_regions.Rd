@@ -12,7 +12,8 @@ compare_region(data, regions, exact = FALSE)
 \arguments{
 \item{data}{A data frame returned by \code{\link[=get_inkar_data]{get_inkar_data()}}.}
 
-\item{regions}{Character vector. Region names or partial patterns to keep.}
+\item{regions}{Character vector. Region names or parts of names to keep, matched
+literally and case-insensitively (e.g. \code{"Frankfurt (Oder)"}).}
 
 \item{exact}{Logical. If \code{TRUE}, require exact string match. Default \code{FALSE}.}
 }
@@ -26,6 +27,6 @@ supplied region names (partial, case-insensitive match by default).
 \examples{
 \donttest{
   df <- try(get_inkar_data("011", level = "KRE", year = 2021, lang = "en"))
-  if (is.data.frame(df)) compare_regions(df, c("Berlin", "Hamburg"))
+  if (is.data.frame(df) && nrow(df) > 0) compare_regions(df, c("Berlin", "Hamburg"))
 }
 }

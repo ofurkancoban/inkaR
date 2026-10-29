@@ -10,6 +10,7 @@ get_inkar_data(
   year = NULL,
   lang = c("de", "en"),
   format = c("long", "wide"),
+  digits = NULL,
   csv = FALSE,
   export_dir = NULL
 )
@@ -24,6 +25,10 @@ get_inkar_data(
 \item{lang}{Character. "de" (default) for German column names, "en" for English.}
 
 \item{format}{Character. "long" (default) for tidy format, "wide" for years as columns.}
+
+\item{digits}{Integer or NULL. If set, rounds numeric value column to this many decimal
+places. The INKAR API uses single-precision floats, so values like 8.45 may arrive
+as 8.44999...; \code{digits = 2} corrects this. Default \code{NULL} keeps the raw API value.}
 
 \item{csv}{Logical. If TRUE, saves the data to a CSV file in the directory specified by \code{export_dir}.}
 

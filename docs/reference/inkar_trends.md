@@ -42,7 +42,7 @@ A `ggplot2` object.
 #> Using M_ID '11' directly.
 #> ✔ Downloaded: Gross domestic product in 1000 euros [thousand euros]
 #>   Level: Kreise | Regions: 400 | Year(s): 1995–2022 | Rows: 11200
-  if (is.data.frame(df)) {
+  if (is.data.frame(df) && nrow(df) > 0) {
     inkar_trends(df, regions = c("Berlin", "Hamburg", "München"))
   }
 

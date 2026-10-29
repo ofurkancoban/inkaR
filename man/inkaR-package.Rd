@@ -61,6 +61,7 @@ if (interactive()) {
 Useful links:
 \itemize{
   \item \url{https://github.com/ofurkancoban/inkaR}
+  \item \url{https://ofurkancoban.github.io/inkaR/}
   \item Report bugs at \url{https://github.com/ofurkancoban/inkaR/issues}
 }
 

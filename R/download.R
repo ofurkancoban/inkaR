@@ -14,7 +14,7 @@ get_time_references <- function(variable, level) {
   body <- list(
     IndicatorCollection = list(list(Gruppe = variable)),
     TimeCollection = "",
-    SpaceCollection = list(list(level = level))
+    SpaceCollection = list(list(level = to_api_level(level)))
   )
 
   # Note: Endpoint is /Wizard/GetM\\u00F6glich (encoded)
@@ -25,15 +25,26 @@ get_time_references <- function(variable, level) {
 
   resp <- perform_request(req)
 
+  # NULL means the request itself failed (perform_request already explained
+  # why); an empty tibble means the API answered but has no data.
+  if (is.null(resp)) return(NULL)
+
   # Response key is actual Unicode string "M\u00f6glich" (Möglich)
   moglich_key <- "M\u00f6glich"
   if (!is.null(resp[[moglich_key]])) {
     times <- dplyr::bind_rows(resp[[moglich_key]])
+    if (nrow(times) == 0) return(tibble::tibble())
+    required_cols <- c("Gruppe", "IndID", "RaumID", "ZeitID")
+    missing_cols <- setdiff(required_cols, names(times))
+    if (length(missing_cols) > 0) {
+      warning("API response missing expected columns: ", paste(missing_cols, collapse = ", "))
+      return(NULL)
+    }
     set_cache(cache_key, times)
     return(times)
   }
 
-  return(NULL)
+  return(tibble::tibble())
 }
 
 #' Download Data from INKAR
@@ -46,6 +57,9 @@ get_time_references <- function(variable, level) {
 #' @param year Integer/Character vector. Specific year (e.g., 2021) or range (e.g., 2010:2020). If NULL, fetches all available years.
 #' @param lang Character. "de" (default) for German column names, "en" for English.
 #' @param format Character. "long" (default) for tidy format, "wide" for years as columns.
+#' @param digits Integer or NULL. If set, rounds numeric value column to this many decimal
+#'   places. The INKAR API uses single-precision floats, so values like 8.45 may arrive
+#'   as 8.44999...; `digits = 2` corrects this. Default `NULL` keeps the raw API value.
 #' @param csv Logical. If TRUE, saves the data to a CSV file in the directory specified by `export_dir`.
 #' @param export_dir Character. Directory to save the CSV file if `csv = TRUE`. If `NULL` (default), it saves to the current working directory (`"."`).
 #' @return A tibble containing the data.
@@ -56,10 +70,15 @@ get_inkar_data <- function(
   year = NULL,
   lang = c("de", "en"),
   format = c("long", "wide"),
+  digits = NULL,
   csv = FALSE,
   export_dir = NULL
 ) {
   # Input Validation
+  if (length(variable) == 0 || any(is.na(variable)) ||
+      any(!nzchar(trimws(as.character(variable))))) {
+    stop("'variable' must be a non-empty indicator ID, M_ID or name.", call. = FALSE)
+  }
   valid_levels <- c("BND", "BLD", "ROR", "KRE", "GVB", "GEM")
   level <- match.arg(toupper(level), valid_levels)
   lang <- match.arg(lang)
@@ -83,25 +102,34 @@ get_inkar_data <- function(
     cli::cli_progress_bar("Downloading indicators", total = n_vars)
     results <- vector("list", n_vars)
     for (i in seq_along(variable)) {
-      results[[i]] <- get_inkar_data(
+      # list() wrapper: assigning NULL with [[ ]] would delete the slot and
+      # misalign results with variable
+      results[i] <- list(get_inkar_data(
         variable = variable[[i]],
         level = level,
         year = year,
         lang = lang,
         format = "long",
+        digits = digits,
         csv = FALSE,
         export_dir = export_dir
-      )
+      ))
       cli::cli_progress_update()
     }
     cli::cli_progress_done()
 
-    # Filter out NULLs (failed selections)
-    results <- results[!sapply(results, is.null)]
-    if (length(results) == 0) return(invisible(NULL))
-
-    # Check if they are empty
-    results <- results[sapply(results, nrow) > 0]
+    # Drop indicators that could not be resolved or returned no rows, and
+    # say which ones, so a partial result is never silent
+    keep <- vapply(results, function(r) is.data.frame(r) && nrow(r) > 0, logical(1))
+    if (any(!keep) && any(keep)) {
+      warning(
+        "No data for: ", paste(variable[!keep], collapse = ", "),
+        ". These indicators are missing from the result.",
+        call. = FALSE
+      )
+    }
+    if (all(vapply(results, is.null, logical(1)))) return(invisible(NULL))
+    results <- results[keep]
     if (length(results) == 0) {
       warning("No data found for any of the selected indicators.")
       return(tibble::tibble())
@@ -124,7 +152,8 @@ get_inkar_data <- function(
         final_df[[col_lev]] <- level
       }
 
-      # Build a short, readable column label per M_ID from the indicator name
+      # One column per indicator, named by its short ID (e.g. "xbev", "bip").
+      # IDs are stable across languages; names are only used as a fallback.
       col_ind <- if (lang == "de") "Indikator" else "indicator_name"
       make_col_label <- function(name, mid) {
         name <- if (is.na(name) || !nzchar(trimws(name))) "" else trimws(name)
@@ -134,6 +163,12 @@ get_inkar_data <- function(
         if (!nzchar(label)) label <- paste0("ind_", mid)
         label
       }
+      id_label <- function(mid) {
+        inds_ids <- inkar_indicators()
+        if (is.null(inds_ids)) return(NA_character_)
+        hit <- inds_ids$ID[as.character(inds_ids$M_ID) == mid]
+        if (length(hit) == 0) NA_character_ else hit[1]
+      }
       ind_names <- if (col_ind %in% names(final_df)) {
         final_df[[col_ind]]
       } else {
@@ -141,8 +176,9 @@ get_inkar_data <- function(
       }
       # Fall back to local metadata name when API name is missing
       local_name_col <- if (lang == "en") "Name_EN" else "Name_DE"
-      if (exists("indicators", envir = asNamespace("inkaR"))) {
-        local_meta <- inkaR::indicators[, c("M_ID", local_name_col)]
+      inds_meta <- inkar_indicators()
+      if (!is.null(inds_meta)) {
+        local_meta <- inds_meta[, c("M_ID", local_name_col)]
         names(local_meta) <- c("M_ID", "local_name")
         local_meta$M_ID <- as.character(local_meta$M_ID)
         name_df <- data.frame(M_ID = as.character(final_df$M_ID), ind_name = ind_names,
@@ -167,7 +203,14 @@ get_inkar_data <- function(
         stringsAsFactors = FALSE
       ) |>
         dplyr::distinct() |>
-        dplyr::mutate(col_label = mapply(make_col_label, .data$ind_name, .data$M_ID)) |>
+        dplyr::mutate(
+          col_label = vapply(.data$M_ID, id_label, character(1)),
+          col_label = dplyr::if_else(
+            is.na(.data$col_label),
+            mapply(make_col_label, .data$ind_name, .data$M_ID),
+            .data$col_label
+          )
+        ) |>
         dplyr::select(M_ID, col_label)
 
       final_df <- final_df |>
@@ -198,8 +241,8 @@ get_inkar_data <- function(
   }
 
   # Step 1: Smart ID Resolution (handles exact ID, numeric M_ID, normalized, name search, fuzzy)
-  if (exists("indicators", envir = asNamespace("inkaR"))) {
-    inds <- inkaR::indicators
+  inds <- inkar_indicators()
+  if (!is.null(inds)) {
     resolved <- FALSE
 
     # Case 1: Exact textual ID (e.g., "bip", "xbev")
@@ -207,7 +250,7 @@ get_inkar_data <- function(
       match_row <- inds[inds$ID == variable, ]
       m_id_val  <- match_row$M_ID[1]
       if (isFALSE(match_row$Active[1])) {
-        cli::cli_warn("Indicator {.val {variable}} (M_ID={m_id_val}) is marked inactive and may not return data.")
+        cli::cli_warn("Indicator {.val {variable}} (M_ID={m_id_val}) is marked inactive and may not return data. Use search_indicators() to find an active alternative.")
       }
       message("Using M_ID '", m_id_val, "' for Indicator '", variable, "'")
       variable <- as.character(m_id_val)
@@ -221,6 +264,13 @@ get_inkar_data <- function(
         message("Using M_ID '", var_num, "' directly.")
         variable <- as.character(var_num)
         resolved <- TRUE
+      } else if (!is.na(var_num) && "IndID" %in% names(inds) && var_num %in% inds$IndID) {
+        # Official INKAR number from the indicator overview (e.g. 1101),
+        # which the API does not accept; use the matching Gruppe
+        m_id_val <- inds$M_ID[which(inds$IndID == var_num)[1]]
+        message("Official indicator number ", var_num, " maps to M_ID '", m_id_val, "'.")
+        variable <- as.character(m_id_val)
+        resolved <- TRUE
       }
     }
 
@@ -233,7 +283,7 @@ get_inkar_data <- function(
         match_row <- inds[norm_hits, ]
         m_id_val  <- match_row$M_ID[1]
         if (isFALSE(match_row$Active[1])) {
-          cli::cli_warn("Indicator {.val {variable}} (M_ID={m_id_val}) is marked inactive and may not return data.")
+          cli::cli_warn("Indicator {.val {variable}} (M_ID={m_id_val}) is marked inactive and may not return data. Use search_indicators() to find an active alternative.")
         }
         message("Normalized match: '", inds$ID[norm_hits], "' (M_ID=", m_id_val, ")")
         variable <- as.character(m_id_val)
@@ -246,18 +296,28 @@ get_inkar_data <- function(
 
     # Case 4: Natural-language / partial name search in Name_DE, Name_EN
     if (!resolved) {
-      search_cols <- intersect(c("Name_DE", "Name_EN", "Description_DE"), names(inds))
+      search_cols <- intersect(c("Name_DE", "Short_DE", "Name_EN", "Description_DE"), names(inds))
       pattern     <- variable
       hits <- inds[
         Reduce("|", lapply(search_cols, function(col) {
-          grepl(pattern, inds[[col]], ignore.case = TRUE)
+          text_match(inds[[col]], pattern)
         })),
       ]
+      # Inactive indicators return no data, so prefer active matches
+      if ("Active" %in% names(hits) && any(hits$Active %in% TRUE)) {
+        hits <- hits[hits$Active %in% TRUE, ]
+      }
+      # A name typed in full ("Arbeitslosenquote") wins over names that
+      # merely contain it ("Arbeitslosenquote Frauen")
+      exact <- Reduce("|", lapply(intersect(c("Name_DE", "Short_DE", "Name_EN"), names(hits)), function(col) {
+        !is.na(hits[[col]]) & tolower(trimws(hits[[col]])) == tolower(trimws(pattern))
+      }), rep(FALSE, nrow(hits)))
+      if (sum(exact) == 1) hits <- hits[exact, ]
 
       if (nrow(hits) == 1) {
         m_id_val <- hits$M_ID[1]
         if (isFALSE(hits$Active[1])) {
-          cli::cli_warn("Indicator {.val {variable}} (M_ID={m_id_val}) is marked inactive and may not return data.")
+          cli::cli_warn("Indicator {.val {variable}} (M_ID={m_id_val}) is marked inactive and may not return data. Use search_indicators() to find an active alternative.")
         }
         message("Found indicator: '", hits$Name_DE[1], "' (M_ID=", m_id_val, ")")
         variable <- as.character(m_id_val)
@@ -266,29 +326,47 @@ get_inkar_data <- function(
         message(
           nrow(hits), " indicators matched '", pattern,
           "'. Use a more specific name or an exact ID.\n",
-          paste0("  ", hits$ID[seq_len(min(10, nrow(hits)))],
-                 "  ", hits$Name_DE[seq_len(min(10, nrow(hits)))],
-                 collapse = "\n"),
+          {
+            shown <- seq_len(min(10, nrow(hits)))
+            # The topic area tells apart indicators published under the same
+            # name in several areas (e.g. "Zentrale Orte Monitoring")
+            theme <- if ("Theme" %in% names(hits)) hits$Theme[shown] else NA
+            paste0("  ", hits$ID[shown], "  ", hits$Name_DE[shown],
+                   ifelse(is.na(theme), "", paste0("  [", theme, "]")),
+                   collapse = "\n")
+          },
           if (nrow(hits) > 10) paste0("\n  ... and ", nrow(hits) - 10, " more.") else "",
           "\n\nTip: Use search_indicators(\"", pattern, "\") to explore."
         )
         return(invisible(NULL))
       } else {
-        # Case 5: Fuzzy / Jaro-Winkler suggestion (stringdist in Suggests)
-        if (requireNamespace("stringdist", quietly = TRUE)) {
-          search_pool <- paste(inds$Name_DE, inds$Name_EN, sep = " ")
-          dists       <- stringdist::stringdist(tolower(pattern), tolower(search_pool), method = "jw")
-          best_idx    <- which(dists < 0.15)
-          if (length(best_idx) > 0) {
-            best_idx <- best_idx[order(dists[best_idx])]
-            cli::cli_alert_info(
-              "No match for {.val {pattern}}. Did you mean one of these?\n{paste0('  ', inds$ID[best_idx[seq_len(min(3, length(best_idx)))]], '  ', inds$Name_EN[best_idx[seq_len(min(3, length(best_idx)))]], collapse = '\n')}"
-            )
-          } else {
-            message("No match found for '", pattern, "'. Passing to API as-is.")
-          }
+        # A numeric value may be an M_ID that is newer than the local
+        # metadata, so let it through to the API. Anything else is an
+        # unknown ID or name: sending it to the API would only return an
+        # empty result with a misleading "No data found" warning.
+        if (!is.na(suppressWarnings(as.numeric(pattern)))) {
+          message("M_ID '", pattern, "' not in local metadata. Passing to API as-is.")
         } else {
-          message("No match found for '", pattern, "'. Passing to API as-is.")
+          # Case 5: Fuzzy / Jaro-Winkler suggestion (stringdist in Suggests)
+          suggestion <- ""
+          if (requireNamespace("stringdist", quietly = TRUE)) {
+            search_pool <- paste(inds$Name_DE, inds$Name_EN, sep = " ")
+            dists       <- stringdist::stringdist(tolower(pattern), tolower(search_pool), method = "jw")
+            best_idx    <- which(dists < 0.15)
+            if (length(best_idx) > 0) {
+              best_idx   <- best_idx[order(dists[best_idx])][seq_len(min(3, length(best_idx)))]
+              suggestion <- paste0(
+                "\nDid you mean one of these?\n",
+                paste0("  ", inds$ID[best_idx], "  ", inds$Name_EN[best_idx], collapse = "\n")
+              )
+            }
+          }
+          stop(
+            "Could not resolve indicator '", pattern, "' to an INKAR M_ID.",
+            suggestion,
+            "\nUse search_indicators(\"keyword\") to find a valid ID.",
+            call. = FALSE
+          )
         }
       }
     }
@@ -298,14 +376,11 @@ get_inkar_data <- function(
   # This is required to construct the TimeCollection for the main request
   times_df <- get_time_references(variable, level)
 
-  if (is.null(times_df) || nrow(times_df) == 0) {
-    if (level == "BLD") {
-      cli::cli_alert_warning(
-        "No data found for level {.val BLD}. Most INKAR indicators are only available at KRE or GEM level. Try {.code level = \"KRE\"}."
-      )
-    } else {
-      warning("No data found for this variable/level combination.")
-    }
+  # Request failed: perform_request() has already explained why
+  if (is.null(times_df)) return(tibble::tibble())
+
+  if (nrow(times_df) == 0) {
+    warning("No data found for this variable/level combination.")
     return(tibble::tibble())
   }
 
@@ -343,7 +418,7 @@ get_inkar_data <- function(
   body <- list(
     IndicatorCollection = list(list(Gruppe = variable)),
     TimeCollection = time_collection, # httr2/jsonlite will serialize DF as array of objects
-    SpaceCollection = list(list(level = level)),
+    SpaceCollection = list(list(level = to_api_level(level))),
     pageorder = "1"
   )
 
@@ -390,7 +465,10 @@ get_inkar_data <- function(
       if (ind_id_col %in% names(df)) {
         # Extract unique metadata
         meta <- times_df |>
-          dplyr::select(ID = IndID, Name = Indikator, Agg = Raum) |>
+          # Join on Gruppe: the data response identifies the indicator by the
+          # requested Gruppe, while IndID is INKAR's official number, which
+          # differs for most indicators (e.g. Gruppe 12 vs IndID 1101)
+          dplyr::select(ID = Gruppe, Name = Indikator, Agg = Raum) |>
           dplyr::distinct(ID, .keep_all = TRUE)
 
         # Rename for join target
@@ -425,7 +503,8 @@ get_inkar_data <- function(
                 # Match primarily on M_ID (Numeric API ID)
                 lookup <- en_inds |>
                   dplyr::select(M_ID, Name_EN = Name) |>
-                  dplyr::mutate(join_id = as.character(M_ID))
+                  dplyr::mutate(join_id = as.character(M_ID)) |>
+                  dplyr::select(-M_ID)
 
                 # Update the indicator_name column
                 df <- df |>
@@ -462,11 +541,8 @@ get_inkar_data <- function(
     }
 
     # --- B2. Enrich with Description & Unit from local indicators metadata ---
-    if (
-      exists("indicators", envir = asNamespace("inkaR")) &&
-        "M_ID" %in% names(df)
-    ) {
-      inds_local <- inkaR::indicators
+    inds_local <- inkar_indicators()
+    if (!is.null(inds_local) && "M_ID" %in% names(df)) {
 
       desc_target <- if (lang == "de") "Beschreibung" else "description"
       unit_target <- if (lang == "de") "Einheit" else "unit"
@@ -479,9 +555,12 @@ get_inkar_data <- function(
             desc_de = dplyr::any_of("Description_DE"),
             unit_en = dplyr::any_of("Unit_EN"),
             unit_de = dplyr::any_of("Unit_DE")
-          ) |>
+          )
+        has_desc_en <- "desc_en" %in% names(lookup)
+        has_unit_en <- "unit_en" %in% names(lookup)
+        lookup <- lookup |>
           dplyr::mutate(
-            !!desc_target := if (lang == "en" && "desc_en" %in% names(dplyr::pick(dplyr::everything()))) {
+            !!desc_target := if (lang == "en" && has_desc_en) {
               dplyr::if_else(!is.na(.data$desc_en) & .data$desc_en != "",
                              .data$desc_en, .data$desc_de)
             } else {
@@ -491,8 +570,7 @@ get_inkar_data <- function(
           dplyr::select(-dplyr::any_of(c("desc_en", "desc_de"))) |>
           dplyr::mutate(
             join_key = as.character(.data$join_key),
-            # EN: prefer Unit_EN, fall back to Unit_DE when EN is missing
-            !!unit_target := if (lang == "en" && "unit_en" %in% names(dplyr::pick(dplyr::everything()))) {
+            !!unit_target := if (lang == "en" && has_unit_en) {
               dplyr::if_else(!is.na(.data$unit_en), .data$unit_en, .data$unit_de)
             } else {
               .data$unit_de
@@ -593,7 +671,7 @@ get_inkar_data <- function(
             names_from = dplyr::all_of(col_time),
             values_from = dplyr::all_of(col_value)
           )
-        # Update target_cols so static id cols come first (B1 fix — Indikator preserved)
+        # Update target_cols so static id cols come first (B1 fix: Indikator preserved)
         target_cols <- id_cols
       }
     }
@@ -701,6 +779,19 @@ get_inkar_data <- function(
     )
   }
 
+  # Apply rounding if digits specified (fixes IEEE 754 single-precision artifacts)
+  if (!is.null(digits)) {
+    val_col <- if (lang == "de") "Wert" else "value"
+    if (val_col %in% names(df) && is.numeric(df[[val_col]])) {
+      df[[val_col]] <- round(df[[val_col]], digits)
+    }
+    # Also round any numeric year-named columns in wide format
+    year_cols <- grep("^[0-9]{4}$", names(df), value = TRUE)
+    for (yc in year_cols) {
+      if (is.numeric(df[[yc]])) df[[yc]] <- round(df[[yc]], digits)
+    }
+  }
+
   return(df)
 }
 
@@ -729,11 +820,19 @@ get_geographies <- function(geography = NULL) {
       ID = c("BND", "BLD", "KRE", "GVB", "GEM", "ROR")
     ))
   } else {
-    # Fetch specific regions for a level
-    # Endpoint: /Wizard/GetGebieteZumRaumbezug/{Level}
+    geography <- toupper(geography)
+    valid_levels <- c("BND", "BLD", "ROR", "KRE", "GVB", "GEM")
+    if (length(geography) != 1 || !geography %in% valid_levels) {
+      stop(
+        "Invalid 'geography': must be one of ", paste(valid_levels, collapse = ", "), ".",
+        call. = FALSE
+      )
+    }
+    cache_key <- paste0("geo_", geography)
+    cached <- get_cache(cache_key, ttl_hours = 168)
+    if (!is.null(cached)) return(cached)
 
-    # Ensure using the ID (e.g. KRE) not the full name
-    req <- inkar_request(paste0("Wizard/GetGebieteZumRaumbezug/", geography))
+    req <- inkar_request(paste0("Wizard/GetGebieteZumRaumbezug/", to_api_level(geography)))
     resp <- perform_request(req)
 
     # Response is normally a list of lists or DF inside a list
@@ -754,6 +853,7 @@ get_geographies <- function(geography = NULL) {
           ))
         )
 
+      set_cache(cache_key, regions)
       return(regions)
     }
     return(tibble::tibble())
@@ -774,6 +874,8 @@ get_geographies <- function(geography = NULL) {
 #'   If `NULL` and `variable` is also `NULL`, an interactive level menu is shown.
 #' @param year Integer/Character vector or `"latest"`. Specific year (e.g. 2021) or range.
 #' @param lang Character. `"de"` (default) for German column names, `"en"` for English.
+#' @param digits Integer or NULL. Rounds the value column to this many decimal places.
+#'   Useful to correct IEEE 754 single-precision artifacts from the API (e.g. 8.44999... -> 8.45).
 #' @param ... Additional arguments passed to [get_inkar_data()], such as
 #'   `format` or `csv`.
 #' @return A tibble containing the downloaded data, or `NULL` if selection was cancelled.
@@ -787,7 +889,7 @@ get_geographies <- function(geography = NULL) {
 #'   try(df <- inkaR("bip", level = "KRE", year = 2021))
 #'   try(df <- inkaR("Bruttoinlandsprodukt", level = "KRE"))
 #' }
-inkaR <- function(variable = NULL, level = NULL, year = NULL, lang = c("de", "en"), ...) {
+inkaR <- function(variable = NULL, level = NULL, year = NULL, lang = c("de", "en"), digits = NULL, ...) {
   lang <- match.arg(lang)
   
   if (is.null(variable)) {
@@ -810,7 +912,7 @@ inkaR <- function(variable = NULL, level = NULL, year = NULL, lang = c("de", "en
         if (length(year) == 0) return(invisible(NULL))
       }
       
-      return(get_inkar_data(variable = variable, level = level, year = year, lang = lang, ...))
+      return(get_inkar_data(variable = variable, level = level, year = year, lang = lang, digits = digits, ...))
     } else {
       stop("Argument 'variable' is missing, with no default.")
     }
@@ -820,7 +922,7 @@ inkaR <- function(variable = NULL, level = NULL, year = NULL, lang = c("de", "en
     level <- "KRE"
   }
 
-  get_inkar_data(variable = variable, level = level, year = year, lang = lang, ...)
+  get_inkar_data(variable = variable, level = level, year = year, lang = lang, digits = digits, ...)
 }
 
 #' Download INKAR Data (English Shortcut)
@@ -833,6 +935,7 @@ inkaR <- function(variable = NULL, level = NULL, year = NULL, lang = c("de", "en
 #' @param level Character. Spatial level code (default `"KRE"`).
 #' @param year Integer/Character vector or `"latest"` (default). Year(s) to download.
 #' @param lang Character. Output language (default `"en"`).
+#' @param digits Integer or NULL. Rounds the value column to this many decimal places.
 #' @param ... Additional arguments passed to [get_inkar_data()].
 #' @return A tibble with English column names.
 #' @name inkar_shortcut
@@ -843,8 +946,8 @@ inkaR <- function(variable = NULL, level = NULL, year = NULL, lang = c("de", "en
 #'   try(df <- inkar("011", level = "KRE"))
 #'   try(df <- inkar("011", level = "KRE", year = 2019:2021))
 #' }
-inkar <- function(variable, level = "KRE", year = "latest", lang = "en", ...) {
-  get_inkar_data(variable = variable, level = level, year = year, lang = lang, ...)
+inkar <- function(variable, level = "KRE", year = "latest", lang = "en", digits = NULL, ...) {
+  get_inkar_data(variable = variable, level = level, year = year, lang = lang, digits = digits, ...)
 }
 
 #' Filter Downloaded Data to Specific Regions
@@ -853,14 +956,15 @@ inkar <- function(variable, level = "KRE", year = "latest", lang = "en", ...) {
 #' supplied region names (partial, case-insensitive match by default).
 #'
 #' @param data A data frame returned by [get_inkar_data()].
-#' @param regions Character vector. Region names or partial patterns to keep.
+#' @param regions Character vector. Region names or parts of names to keep, matched
+#'   literally and case-insensitively (e.g. `"Frankfurt (Oder)"`).
 #' @param exact Logical. If `TRUE`, require exact string match. Default `FALSE`.
 #' @return A filtered tibble.
 #' @export
 #' @examples
 #' \donttest{
 #'   df <- try(get_inkar_data("011", level = "KRE", year = 2021, lang = "en"))
-#'   if (is.data.frame(df)) compare_regions(df, c("Berlin", "Hamburg"))
+#'   if (is.data.frame(df) && nrow(df) > 0) compare_regions(df, c("Berlin", "Hamburg"))
 #' }
 compare_regions <- function(data, regions, exact = FALSE) {
   is_en <- "region_name" %in% names(data)
@@ -871,8 +975,7 @@ compare_regions <- function(data, regions, exact = FALSE) {
   if (exact) {
     mask <- data[[name_col]] %in% regions
   } else {
-    pattern <- paste(regions, collapse = "|")
-    mask <- grepl(pattern, data[[name_col]], ignore.case = TRUE)
+    mask <- text_match(data[[name_col]], regions)
   }
   result <- data[mask, , drop = FALSE]
   if (nrow(result) == 0) {
@@ -892,14 +995,16 @@ compare_region <- compare_regions
 #' by [get_inkar_data()] to rows matching specific district names or IDs (Kennziffer).
 #'
 #' @param data A data frame returned by [get_inkar_data()].
-#' @param districts Character/Numeric vector. District names, IDs, or partial patterns to keep.
+#' @param districts Character/Numeric vector. District names or IDs (Kennziffer) to keep.
+#'   Names match literally as parts of names. IDs match as a prefix (`"09"` keeps all of
+#'   Bavaria) or exactly with leading zeros ignored (`1001` matches `"01001"`).
 #' @param exact Logical. If `TRUE`, require exact string match. Default `FALSE`.
 #' @return A filtered tibble.
 #' @export
 #' @examples
 #' \donttest{
 #'   df <- try(get_inkar_data("011", level = "KRE", year = 2021, lang = "en"))
-#'   if (is.data.frame(df)) compare_districts(df, c("Berlin", "Hamburg"))
+#'   if (is.data.frame(df) && nrow(df) > 0) compare_districts(df, c("Berlin", "Hamburg"))
 #' }
 compare_districts <- function(data, districts, exact = FALSE) {
   is_en <- "region_name" %in% names(data)
@@ -910,14 +1015,20 @@ compare_districts <- function(data, districts, exact = FALSE) {
     stop("Data must contain name and ID columns.")
   }
   
-  districts_char <- as.character(districts)
-  
+  districts_char <- trimws(as.character(districts))
+  # Numeric input such as 1001 loses the leading zero of "01001"
+  strip_zeros <- function(x) sub("^0+(?=.)", "", x, perl = TRUE)
+  ids <- as.character(data[[id_col]])
+
   if (exact) {
-    mask <- (data[[name_col]] %in% districts_char) | (data[[id_col]] %in% districts_char)
+    mask <- (data[[name_col]] %in% districts_char) |
+      (strip_zeros(ids) %in% strip_zeros(districts_char))
   } else {
-    pattern <- paste(districts_char, collapse = "|")
-    mask <- grepl(pattern, data[[name_col]], ignore.case = TRUE) | 
-            grepl(pattern, data[[id_col]], ignore.case = TRUE)
+    # IDs match as a prefix ("09" = all of Bavaria), never in the middle
+    id_mask <- Reduce(`|`, lapply(districts_char, function(d) {
+      startsWith(ids, d) | strip_zeros(ids) == strip_zeros(d)
+    }), rep(FALSE, length(ids)))
+    mask <- text_match(data[[name_col]], districts_char) | id_mask
   }
   
   result <- data[mask, , drop = FALSE]
@@ -948,7 +1059,7 @@ compare_district <- compare_districts
 #' @examples
 #' \donttest{
 #'   df <- try(get_inkar_data("011", level = "KRE", lang = "en"))
-#'   if (is.data.frame(df)) {
+#'   if (is.data.frame(df) && nrow(df) > 0) {
 #'     inkar_trends(df, regions = c("Berlin", "Hamburg", "München"))
 #'   }
 #' }
@@ -964,13 +1075,19 @@ inkar_trends <- function(data, regions = NULL, title = NULL, mode = c("light", "
   ind_col  <- if (is_en) "indicator_name" else "Indikator"
 
   if (!all(c(name_col, year_col, val_col) %in% names(data))) {
+    year_like_cols <- grep("^[0-9]{4}$", names(data), value = TRUE)
+    if (length(year_like_cols) > 0) {
+      stop(
+        "Data appears to be in wide format (years as columns). ",
+        "Use format = \"long\" when calling get_inkar_data()."
+      )
+    }
     stop("Data must be in long format with region, year, and value columns.")
   }
 
   plot_data <- data
   if (!is.null(regions)) {
-    pattern   <- paste(regions, collapse = "|")
-    plot_data <- plot_data[grepl(pattern, plot_data[[name_col]], ignore.case = TRUE), , drop = FALSE]
+    plot_data <- plot_data[text_match(plot_data[[name_col]], regions), , drop = FALSE]
     if (nrow(plot_data) == 0) {
       cli::cli_alert_warning("No matching regions found for: {.val {regions}}")
       return(invisible(NULL))

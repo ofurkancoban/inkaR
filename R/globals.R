@@ -44,7 +44,6 @@ utils::globalVariables(c(
     "M\u00f6glich",
     "IndikatorID",
     "join_key",
-    "select_level",
     "col_label",
     "desc_en",
     "desc_de",

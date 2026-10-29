@@ -14,7 +14,8 @@ search_indicators(pattern, lang = c("de", "en"), theme = NULL)
 
 - pattern:
 
-  Text to search in names and descriptions.
+  Text to search in names, IDs and descriptions. Matched literally and
+  case-insensitively, so characters such as `(` need no escaping.
 
 - lang:
 

@@ -28,18 +28,20 @@ plot_inkar(
 all other regions are shown at reduced opacity.}
 
 \item{breaks}{Character. Color scale break method: \code{"equal"} (default) or
-\code{"quantile"} for quantile-based color breaks.}
+\code{"quantile"} for five quantile classes, each with its own color step.}
 
 \item{title}{Character. Custom plot title. Defaults to the indicator name.}
 
 \item{geom}{Optional \code{sf} object (spatial data frame) to use for plotting. If supplied,
-GADM geometries are not downloaded, and the data is merged directly with this object.}
+no boundaries are downloaded, and the data is merged directly with this object.}
 }
 \value{
 A \code{ggplot2} object displaying the mapped data.
 }
 \description{
-Automatically projects regional INKAR data onto administrative boundaries of Germany using
-the \code{geodata} and \code{sf} packages. Supports Bund (BND), Bundeslaender (BLD), Kreise (KRE),
-and Gemeinden (GEM) levels. Alternatively, a custom \code{sf} geometry can be provided.
+Automatically projects regional INKAR data onto administrative boundaries of Germany.
+Supports Bund (BND), Bundeslaender (BLD), Kreise (KRE), Gemeindeverbaende (GVB) and
+Gemeinden (GEM). Boundaries come from Eurostat GISCO with the same territorial status as
+INKAR (see \code{\link[=get_inkar_geometry]{get_inkar_geometry()}}); they are downloaded once and cached. Alternatively, a
+custom \code{sf} geometry can be provided, for example for Raumordnungsregionen (ROR).
 }

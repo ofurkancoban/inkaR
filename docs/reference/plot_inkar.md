@@ -1,9 +1,12 @@
 # Plot INKAR Data on German Maps
 
 Automatically projects regional INKAR data onto administrative
-boundaries of Germany using the `geodata` and `sf` packages. Supports
-Bund (BND), Bundeslaender (BLD), Kreise (KRE), and Gemeinden (GEM)
-levels. Alternatively, a custom `sf` geometry can be provided.
+boundaries of Germany. Supports Bund (BND), Bundeslaender (BLD), Kreise
+(KRE), Gemeindeverbaende (GVB) and Gemeinden (GEM). Boundaries come from
+Eurostat GISCO with the same territorial status as INKAR (see
+[`get_inkar_geometry()`](https://ofurkancoban.github.io/inkaR/reference/get_inkar_geometry.md));
+they are downloaded once and cached. Alternatively, a custom `sf`
+geometry can be provided, for example for Raumordnungsregionen (ROR).
 
 ## Usage
 
@@ -50,7 +53,7 @@ plot_inkar(
 - breaks:
 
   Character. Color scale break method: `"equal"` (default) or
-  `"quantile"` for quantile-based color breaks.
+  `"quantile"` for five quantile classes, each with its own color step.
 
 - title:
 
@@ -59,7 +62,7 @@ plot_inkar(
 - geom:
 
   Optional `sf` object (spatial data frame) to use for plotting. If
-  supplied, GADM geometries are not downloaded, and the data is merged
+  supplied, no boundaries are downloaded, and the data is merged
   directly with this object.
 
 ## Value

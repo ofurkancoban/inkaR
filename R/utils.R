@@ -88,9 +88,20 @@ parse_inkar_json <- function(data, lang = "de") {
             df <- df |>
                 dplyr::mutate(
                     !!col_value := if (is.character(.data[[col_value]])) {
-                        # Remove thousands separators (dots) first, then replace comma with dot
-                        clean_str <- gsub("\\.", "", .data[[col_value]])
-                        as.numeric(gsub(",", ".", clean_str))
+                        vals <- .data[[col_value]]
+                        # Detect German format (comma as decimal, dot as thousands separator):
+                        # presence of both "." and "," with "," appearing after "." is a strong signal
+                        is_german <- any(grepl(",", vals, fixed = TRUE), na.rm = TRUE) &&
+                            any(grepl("\\.", vals), na.rm = TRUE)
+                        if (is_german) {
+                            clean_str <- gsub("\\.", "", vals)
+                            as.numeric(gsub(",", ".", clean_str))
+                        } else if (any(grepl(",", vals, fixed = TRUE), na.rm = TRUE)) {
+                            # Only comma present: treat as decimal separator
+                            as.numeric(gsub(",", ".", vals))
+                        } else {
+                            as.numeric(vals)
+                        }
                     } else {
                         as.numeric(.data[[col_value]])
                     }
@@ -184,4 +195,55 @@ get_usage_history <- function() {
         ))
     }
     return(character())
+}
+
+#' Bundled indicator metadata
+#'
+#' With `LazyData: true` the `indicators` dataset lives in the package's
+#' lazy-data environment, not in the namespace itself, so
+#' `exists("indicators", envir = asNamespace("inkaR"))` is always FALSE in a
+#' regular `library(inkaR)` session. Use this helper instead.
+#'
+#' @return The `indicators` tibble, or NULL if it cannot be loaded.
+#' @noRd
+inkar_indicators <- function() {
+  tryCatch(getExportedValue("inkaR", "indicators"), error = function(e) NULL)
+}
+
+#' Translate a user-facing level code to the code the INKAR API expects
+#'
+#' The API uses `BU` (Bund) and `BL` (Laender); `BND` and `BLD` return no data.
+#' The package keeps `BND`/`BLD` as its public codes for backward compatibility.
+#'
+#' @param level Character vector of level codes.
+#' @return Character vector of API level codes.
+#' @noRd
+to_api_level <- function(level) {
+  api_codes <- c(BND = "BU", BLD = "BL")
+  out <- as.character(level)
+  hit <- out %in% names(api_codes)
+  out[hit] <- api_codes[out[hit]]
+  out
+}
+
+#' Escape regular expression metacharacters
+#' @noRd
+escape_regex <- function(x) {
+  gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", x)
+}
+
+#' Case-insensitive literal substring match
+#'
+#' User input such as "Frankfurt (Oder)" or "Bevoelkerung (mit" contains regex
+#' metacharacters, so patterns are matched literally.
+#'
+#' @param x Character vector to search in.
+#' @param patterns Character vector; a value matches if it contains any of them.
+#' @return Logical vector the length of `x`.
+#' @noRd
+text_match <- function(x, patterns) {
+  patterns <- patterns[!is.na(patterns)]
+  if (length(patterns) == 0) return(rep(FALSE, length(x)))
+  hits <- grepl(paste(escape_regex(patterns), collapse = "|"), x, ignore.case = TRUE)
+  hits & !is.na(x)
 }

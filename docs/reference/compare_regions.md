@@ -22,7 +22,8 @@ compare_region(data, regions, exact = FALSE)
 
 - regions:
 
-  Character vector. Region names or partial patterns to keep.
+  Character vector. Region names or parts of names to keep, matched
+  literally and case-insensitively (e.g. `"Frankfurt (Oder)"`).
 
 - exact:
 
@@ -40,7 +41,7 @@ A filtered tibble.
 #> Using M_ID '11' directly.
 #> ✔ Downloaded: Gross domestic product in 1000 euros [thousand euros]
 #>   Level: Kreise | Regions: 400 | Year(s): 2021 | Rows: 400
-  if (is.data.frame(df)) compare_regions(df, c("Berlin", "Hamburg"))
+  if (is.data.frame(df) && nrow(df) > 0) compare_regions(df, c("Berlin", "Hamburg"))
 #>     region_id                   region_name level_name M_ID
 #> 16      02000 Hamburg, Freie und Hansestadt     Kreise   11
 #> 325     11000                 Berlin, Stadt     Kreise   11

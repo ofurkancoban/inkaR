@@ -4,7 +4,7 @@ template:
   bootstrap: 5
 
 home:
-  title: "inkaR — BBSR INKAR Interface for R"
+  title: "inkaR: BBSR INKAR Interface for R"
   description: >
     Download and analyze spatial development indicators from the BBSR INKAR database.
 
@@ -15,6 +15,7 @@ navbar:
   components:
     github:
       icon: fab fa-github
+      aria-label: GitHub
       href: https://github.com/ofurkancoban/inkaR
 
 reference:
@@ -57,6 +58,7 @@ reference:
     desc: "Map and chart downloaded data."
     contents:
       - plot_inkar
+      - get_inkar_geometry
       - theme_inkaR
 
   - title: "Caching"

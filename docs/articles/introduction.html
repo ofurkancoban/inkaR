@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Introduction to inkaR • inkaR</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -20,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">inkaR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +46,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ofurkancoban/inkaR"><span class="fa fab fa-github"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ofurkancoban/inkaR" aria-label="GitHub"><span class="fa fab fa-github"></span></a></li>
       </ul>
 </div>
 
@@ -54,8 +59,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Introduction to inkaR</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Introduction to inkaR</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ofurkancoban/inkaR/blob/HEAD/vignettes/introduction.Rmd" class="external-link"><code>vignettes/introduction.Rmd</code></a></small>
@@ -68,7 +72,7 @@
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>The <code>inkaR</code> package provides a modern R interface to the
-<a href="https://www.inkar.de/" class="external-link">BBSR INKAR</a> database —
+<a href="https://www.inkar.de/" class="external-link">BBSR INKAR</a> database,
 <strong>Indikatoren und Karten zur Raum- und Stadtentwicklung</strong>
 (Indicators and Maps for Spatial and Urban Development). INKAR is
 published by the German Federal Institute for Research on Building,
@@ -88,7 +92,7 @@ with <code><a href="../reference/select_indicator.html">select_indicator()</a></
 <strong>Bilingual Output</strong>: All results available in German
 (default) or English (<code>lang = "en"</code>).</li>
 <li>
-<strong>Disk Caching</strong>: API responses are cached locally —
+<strong>Disk Caching</strong>: API responses are cached locally, so
 repeated calls return instantly.</li>
 <li>
 <strong>Mapping</strong>: Visualize downloaded data on German
@@ -141,7 +145,7 @@ the API.</p>
 <div class="section level2">
 <h2 id="interactive-wizard">2. Interactive Wizard<a class="anchor" aria-label="anchor" href="#interactive-wizard"></a>
 </h2>
-<p>For guided, step-by-step downloads — especially useful in the RStudio
+<p>For guided, step-by-step downloads, especially useful in the RStudio
 console:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Step 1 – pick an indicator (searchable menu)</span></span>
@@ -169,7 +173,7 @@ parameters:</p>
 <h3 id="basic-download">Basic download<a class="anchor" aria-label="anchor" href="#basic-download"></a>
 </h3>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># GDP (ID "011") for Districts (Kreise) — latest available year</span></span>
+<code class="sourceCode R"><span><span class="co"># GDP (ID "011") for Districts (Kreise), latest available year</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_inkar_data.html">get_inkar_data</a></span><span class="op">(</span><span class="st">"011"</span>, level <span class="op">=</span> <span class="st">"KRE"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   Kennziffer        Raumeinheit Aggregat  Zeit              Indikator     Wert</span></span>
@@ -232,8 +236,19 @@ parameters:</p>
 </h3>
 <p>Pass a vector of IDs to download and merge automatically:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_multi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_inkar_data.html">get_inkar_data</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"011"</span>, <span class="st">"q_alo"</span><span class="op">)</span>, level <span class="op">=</span> <span class="st">"KRE"</span>, year <span class="op">=</span> <span class="fl">2021</span>, lang <span class="op">=</span> <span class="st">"en"</span><span class="op">)</span></span></code></pre></div>
-<p>Results are merged by region and year into a wide-format tibble.</p>
+<code class="sourceCode R"><span><span class="va">df_multi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_inkar_data.html">get_inkar_data</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"011"</span>, <span class="st">"12"</span><span class="op">)</span>, level <span class="op">=</span> <span class="st">"KRE"</span>, year <span class="op">=</span> <span class="fl">2021</span>, lang <span class="op">=</span> <span class="st">"en"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># One column per indicator, named by its short ID (e.g. "bip")</span></span>
+<span><span class="va">df_wide</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_inkar_data.html">get_inkar_data</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"011"</span>, <span class="st">"12"</span><span class="op">)</span>, level <span class="op">=</span> <span class="st">"KRE"</span>, year <span class="op">=</span> <span class="fl">2021</span>, lang <span class="op">=</span> <span class="st">"en"</span>, format <span class="op">=</span> <span class="st">"wide"</span><span class="op">)</span></span></code></pre></div>
+<p>By default the indicators are stacked in long format. With
+<code>format = "wide"</code> they are merged by region and year, one
+column per indicator. If an indicator cannot be resolved or has no data,
+it is left out with a warning.</p>
+<p>Indicators can be addressed by their short ID from the INKAR
+indicator overview (<code>"q_alo"</code>), by <code>M_ID</code>
+(<code>"12"</code>) or by INKAR’s official indicator number
+(<code>"1101"</code>); all three resolve to the same indicator. Topic
+areas are listed by <code><a href="../reference/get_themes.html">get_themes()</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="export-to-csv">Export to CSV<a class="anchor" aria-label="anchor" href="#export-to-csv"></a>
@@ -294,28 +309,48 @@ levels:</p>
 <h2 id="mapping">5. Mapping<a class="anchor" aria-label="anchor" href="#mapping"></a>
 </h2>
 <p><code><a href="../reference/plot_inkar.html">plot_inkar()</a></code> visualizes a downloaded data frame on
-German administrative boundaries. It requires the <code>ggplot2</code>,
-<code>sf</code>, and <code>geodata</code> packages.</p>
+German administrative boundaries. It requires the <code>ggplot2</code>
+and <code>sf</code> packages.</p>
 <div class="section level3">
-<h3 id="automatic-maps-via-gadm">Automatic Maps via GADM<a class="anchor" aria-label="anchor" href="#automatic-maps-via-gadm"></a>
+<h3 id="automatic-maps-via-eurostat-gisco">Automatic Maps via Eurostat GISCO<a class="anchor" aria-label="anchor" href="#automatic-maps-via-eurostat-gisco"></a>
 </h3>
-<p>By default, the function downloads boundaries from <a href="https://gadm.org/" class="external-link">GADM</a> and caches them. It supports: -
-<code>BND</code>: Federal Territory (Germany as a whole - GADM Level 0)
-- <code>BLD</code>: Federal States (GADM Level 1) - <code>KRE</code>:
-Districts (GADM Level 2) - <code>GEM</code>: Municipalities (GADM Level
-3)</p>
+<p>By default, the function uses the municipality boundaries of <a href="https://ec.europa.eu/eurostat/web/gisco" class="external-link">Eurostat GISCO</a> (LAU
+2024), which share INKAR’s territorial status, so every region is drawn.
+The file (about 43 MB) is downloaded once and cached. Higher levels are
+built from the municipalities:</p>
+<ul>
+<li>
+<code>BND</code>: Federal Territory (Germany as a whole)</li>
+<li>
+<code>BLD</code>: Federal States</li>
+<li>
+<code>KRE</code>: Districts</li>
+<li>
+<code>GVB</code>: Municipal associations (assigned via the Destatis
+Gemeindeverzeichnis)</li>
+<li>
+<code>GEM</code>: Municipalities</li>
+</ul>
+<p>Maps carry the attribution “(c) EuroGeographics for the
+administrative boundaries”. The boundaries are also available directly
+for your own analysis:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">kreise</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_inkar_geometry.html">get_inkar_geometry</a></span><span class="op">(</span><span class="st">"KRE"</span><span class="op">)</span>   <span class="co"># sf object with a Kennziffer column</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Download GDP for Districts</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_inkar_data.html">get_inkar_data</a></span><span class="op">(</span><span class="st">"011"</span>, level <span class="op">=</span> <span class="st">"KRE"</span>, year <span class="op">=</span> <span class="fl">2021</span>, lang <span class="op">=</span> <span class="st">"en"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Plot — light theme (default)</span></span>
+<span><span class="co"># Plot: light theme (default)</span></span>
 <span><span class="fu"><a href="../reference/plot_inkar.html">plot_inkar</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Dark theme</span></span>
 <span><span class="fu"><a href="../reference/plot_inkar.html">plot_inkar</a></span><span class="op">(</span><span class="va">df</span>, mode <span class="op">=</span> <span class="st">"dark"</span><span class="op">)</span></span></code></pre></div>
 <p>Below is an example of the dark mode map output generated by
 <code><a href="../reference/plot_inkar.html">plot_inkar()</a></code>:</p>
-<p><img src="map_output.jpg"></p>
+<div class="float">
+<img src="map_output.jpg" alt="Dark-mode map of gross domestic product for German districts (Kreise) in 2021, colored with the viridis scale"><div class="figcaption">Dark-mode map of gross domestic product for
+German districts (Kreise) in 2021, colored with the viridis scale</div>
+</div>
 </div>
 <div class="section level3">
 <h3 id="custom-geometries">Custom Geometries<a class="anchor" aria-label="anchor" href="#custom-geometries"></a>
@@ -323,9 +358,9 @@ Districts (GADM Level 2) - <code>GEM</code>: Municipalities (GADM Level
 <p>If you want to use custom boundaries (e.g. <code>ROR</code>
 Raumordnungsregionen, or custom shapefiles), you can pass an
 <code>sf</code> object directly to the <code>geom</code> parameter.
-<code><a href="../reference/plot_inkar.html">plot_inkar()</a></code> will skip the GADM download and merge your
+<code><a href="../reference/plot_inkar.html">plot_inkar()</a></code> will skip the boundary download and merge your
 data with the custom spatial data frame:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load your custom spatial data frame (e.g. from an sf shapefile)</span></span>
 <span><span class="co"># my_shapes &lt;- sf::read_sf("path/to/shapes.shp")</span></span>
 <span></span>
@@ -340,7 +375,7 @@ data with the custom spatial data frame:</p>
 <p><code>inkaR</code> caches API responses to your user data directory
 (<code>tools::R_user_dir("inkaR", "cache")</code>). Caches expire after
 24 hours. To clear them manually:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/clear_inkar_cache.html">clear_inkar_cache</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
@@ -353,7 +388,7 @@ data with the custom spatial data frame:</p>
 <p>You can filter downloaded datasets to specific regions using either
 the plural or singular helpers. For districts, you can also filter by
 their administrative key (Kennziffer/ID):</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_inkar_data.html">get_inkar_data</a></span><span class="op">(</span><span class="st">"011"</span>, level <span class="op">=</span> <span class="st">"KRE"</span>, lang <span class="op">=</span> <span class="st">"en"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Filter regions (by name)</span></span>
@@ -367,13 +402,13 @@ their administrative key (Kennziffer/ID):</p>
 <div class="section level3">
 <h3 id="plot-trends-over-time">Plot trends over time<a class="anchor" aria-label="anchor" href="#plot-trends-over-time"></a>
 </h3>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/inkar_trends.html">inkar_trends</a></span><span class="op">(</span><span class="va">df</span>, regions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Berlin"</span>, <span class="st">"Hamburg"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="theme-filtered-search">Theme-filtered search<a class="anchor" aria-label="anchor" href="#theme-filtered-search"></a>
 </h3>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_themes.html">get_themes</a></span><span class="op">(</span><span class="op">)</span>                                   <span class="co"># list all themes</span></span>
 <span><span class="fu"><a href="../reference/search_indicators.html">search_indicators</a></span><span class="op">(</span><span class="st">"employment"</span>, theme <span class="op">=</span> <span class="st">"Arbeitsmarkt"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/view_indicators.html">view_indicators</a></span><span class="op">(</span><span class="st">"en"</span>, theme <span class="op">=</span> <span class="st">"Bevölkerung"</span><span class="op">)</span></span></code></pre></div>
@@ -395,7 +430,7 @@ their administrative key (Kennziffer/ID):</p>
 <tbody>
 <tr class="odd">
 <td><code><a href="../reference/inkar_shortcut.html">inkar()</a></code></td>
-<td>English shortcut — latest year, EN output</td>
+<td>English shortcut: latest year, EN output</td>
 </tr>
 <tr class="even">
 <td><code><a href="../reference/get_inkar_data.html">get_inkar_data()</a></code></td>

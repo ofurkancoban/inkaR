@@ -26,27 +26,41 @@ test_that("get_inkar_data validates year argument", {
 })
 
 test_that("view_indicators DE does not error", {
-  # Runs the reshape logic without opening the GUI viewer
   withr::with_options(list(viewer = NULL), {
-    expect_no_error(suppressMessages(view_indicators("de")))
+    capture.output(
+      expect_no_error(suppressMessages(view_indicators("de"))),
+      type = "output"
+    )
   })
+})
+
+test_that("view_indicators DE keeps the umlaut in the Kuerzel column name", {
+  withr::with_options(list(viewer = NULL), {
+    capture.output(res <- suppressMessages(view_indicators("de")), type = "output")
+  })
+  expect_true("K\u00fcrzel" %in% names(res))
 })
 
 test_that("view_indicators EN does not error", {
   withr::with_options(list(viewer = NULL), {
-    expect_no_error(suppressMessages(view_indicators("en")))
+    capture.output(
+      expect_no_error(suppressMessages(view_indicators("en"))),
+      type = "output"
+    )
   })
 })
 
 test_that("search_indicators returns filtered results", {
-  res <- suppressMessages(search_indicators("Bevölkerung"))
+  capture.output(
+    res <- suppressMessages(search_indicators("Bevölkerung")),
+    type = "output"
+  )
   expect_true(is.data.frame(res))
   expect_true(nrow(res) > 0)
 })
 
 test_that("plot_inkar errors on unsupported spatial level", {
   skip_if_not_installed("sf")
-  skip_if_not_installed("geodata")
   skip_if_not_installed("ggplot2")
   df <- data.frame(
     Kennziffer = "01001", Aggregat = "ROR", Wert = 1, Zeit = 2021,
@@ -80,6 +94,18 @@ test_that("plot_inkar supports custom geom sf object", {
   expect_s3_class(p, "gg")
 })
 
+
+test_that("get_inkar_data digits parameter rounds values correctly", {
+  skip_on_cran()
+  skip_if(nzchar(Sys.getenv("CI")), "Skipping network test on CI")
+  skip_if_inkar_unreachable()
+  df_raw    <- suppressMessages(get_inkar_data("12", level = "KRE", year = 2021, lang = "de"))
+  df_rounded <- suppressMessages(get_inkar_data("12", level = "KRE", year = 2021, lang = "de", digits = 2))
+  # rounded values must equal round(raw, 2)
+  expect_equal(df_rounded$Wert, round(df_raw$Wert, 2))
+  # no value should differ by more than 0.005 after rounding to 2dp
+  expect_true(all(abs(df_rounded$Wert - df_raw$Wert) < 0.005))
+})
 
 test_that("clear_inkar_cache runs without error", {
   expect_no_error(suppressMessages(clear_inkar_cache()))

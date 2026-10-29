@@ -27,7 +27,7 @@ for selected regions. Input must be a long-format data frame from
 \examples{
 \donttest{
   df <- try(get_inkar_data("011", level = "KRE", lang = "en"))
-  if (is.data.frame(df)) {
+  if (is.data.frame(df) && nrow(df) > 0) {
     inkar_trends(df, regions = c("Berlin", "Hamburg", "München"))
   }
 }

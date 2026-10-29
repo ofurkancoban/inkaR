@@ -8,7 +8,14 @@ calling `get_inkar_data(variable, level, year = "latest", lang = "en")`.
 ## Usage
 
 ``` r
-inkar(variable, level = "KRE", year = "latest", lang = "en", ...)
+inkar(
+  variable,
+  level = "KRE",
+  year = "latest",
+  lang = "en",
+  digits = NULL,
+  ...
+)
 ```
 
 ## Arguments
@@ -28,6 +35,10 @@ inkar(variable, level = "KRE", year = "latest", lang = "en", ...)
 - lang:
 
   Character. Output language (default `"en"`).
+
+- digits:
+
+  Integer or NULL. Rounds the value column to this many decimal places.
 
 - ...:
 

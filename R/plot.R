@@ -27,9 +27,11 @@ theme_inkaR <- function(mode = c("light", "dark"), base_size = 11) {
 
 #' Plot INKAR Data on German Maps
 #'
-#' Automatically projects regional INKAR data onto administrative boundaries of Germany using
-#' the `geodata` and `sf` packages. Supports Bund (BND), Bundeslaender (BLD), Kreise (KRE),
-#' and Gemeinden (GEM) levels. Alternatively, a custom `sf` geometry can be provided.
+#' Automatically projects regional INKAR data onto administrative boundaries of Germany.
+#' Supports Bund (BND), Bundeslaender (BLD), Kreise (KRE), Gemeindeverbaende (GVB) and
+#' Gemeinden (GEM). Boundaries come from Eurostat GISCO with the same territorial status as
+#' INKAR (see [get_inkar_geometry()]); they are downloaded once and cached. Alternatively, a
+#' custom `sf` geometry can be provided, for example for Raumordnungsregionen (ROR).
 #'
 #' @param data A data frame returned by `get_inkar_data()`.
 #' @param variable Character. For wide-format data with multiple indicators, specify which indicator column to plot.
@@ -38,10 +40,10 @@ theme_inkaR <- function(mode = c("light", "dark"), base_size = 11) {
 #' @param highlight Character vector. Region names (partial match) to highlight;
 #'   all other regions are shown at reduced opacity.
 #' @param breaks Character. Color scale break method: `"equal"` (default) or
-#'   `"quantile"` for quantile-based color breaks.
+#'   `"quantile"` for five quantile classes, each with its own color step.
 #' @param title Character. Custom plot title. Defaults to the indicator name.
 #' @param geom Optional `sf` object (spatial data frame) to use for plotting. If supplied,
-#'   GADM geometries are not downloaded, and the data is merged directly with this object.
+#'   no boundaries are downloaded, and the data is merged directly with this object.
 #' @return A `ggplot2` object displaying the mapped data.
 #' @export
 plot_inkar <- function(data, variable = NULL, year = NULL, mode = c("light", "dark"),
@@ -51,9 +53,6 @@ plot_inkar <- function(data, variable = NULL, year = NULL, mode = c("light", "da
     
     if (!requireNamespace("sf", quietly = TRUE)) {
         stop("Package 'sf' is required for plotting. Install it with: install.packages('sf')")
-    }
-    if (is.null(geom) && !requireNamespace("geodata", quietly = TRUE)) {
-        stop("Package 'geodata' is required for plotting. Install it with: install.packages('geodata')")
     }
     if (!requireNamespace("ggplot2", quietly = TRUE)) {
         stop("Package 'ggplot2' is required for plotting. Install it with: install.packages('ggplot2')")
@@ -105,23 +104,23 @@ plot_inkar <- function(data, variable = NULL, year = NULL, mode = c("light", "da
         val_col <- variable
         indicator_title <- variable
         
-        # Filter year
+        # Filter year (coerce both sides to integer to avoid type mismatch)
         if (!is.null(year)) {
-            data <- data[data[[time_col]] == year, ]
+            data <- data[as.integer(as.character(data[[time_col]])) == as.integer(year), ]
             if (nrow(data) == 0) stop("No data found for year: ", year)
         } else {
             max_year <- max(as.integer(as.character(data[[time_col]])), na.rm = TRUE)
-            data <- data[data[[time_col]] == max_year, ]
+            data <- data[as.integer(as.character(data[[time_col]])) == max_year, ]
             year <- max_year
         }
     } else if (val_col %in% names(data) && time_col %in% names(data)) {
         # Long format
         if (!is.null(year)) {
-            data <- data[data[[time_col]] == year, ]
+            data <- data[as.integer(as.character(data[[time_col]])) == as.integer(year), ]
             if (nrow(data) == 0) stop("No data found for year: ", year)
         } else {
             max_year <- max(as.integer(as.character(data[[time_col]])), na.rm = TRUE)
-            data <- data[data[[time_col]] == max_year, ]
+            data <- data[as.integer(as.character(data[[time_col]])) == max_year, ]
             year <- max_year
         }
         
@@ -145,6 +144,7 @@ plot_inkar <- function(data, variable = NULL, year = NULL, mode = c("light", "da
     unit_col <- if (is_en) "unit" else "Einheit"
     unit_str <- if (unit_col %in% names(data) && !is.na(data[[unit_col]][1])) paste0(" (", data[[unit_col]][1], ")") else ""
 
+    caption <- NULL
     if (!is.null(geom)) {
         if (!inherits(geom, "sf")) {
             stop("The 'geom' argument must be an sf object.")
@@ -167,61 +167,46 @@ plot_inkar <- function(data, variable = NULL, year = NULL, mode = c("light", "da
         data[[id_col]] <- as.character(data[[id_col]])
         map_sf <- merge(map_sf, data, by.x = join_key, by.y = id_col, all.x = TRUE)
     } else {
-        is_bnd <- grepl("BND|Bund|Germany|Federal", level_raw, ignore.case = TRUE)
-        is_bld <- grepl("BLD|L.nder|nder|States|state|Bundesl", level_raw, ignore.case = TRUE)
-        is_kre <- grepl("KRE|Kreise|Districts|district", level_raw, ignore.case = TRUE)
-        is_gem <- grepl("GEM|Gemeinden|Municipalities|municipality", level_raw, ignore.case = TRUE)
-
-        if (!is_bnd && !is_bld && !is_kre && !is_gem) {
+        map_level <- detect_map_level(level_raw)
+        if (is.na(map_level)) {
             stop(
-                "plot_inkar() only supports 'BND', 'BLD', 'KRE', and 'GEM' spatial levels for GADM automatic maps. ",
+                "plot_inkar() only supports 'BND', 'BLD', 'KRE', 'GVB' and 'GEM' spatial levels for automatic maps. ",
                 "Detected level: '", level_raw, "'. ",
-                "For custom levels (like ROR or GVB) please provide your own sf geometry via the 'geom' parameter."
+                "For other levels (like ROR) please provide your own sf geometry via the 'geom' parameter."
             )
         }
 
         message("Loading map geometries...")
-        level_type <- if (is_bnd) {
-            0L
-        } else if (is_bld) {
-            1L
-        } else if (is_kre) {
-            2L
-        } else {
-            3L
-        }
-        
-        map_raw <- geodata::gadm("DEU", level = level_type, path = tempdir())
-        map_sf <- sf::st_as_sf(map_raw)
+        map_sf <- get_inkar_geometry(map_level)
+        join_key <- "Kennziffer"
 
-        if (is_bnd) {
-            join_key <- "GID_0"
-            map_sf[[join_key]] <- "DEU"
-            data[[id_col]] <- "DEU"
+        # Restore leading zeros if the ID column was read as a number
+        pad_width <- c(BND = 1L, BLD = 2L, KRE = 5L, GVB = 9L, GEM = 8L)[[map_level]]
+        parsed_ids <- suppressWarnings(as.numeric(data[[id_col]]))
+        if (any(is.na(parsed_ids))) {
+            data[[id_col]] <- as.character(data[[id_col]])
         } else {
-            join_key <- if (is_bld) "CC_1" else if (is_kre) "CC_2" else "CC_3"
-            pad_width <- if (is_bld) 2L else if (is_kre) 5L else 8L
-            map_sf[[join_key]] <- as.character(map_sf[[join_key]])
-            
-            parsed_ids <- suppressWarnings(as.integer(data[[id_col]]))
-            if (any(is.na(parsed_ids))) {
-                data[[id_col]] <- as.character(data[[id_col]])
-            } else {
-                data[[id_col]] <- formatC(
-                    parsed_ids,
-                    width = pad_width,
-                    flag = "0"
-                )
-            }
+            data[[id_col]] <- formatC(parsed_ids, width = pad_width, flag = "0", format = "d", big.mark = "")
+        }
+
+        unmatched <- setdiff(unique(data[[id_col]]), map_sf[[join_key]])
+        if (length(unmatched) > 0) {
+            warning(
+                length(unmatched), " region(s) have no boundary and are not drawn: ",
+                paste(utils::head(unmatched, 5), collapse = ", "),
+                if (length(unmatched) > 5) ", ..." else "",
+                ". INKAR may use a newer territorial status; pass your own boundaries via 'geom'.",
+                call. = FALSE
+            )
         }
         map_sf <- merge(map_sf, data, by.x = join_key, by.y = id_col, all.x = TRUE)
+        caption <- gisco_attribution
     }
 
     # Highlight: add alpha column
     if (!is.null(highlight)) {
         name_col_map <- if (is_en) "region_name" else "Raumeinheit"
-        hl_mask <- !is.na(map_sf[[name_col_map]]) &
-            grepl(paste(highlight, collapse = "|"), map_sf[[name_col_map]], ignore.case = TRUE)
+        hl_mask <- text_match(map_sf[[name_col_map]], highlight)
         map_sf$.hl_alpha <- ifelse(hl_mask, 1, 0.25)
     } else {
         map_sf$.hl_alpha <- 1
@@ -230,21 +215,26 @@ plot_inkar <- function(data, variable = NULL, year = NULL, mode = c("light", "da
     # Styling colors
     fill_pal <- if (mode == "dark") "magma" else "viridis"
 
-    # Build fill scale — quantile or equal
+    # Build fill scale: quantile or equal
     fill_values <- map_sf[[val_col]]
     fill_values <- fill_values[!is.na(fill_values)]
+    na_fill <- if (mode == "dark") "grey10" else "grey95"
     fill_scale <- if (breaks == "quantile" && length(fill_values) >= 5) {
-        q_breaks <- stats::quantile(fill_values, probs = seq(0, 1, length.out = 6), na.rm = TRUE)
-        ggplot2::scale_fill_viridis_c(
-            option  = fill_pal,
-            breaks  = q_breaks,
-            labels  = round(q_breaks, 1),
-            na.value = if (mode == "dark") "grey10" else "grey95"
+        # Binned scale: each quintile gets its own color step, and the legend
+        # spaces the steps evenly. A continuous scale with quantile ticks kept
+        # the colors linear and crowded the labels together.
+        q_breaks <- unique(stats::quantile(fill_values, probs = seq(0.2, 0.8, by = 0.2), names = FALSE))
+        ggplot2::scale_fill_viridis_b(
+            option   = fill_pal,
+            breaks   = q_breaks,
+            labels   = format_legend_number,
+            na.value = na_fill
         )
     } else {
         ggplot2::scale_fill_viridis_c(
             option   = fill_pal,
-            na.value = if (mode == "dark") "grey10" else "grey95"
+            labels   = format_legend_number,
+            na.value = na_fill
         )
     }
 
@@ -263,8 +253,44 @@ plot_inkar <- function(data, variable = NULL, year = NULL, mode = c("light", "da
         ggplot2::labs(
             title    = plot_title,
             subtitle = paste0("Spatial Level: ", level_raw, " | Year: ", year),
-            fill     = unit_str
+            fill     = unit_str,
+            caption  = caption
         )
 
     return(p)
+}
+
+#' Map an INKAR level label to a level code supported by GADM maps
+#'
+#' Matches whole labels, because "Bundeslaender" must not be read as "Bund".
+#'
+#' @param level_raw Level code or label from the `Aggregat` / `level_name` column.
+#' @return One of "BND", "BLD", "KRE", "GVB", "GEM", or NA.
+#' @noRd
+detect_map_level <- function(level_raw) {
+    key <- tolower(trimws(as.character(level_raw)))
+    # Names are built with setNames(): a non-ASCII argument name is mangled to
+    # "<U+00E4>" when the package is installed in a non-UTF-8 locale
+    lookup <- stats::setNames(
+        c("BND", "BND", "BND", "BND",
+          "BLD", "BLD", "BLD", "BLD", "BLD", "BLD", "BLD", "BLD",
+          "KRE", "KRE", "KRE",
+          "GVB", "GVB", "GVB", "GVB",
+          "GEM", "GEM", "GEM"),
+        c("bnd", "bu", "bund", "germany",
+          "bld", "bl", "bundesl\u00e4nder", "l\u00e4nder", "bundeslaender", "laender",
+          "federal states", "states",
+          "kre", "kreise", "districts",
+          "gvb", "gemeindeverb\u00e4nde", "gemeindeverbaende", "municipal associations",
+          "gem", "gemeinden", "municipalities")
+    )
+    if (length(key) == 0 || is.na(key) || !key %in% names(lookup)) return(NA_character_)
+    unname(lookup[[key]])
+}
+
+#' Format legend values without scientific notation
+#' @noRd
+format_legend_number <- function(x) {
+    x <- signif(x, 3)
+    format(x, big.mark = ",", scientific = FALSE, trim = TRUE, drop0trailing = TRUE)
 }

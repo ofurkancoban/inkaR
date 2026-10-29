@@ -21,5 +21,13 @@ A sorted character vector of theme names.
 
 ``` r
 get_themes()
-#> [1] "API Discovered"
+#>  [1] "Absolutzahlen"                       "Arbeitslosigkeit"                   
+#>  [3] "Bauen und Wohnen"                    "Beschäftigung und Erwerbstätigkeit" 
+#>  [5] "Bevölkerung"                         "Bildung"                            
+#>  [7] "Flächennutzung und Umwelt"           "Medizinische und soziale Versorgung"
+#>  [9] "Privateinkommen, Private Schulden"   "Raumwirksame Mittel"                
+#> [11] "SDG-Indikatoren für Kommunen"        "Siedlungsstruktur"                  
+#> [13] "Sozialleistungen"                    "Verkehr und Erreichbarkeit"         
+#> [15] "Wirtschaft"                          "Zentrale Orte Monitoring"           
+#> [17] "Öffentliche Finanzen"               
 ```

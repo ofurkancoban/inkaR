@@ -15,15 +15,28 @@ A data frame with the following columns:
 
 - ID:
 
-  Short identifier (e.g., "001")
+  Short identifier from the INKAR indicator overview (e.g., "q_alo"), or
+  the M_ID as text where INKAR publishes none
 
 - M_ID:
 
-  Numeric internal ID used by API
+  Numeric key the INKAR API expects (the wizard "Gruppe")
+
+- IndID:
+
+  Official INKAR indicator number from the indicator overview. It
+  differs from M_ID for most indicators (e.g. 1101 vs 12) and is
+  accepted by
+  [`get_inkar_data()`](https://ofurkancoban.github.io/inkaR/reference/get_inkar_data.md)
+  as well
 
 - Name_DE:
 
   German name of the indicator
+
+- Short_DE:
+
+  Official German short name (e.g. "Arbeitslosenquote")
 
 - Name_EN:
 
@@ -35,15 +48,19 @@ A data frame with the following columns:
 
 - Description_EN:
 
-  Detailed English description (available for 413 indicators)
+  Detailed English description (missing for about a quarter of the
+  indicators)
 
 - Theme:
 
-  Group/Domain of the indicator
+  Topic area of the INKAR wizard in German (e.g. "Arbeitslosigkeit");
+  see
+  [`get_themes()`](https://ofurkancoban.github.io/inkaR/reference/get_themes.md)
 
 - Active:
 
-  Logical. TRUE if verified as active in the API
+  Logical. TRUE if the indicator is offered by the INKAR API. FALSE
+  marks discontinued indicators kept for backward compatibility
 
 - Algorithmus:
 

@@ -7,13 +7,19 @@
 update_indicators(lang = c("de", "en"))
 }
 \arguments{
-\item{lang}{Character. Language for messages: \code{"de"} or \code{"en"}.}
+\item{lang}{Character. Language for messages: \code{"de"} or \code{"en"}.
+Only indicators for German spatial levels are compared; the API's European
+indicators (NUTS-2) are not supported by this package.}
 }
 \value{
-Invisibly returns the local \code{indicators} tibble.
+Invisibly returns the local \code{indicators} tibble. Indicators the
+API offers but the local metadata lacks are attached as attribute
+\code{"new_indicators"} (\code{M_ID}, \code{Name}, \code{Bereich}); active local
+indicators the API no longer offers as \code{"removed_indicators"}.
 }
 \description{
-Checks the INKAR API for new indicators not present in the local
-\code{indicators} dataset. The check is informational only; reinstall
-the package to permanently add new indicators to local metadata.
+Checks the INKAR API for indicators that are not in the local
+\code{indicators} dataset. The check is informational only; install a newer
+package version to add them to the local metadata. New indicators can
+still be downloaded by their numeric M_ID with \code{\link[=get_inkar_data]{get_inkar_data()}}.
 }

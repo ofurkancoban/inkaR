@@ -1,4 +1,7 @@
 # --- indicators metadata ---
+# Pipeline: run this script first (names and translations), then
+# sync_indicators_api.R (merges rows with the live INKAR API, adds IndID,
+# Short_DE, Theme and availability years). The sync step is idempotent.
 # This script processes the raw metadata and generates a clean translation dictionary.
 # It uses ASCII normalization to bypass all encoding and boundary issues.
 
@@ -1176,7 +1179,7 @@ if (file.exists(xl_en_path) && requireNamespace("readxl", quietly = TRUE)) {
   message(sprintf("Excel EN joined: %d indicators with Description_EN",
                   sum(!is.na(indicators$Description_EN))))
 } else {
-  message("Excel EN file not found — skipping Description_EN/Anmerkungen_EN/Stat_Grund_EN enrichment.")
+  message("Excel EN file not found; skipping Description_EN/Anmerkungen_EN/Stat_Grund_EN enrichment.")
 }
 
 # --- Check for failures ---

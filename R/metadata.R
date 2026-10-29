@@ -9,16 +9,13 @@ get_indicators <- function(lang = c("de", "en")) {
     lang <- match.arg(lang)
 
     # Load internal dataset
-    # Note: This assumes 'indicators' dataset exists in the package
-    if (!exists("indicators", envir = asNamespace("inkaR"))) {
-        # If not yet built, return empty or try to load raw file if testing
+    df <- inkar_indicators()
+    if (is.null(df)) {
         warning(
             "Indicators dataset not loaded. Ensure package is installed or data loaded."
         )
         return(tibble::tibble())
     }
-
-    df <- inkaR::indicators
 
     # Filter only Active indicators to prevent dead/archived indicators from appearing
     if ("Active" %in% names(df)) {
@@ -81,7 +78,7 @@ view_indicators <- function(lang = c("de", "en"), theme = NULL) {
     df <- get_indicators(lang = lang)
 
     if (!is.null(theme) && "Theme" %in% names(df)) {
-        df <- df[!is.na(df$Theme) & grepl(theme, df$Theme, ignore.case = TRUE), ]
+        df <- df[text_match(df$Theme, theme), ]
         if (nrow(df) == 0) {
             cli::cli_alert_warning("No indicators found for theme: {.val {theme}}")
             return(invisible(NULL))
@@ -90,24 +87,28 @@ view_indicators <- function(lang = c("de", "en"), theme = NULL) {
 
     # Custom formatting for German view based on user request
     if (lang == "de") {
-        # Map standardized names back to user-preferred (Excel-like) headers
+        # Normalize "Statistische Grundlagen" column name before select
+        stat_col <- intersect(c("Statistische Grundlagen", "Statistische_Grundlagen"), names(df))
+        if (length(stat_col) > 0 && stat_col[1] != "Statistische Grundlagen") {
+            df <- dplyr::rename(df, `Statistische Grundlagen` = !!stat_col[1])
+        }
         df <- df |>
-            dplyr::arrange(dplyr::desc(Active)) |> # Sort Active first
+            dplyr::arrange(dplyr::desc(Active)) |>
             dplyr::select(
                 M_ID,
-                Aktiv = Active, # NEW: Active Status
-                Kurzname = Name, # Name is Name_DE
-                Name = Description_DE, # Description_DE is the longer Name
+                Aktiv = Active,
+                Kurzname = Name,
+                Name = Description_DE,
                 Gemeinden,
                 Kreise,
                 Algorithmus,
-                "K\u00fcrzel" = ID,
+                Kuerzel = ID,
                 Anmerkungen,
-                `Statistische Grundlagen` = dplyr::any_of(c(
-                    "Statistische Grundlagen",
-                    "Statistische_Grundlagen"
-                ))
+                dplyr::any_of("Statistische Grundlagen")
             )
+        # Renamed afterwards: a non-ASCII name inside select() is mangled to
+        # "K<U+00FC>rzel" when the package is installed in a non-UTF-8 locale
+        names(df)[names(df) == "Kuerzel"] <- "K\u00fcrzel"
     } else if (lang == "en") {
         # Custom formatting for English view to match DE structure
         df <- df |>
@@ -156,7 +157,8 @@ view_indicators <- function(lang = c("de", "en"), theme = NULL) {
 #' Search for indicators by keyword. Prints a formatted table and invisibly
 #' returns the matches so you can copy the ID for use in `inkaR()`.
 #'
-#' @param pattern Text to search in names and descriptions.
+#' @param pattern Text to search in names, IDs and descriptions. Matched literally
+#'   and case-insensitively, so characters such as `(` need no escaping.
 #' @param lang Language to search in ("de" or "en").
 #' @param theme Optional character. Filter to a specific theme/domain before
 #'   searching. Use [get_themes()] to list available themes.
@@ -167,7 +169,7 @@ search_indicators <- function(pattern, lang = c("de", "en"), theme = NULL) {
     df <- get_indicators(lang = lang)
 
     if (!is.null(theme) && "Theme" %in% names(df)) {
-        df <- df[!is.na(df$Theme) & grepl(theme, df$Theme, ignore.case = TRUE), ]
+        df <- df[text_match(df$Theme, theme), ]
         if (nrow(df) == 0) {
             cli::cli_alert_warning("No indicators found for theme: {.val {theme}}")
             return(invisible(tibble::tibble()))
@@ -177,16 +179,19 @@ search_indicators <- function(pattern, lang = c("de", "en"), theme = NULL) {
     desc_col <- if ("Description_DE" %in% names(df)) "Description_DE" else NULL
 
     # Bilingual Search: Search in primary Name, ID and secondary names if they exist
+    # Literal matching: names such as "Bevoelkerung (mit ..." contain regex
+    # metacharacters
     hits <- df |>
         dplyr::filter(
-            grepl(pattern, .data$Name, ignore.case = TRUE) |
-                grepl(pattern, .data$ID, ignore.case = TRUE) |
-                (if ("Name_DE" %in% names(df)) grepl(pattern, .data$Name_DE, ignore.case = TRUE) else FALSE) |
-                (if ("Name_EN" %in% names(df)) grepl(pattern, .data$Name_EN, ignore.case = TRUE) else FALSE) |
+            text_match(.data$Name, pattern) |
+                text_match(.data$ID, pattern) |
+                (if ("Name_DE" %in% names(df)) text_match(.data$Name_DE, pattern) else FALSE) |
+                (if ("Short_DE" %in% names(df)) text_match(.data$Short_DE, pattern) else FALSE) |
+                (if ("Name_EN" %in% names(df)) text_match(.data$Name_EN, pattern) else FALSE) |
                 (if (!is.null(desc_col)) {
-                    grepl(pattern, .data[[desc_col]], ignore.case = TRUE)
+                    text_match(.data[[desc_col]], pattern)
                 } else if ("Description_EN" %in% names(df)) {
-                    grepl(pattern, .data$Description_EN, ignore.case = TRUE)
+                    text_match(.data$Description_EN, pattern)
                 } else {
                     FALSE
                 })
@@ -208,8 +213,8 @@ search_indicators <- function(pattern, lang = c("de", "en"), theme = NULL) {
         } else {
             # Base R fallback using adist
             name_col    <- if ("Name_EN" %in% names(df) && lang == "en") df$Name_EN else df$Name_DE
-            dists_name  <- as.vector(utils::adist(tolower(pattern), tolower(name_col), method = "osa")) / max(nchar(pattern), 1)
-            dists_id    <- as.vector(utils::adist(tolower(pattern), tolower(df$ID), method = "osa")) / max(nchar(pattern), 1)
+            dists_name  <- as.vector(utils::adist(tolower(pattern), tolower(name_col))) / max(nchar(pattern), 1)
+            dists_id    <- as.vector(utils::adist(tolower(pattern), tolower(df$ID))) / max(nchar(pattern), 1)
             dists       <- pmin(dists_name, dists_id)
             best_idx    <- which(dists < 0.4)
             if (length(best_idx) > 0) {
@@ -277,9 +282,10 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
         search_in <- paste(
             df$Name,
             df$ID,
+            if ("Short_DE" %in% names(df)) df$Short_DE else "",
             if ("Description_DE" %in% names(df)) df$Description_DE else ""
         )
-        df <- df[grepl(pattern, search_in, ignore.case = TRUE), ]
+        df <- df[text_match(search_in, pattern), ]
         if (nrow(df) == 0) {
             message("No indicators found for: '", pattern, "'")
             return(invisible(NULL))
@@ -378,73 +384,31 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
             # Handle multiple IDs (space or comma separated)
             inputs <- strsplit(input, "[ ,]+")[[1]]
             inputs <- inputs[inputs != ""]
-            
+
             # Check exact matches for all
             exact_matches <- inputs[inputs %in% df$ID]
             if (length(exact_matches) == length(inputs)) {
                 sapply(exact_matches, record_usage)
                 return(exact_matches)
             }
-            
-            # If a single input was given, try partial match and fuzzy
-            if (length(inputs) == 1) {
-                # 1. Partial Match (grepl)
-                matches <- df$ID[grepl(input, df$ID, fixed = TRUE)]
-                if (length(matches) == 1) {
-                    record_usage(matches)
-                    return(matches)
-                }
-                
-                # 2. String Distance Match (Fuzzy)
-                if (requireNamespace("stringdist", quietly = TRUE)) {
-                    dists_id <- stringdist::stringdist(tolower(input), tolower(df$ID), method = "jw")
-                    dists_name <- stringdist::stringdist(tolower(input), tolower(df$Name), method = "jw")
-                    
-                    min_id <- min(dists_id, na.rm = TRUE)
-                    min_name <- min(dists_name, na.rm = TRUE)
-                    
-                    if (min_id < 0.2) {
-                        best <- df$ID[which.min(dists_id)]
-                        cli::cli_alert_info("Exact match not found. Selecting closest match: {.val {best}}")
-                        Sys.sleep(1)
-                        record_usage(best)
-                        return(best)
-                    } else if (min_name < 0.2) {
-                        best <- df$ID[which.min(dists_name)]
-                        cli::cli_alert_info("Indicator name matched: {.val {df$Name[which.min(dists_name)]}} (ID: {best})")
-                        Sys.sleep(1)
-                        record_usage(best)
-                        return(best)
-                    }
-                } else {
-                    # Base R fallback
-                    dists_id <- as.vector(utils::adist(tolower(input), tolower(df$ID), method = "osa")) / max(nchar(input), 1)
-                    dists_name <- as.vector(utils::adist(tolower(input), tolower(df$Name), method = "osa")) / max(nchar(input), 1)
-                    
-                    min_id <- min(dists_id, na.rm = TRUE)
-                    min_name <- min(dists_name, na.rm = TRUE)
-                    
-                    if (min_id < 0.3) {
-                        best <- df$ID[which.min(dists_id)]
-                        cli::cli_alert_info("Exact match not found. Selecting closest match (Base R fallback): {.val {best}}")
-                        Sys.sleep(1)
-                        record_usage(best)
-                        return(best)
-                    } else if (min_name < 0.3) {
-                        best <- df$ID[which.min(dists_name)]
-                        cli::cli_alert_info("Indicator name matched (Base R fallback): {.val {df$Name[which.min(dists_name)]}} (ID: {best})")
-                        Sys.sleep(1)
-                        record_usage(best)
-                        return(best)
-                    }
-                }
-            } else {
-                # For multiple inputs, if all are not exact, show error
-                cli::cli_alert_danger("Some IDs are invalid. Please use exact IDs for multiple selection.")
-                Sys.sleep(1.2)
+
+            # Otherwise treat the whole input as one name or ID query, so
+            # "Total population" is not split into two invalid IDs
+            selected <- match_indicator_input(input, df)
+            if (is.data.frame(selected)) {
+                # Several indicators match: narrow the list and keep paging
+                cli::cli_alert_info("{nrow(selected)} indicators match {.val {input}}. Showing only those.")
+                Sys.sleep(1)
+                df <- selected
+                total_items <- nrow(df)
+                start_idx <- 1
                 next
             }
-            
+            if (!is.null(selected)) {
+                record_usage(selected)
+                return(selected)
+            }
+
             cli::cli_alert_danger("Invalid selection: {input}")
             Sys.sleep(1.2)
             next
@@ -463,13 +427,12 @@ select_indicator <- function(pattern = NULL, lang = c("de", "en")) {
 #' @export
 select_level <- function(variable = NULL) {
     # Full mapping of level names -> API level IDs
-    level_map <- list(
-        "Bund" = "BND",
-        "L\u00E4nder" = "BLD",
-        "Raumordnungsregionen" = "ROR",
-        "Kreise" = "KRE",
-        "Gemeindeverb\u00E4nde" = "GVB",
-        "Gemeinden" = "GEM"
+    # setNames() keeps the umlauts intact when the package is installed in a
+    # non-UTF-8 locale (literal argument names would become "<U+00E4>")
+    level_map <- stats::setNames(
+        as.list(c("BND", "BLD", "ROR", "KRE", "GVB", "GEM")),
+        c("Bund", "L\u00E4nder", "Raumordnungsregionen", "Kreise",
+          "Gemeindeverb\u00E4nde", "Gemeinden")
     )
 
     available_levels <- names(level_map)
@@ -478,8 +441,8 @@ select_level <- function(variable = NULL) {
     if (!is.null(variable)) {
         # Resolve all variables to M_IDs
         api_variables <- variable
-        if (exists("indicators", envir = asNamespace("inkaR"))) {
-            inds <- inkaR::indicators
+        inds <- inkar_indicators()
+        if (!is.null(inds)) {
             api_variables <- sapply(variable, function(v) {
                 if (v %in% inds$ID) {
                     m <- inds$M_ID[inds$ID == v]
@@ -501,7 +464,7 @@ select_level <- function(variable = NULL) {
             body <- list(
                 IndicatorCollection = list(list(Gruppe = api_var)),
                 TimeCollection = "",
-                SpaceCollection = list(list(level = lv_id))
+                SpaceCollection = list(list(level = to_api_level(lv_id)))
             )
             
             inkar_request("Wizard/GetM%C3%B6glich") |>
@@ -597,8 +560,8 @@ select_level <- function(variable = NULL) {
 #' @export
 select_years <- function(variable, level) {
     api_variables <- variable
-    if (exists("indicators", envir = asNamespace("inkaR"))) {
-        inds <- inkaR::indicators
+    inds <- inkar_indicators()
+    if (!is.null(inds)) {
         api_variables <- sapply(variable, function(v) {
             if (v %in% inds$ID) {
                 m <- inds$M_ID[inds$ID == v]
@@ -623,7 +586,7 @@ select_years <- function(variable, level) {
         body <- list(
             IndicatorCollection = list(list(Gruppe = v)),
             TimeCollection = "",
-            SpaceCollection = list(list(level = level))
+            SpaceCollection = list(list(level = to_api_level(level)))
         )
         resp <- inkar_request("Wizard/GetM%C3%B6glich") |>
             httr2::req_method("POST") |>
@@ -710,58 +673,162 @@ select_years <- function(variable, level) {
 #' @examples
 #' get_themes()
 get_themes <- function() {
-  if (!exists("indicators", envir = asNamespace("inkaR"))) return(character())
-  df <- inkaR::indicators
+  df <- inkar_indicators()
+  if (is.null(df)) return(character())
   if (!"Theme" %in% names(df)) return(character())
   sort(unique(df$Theme[!is.na(df$Theme) & nzchar(df$Theme)]))
 }
 
 #' Refresh Local Indicators Metadata
 #'
-#' Checks the INKAR API for new indicators not present in the local
-#' \code{indicators} dataset. The check is informational only; reinstall
-#' the package to permanently add new indicators to local metadata.
+#' Checks the INKAR API for indicators that are not in the local
+#' \code{indicators} dataset. The check is informational only; install a newer
+#' package version to add them to the local metadata. New indicators can
+#' still be downloaded by their numeric M_ID with [get_inkar_data()].
 #'
 #' @param lang Character. Language for messages: \code{"de"} or \code{"en"}.
-#' @return Invisibly returns the local \code{indicators} tibble.
+#' Only indicators for German spatial levels are compared; the API's European
+#' indicators (NUTS-2) are not supported by this package.
+#'
+#' @return Invisibly returns the local \code{indicators} tibble. Indicators the
+#'   API offers but the local metadata lacks are attached as attribute
+#'   \code{"new_indicators"} (\code{M_ID}, \code{Name}, \code{Bereich}); active local
+#'   indicators the API no longer offers as \code{"removed_indicators"}.
 #' @export
 update_indicators <- function(lang = c("de", "en")) {
     lang <- match.arg(lang)
+    local <- inkaR::indicators
     cli::cli_alert_info("Fetching latest indicator list from INKAR API...")
 
-    req <- inkar_request("Wizard/GetM%C3%B6glich") |>
-        httr2::req_method("POST") |>
-        httr2::req_body_json(list(
-            IndicatorCollection = list(),
-            TimeCollection      = "",
-            SpaceCollection     = list(list(level = "KRE"))
-        ))
-
-    resp <- tryCatch(perform_request(req), error = function(e) NULL)
-    if (is.null(resp)) {
+    api_df <- tryCatch(fetch_api_indicators(), error = function(e) NULL)
+    if (is.null(api_df) || nrow(api_df) == 0) {
         cli::cli_alert_warning(
-            "Could not reach INKAR API. Local indicators dataset remains unchanged ({nrow(inkaR::indicators)} indicators)."
+            "Could not reach INKAR API. Local indicators dataset remains unchanged ({nrow(local)} indicators)."
         )
-        return(invisible(inkaR::indicators))
+        return(invisible(local))
     }
 
-    moglich_key <- "M\u00f6glich"
-    if (!is.null(resp[[moglich_key]])) {
-        api_df   <- dplyr::bind_rows(resp[[moglich_key]])
-        local_ids <- inkaR::indicators$M_ID
-        api_ids   <- suppressWarnings(as.numeric(api_df$IndID))
-        new_ids   <- setdiff(api_ids[!is.na(api_ids)], local_ids)
-        if (length(new_ids) > 0) {
-            cli::cli_alert_success(
-                "Found {length(new_ids)} new indicator(s) not in local metadata: {.val {new_ids}}"
-            )
-            cli::cli_alert_info("Reinstall the package to include them permanently.")
-        } else {
-            cli::cli_alert_success(
-                "Local indicators are up to date ({nrow(inkaR::indicators)} indicators)."
-            )
+    # Compare against indicators the API still offers; inactive local rows
+    # are discontinued and may legitimately be missing from the API
+    new_df <- api_df[!api_df$M_ID %in% local$M_ID[local$Active], , drop = FALSE]
+    removed <- local[local$Active & !local$M_ID %in% api_df$M_ID, , drop = FALSE]
+    if (nrow(removed) > 0) {
+        cli::cli_alert_warning(
+            "{nrow(removed)} local indicator(s) are no longer offered by the API: {.val {utils::head(removed$ID, 10)}}"
+        )
+        attr(local, "removed_indicators") <- removed[, c("ID", "M_ID", "Name_DE")]
+    }
+    if (nrow(new_df) > 0) {
+        cli::cli_alert_success("Found {nrow(new_df)} new indicator(s) not in local metadata:")
+        shown <- utils::head(new_df, 10)
+        cli::cli_verbatim(paste0("  ", format(shown$M_ID), "  ", shown$Name))
+        if (nrow(new_df) > 10) cli::cli_verbatim(paste0("  ... and ", nrow(new_df) - 10, " more."))
+        cli::cli_alert_info(
+            "Download them by M_ID, e.g. {.code get_inkar_data(\"{new_df$M_ID[1]}\")}, or install a newer package version."
+        )
+        attr(local, "new_indicators") <- new_df
+    } else if (nrow(removed) == 0) {
+        cli::cli_alert_success("Local indicators are up to date ({sum(local$Active)} active indicators).")
+    }
+
+    invisible(local)
+}
+
+#' List all indicators currently offered by the INKAR wizard
+#'
+#' The API has no single list endpoint: the wizard first loads the topic
+#' areas (Bereiche) and then the indicators of each area.
+#'
+#' @return Data frame with numeric `M_ID`, `Name` and `Bereich` for German
+#'   indicators, or NULL if the API could not be reached. Areas with a European
+#'   spatial reference (NUTS-2) are dropped.
+#' @noRd
+fetch_api_indicators <- function() {
+    wizard <- '{"IndicatorCollection":[],"TimeCollection":[],"SpaceCollection":[],"Title":"","pageorder":1,"currentpage":0,"modified":false}'
+    post <- function(path, body) {
+        inkar_request(path) |>
+            httr2::req_method("POST") |>
+            httr2::req_body_raw(body, type = "application/json; charset=utf-8")
+    }
+
+    areas <- perform_request(post("Wizard/GetBereiche", wizard))
+    if (is.null(areas) || is.null(areas$Bereiche)) return(NULL)
+    area_ids <- as.data.frame(areas$Bereiche)$ID
+
+    # The wizard state is passed with quotes replaced by "\u00a7"
+    wizard_escaped <- gsub("\"", "\u00a7", wizard, fixed = TRUE)
+    reqs <- lapply(area_ids, function(id) {
+        post("Wizard/GetIndikatorenZuBereich",
+             sprintf('{"bereichsID": "%s", "wiz": "%s"}', id, wizard_escaped))
+    })
+    resps <- httr2::req_perform_parallel(reqs, on_error = "continue", progress = FALSE)
+
+    parts <- lapply(resps, function(resp) {
+        if (!inherits(resp, "httr2_response") || httr2::resp_is_error(resp)) return(NULL)
+        content <- tryCatch(httr2::resp_body_json(resp, simplifyVector = TRUE), error = function(e) NULL)
+        if (is.character(content) && length(content) == 1) {
+            content <- tryCatch(jsonlite::fromJSON(content, simplifyVector = TRUE), error = function(e) NULL)
         }
-    }
+        inds <- content$Indikatoren
+        if (!is.data.frame(inds) || nrow(inds) == 0) return(NULL)
+        # A non-empty EU field marks indicators with a European spatial reference
+        if ("EU" %in% names(inds)) inds <- inds[is.na(inds$EU) | inds$EU == "", , drop = FALSE]
+        if (nrow(inds) == 0) return(NULL)
+        data.frame(
+            M_ID = suppressWarnings(as.numeric(inds$Gruppe)),
+            Name = inds$KurznamePlus,
+            Bereich = inds$Bereich,
+            stringsAsFactors = FALSE
+        )
+    })
+    out <- do.call(rbind, parts)
+    if (is.null(out)) return(NULL)
+    out <- out[!is.na(out$M_ID) & !duplicated(out$M_ID), , drop = FALSE]
+    out[order(out$M_ID), , drop = FALSE]
+}
 
-    invisible(inkaR::indicators)
+#' Resolve free-text wizard input to an indicator
+#'
+#' @param input Trimmed user input.
+#' @param df Indicator table shown in the wizard.
+#' @return A single ID, a data frame of several candidates, or NULL.
+#' @noRd
+match_indicator_input <- function(input, df) {
+    # 1. Exact name (case-insensitive)
+    names_short <- if ("Short_DE" %in% names(df)) df$Short_DE else df$Name
+    exact_name <- df$ID[(!is.na(df$Name) & tolower(df$Name) == tolower(input)) |
+                        (!is.na(names_short) & tolower(names_short) == tolower(input))]
+    if (length(exact_name) >= 1) return(exact_name[1])
+
+    # 2. Literal substring in ID or name
+    id_hits <- df$ID[text_match(df$ID, input)]
+    if (length(id_hits) == 1) return(id_hits)
+    # Inputs shorter than 3 characters are too vague for name or fuzzy
+    # matching; a stray "1" must not select or filter anything
+    if (nchar(input) < 3) return(NULL)
+    name_hits <- df[text_match(df$Name, input) | text_match(names_short, input), ]
+    if (nrow(name_hits) == 1) return(name_hits$ID)
+    if (nrow(name_hits) > 1) return(name_hits)
+
+    # 3. Fuzzy match
+    if (requireNamespace("stringdist", quietly = TRUE)) {
+        dists_id   <- stringdist::stringdist(tolower(input), tolower(df$ID), method = "jw")
+        dists_name <- stringdist::stringdist(tolower(input), tolower(df$Name), method = "jw")
+        id_limit   <- 0.2
+    } else {
+        dists_id   <- as.vector(utils::adist(tolower(input), tolower(df$ID))) / max(nchar(input), 1)
+        dists_name <- as.vector(utils::adist(tolower(input), tolower(df$Name))) / max(nchar(input), 1)
+        id_limit   <- 0.3
+    }
+    if (min(dists_name, na.rm = TRUE) < id_limit) {
+        idx <- which.min(dists_name)
+        cli::cli_alert_info("Indicator name matched: {.val {df$Name[idx]}} (ID: {df$ID[idx]})")
+        return(df$ID[idx])
+    }
+    if (min(dists_id, na.rm = TRUE) < id_limit) {
+        best <- df$ID[which.min(dists_id)]
+        cli::cli_alert_info("Exact match not found. Selecting closest match: {.val {best}}")
+        return(best)
+    }
+    NULL
 }

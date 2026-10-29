@@ -8,3 +8,4 @@
 inkaR.Rcheck/
 *.tar.gz
 ..Rcheck/
+.DS_Store

@@ -23,8 +23,10 @@ compare_district(data, districts, exact = FALSE)
 
 - districts:
 
-  Character/Numeric vector. District names, IDs, or partial patterns to
-  keep.
+  Character/Numeric vector. District names or IDs (Kennziffer) to keep.
+  Names match literally as parts of names. IDs match as a prefix (`"09"`
+  keeps all of Bavaria) or exactly with leading zeros ignored (`1001`
+  matches `"01001"`).
 
 - exact:
 
@@ -42,7 +44,7 @@ A filtered tibble.
 #> Using M_ID '11' directly.
 #> ✔ Downloaded: Gross domestic product in 1000 euros [thousand euros]
 #>   Level: Kreise | Regions: 400 | Year(s): 2021 | Rows: 400
-  if (is.data.frame(df)) compare_districts(df, c("Berlin", "Hamburg"))
+  if (is.data.frame(df) && nrow(df) > 0) compare_districts(df, c("Berlin", "Hamburg"))
 #>     region_id                   region_name level_name M_ID
 #> 16      02000 Hamburg, Freie und Hansestadt     Kreise   11
 #> 325     11000                 Berlin, Stadt     Kreise   11

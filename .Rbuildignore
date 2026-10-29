@@ -18,3 +18,4 @@
 ^inkaR_.*\.tar\.gz$
 ^_pkgdown\.yml$
 ^docs$
+^pkgdown$

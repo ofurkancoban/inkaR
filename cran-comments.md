@@ -1,46 +1,58 @@
 # CRAN Comments
 
-## Resubmission for v0.6.2 (Archive Fix)
+## Update to v0.7.0
 
-The package was archived on 2026-03-30 because the previous version left files
-in `~/.cache/R/inkaR/` during `R CMD check`, which violates the CRAN policy of
-not writing to the user's home filespace in non-interactive sessions.
+This is an update of the CRAN version 0.6.6. Main changes (see NEWS.md):
 
-**Root cause:** `get_cache_dir()` always called `tools::R_user_dir()`, even
-during automated checks and tests, causing the NOTE:
+* The bundled indicator metadata was synchronised with the live INKAR API, so
+  every active indicator now resolves to the key the API expects.
+* Maps now use administrative boundaries from Eurostat GISCO instead of
+  'geodata' (removed from Suggests). The new exported function
+  `get_inkar_geometry()` returns these boundaries as an `sf` object.
+* Several bug fixes in downloads, indicator search and plotting.
 
-```text
-* checking for new files in some other directories ... NOTE
-Found the following files/directories:
-  '~/.cache/R/inkaR' '~/.cache/R/inkaR/times_11_KRE.qs'
-```
+## Network access
 
-**Fix applied in v0.6.2:** `get_cache_dir()` now detects non-interactive
-sessions via `interactive()` and falls back to `file.path(tempdir(), "inkaR")`
-in those cases. Persistent caching via `tools::R_user_dir()` is only used when
-the package is loaded interactively by an end-user. The temp directory is
-cleaned up automatically at the end of each R session.
-
-## Previous Resubmission Notes (v0.6.1)
-
-* **Fixed DESCRIPTION**: Single-quoted software names in Title and Description ('INKAR', 'BBSR', 'ggplot2') to comply with CRAN policies.
-* **Fixed Misspellings**: Corrected/Quoted 'ggplot2' usage to resolve spelling notes.
+* All functions that contact the INKAR API or Eurostat GISCO fail with an
+  informative error when the service is unreachable.
+* Examples that need the network are wrapped in `\donttest{}` or
+  `if (interactive())`. The vignette is not evaluated during the build.
+* Tests that need the network are skipped on CRAN and on CI; all other tests
+  use mocked responses.
+* The download cache is written to `tempdir()` in non-interactive sessions, so
+  `R CMD check` leaves no files in the user's home filespace.
+* Examples that download data only use the result when the download returned
+  rows, so they pass with `--run-donttest` even when INKAR is unreachable.
 
 ## Test environments
 
-* local OS X install, R 4.5.3
-* macOS-latest, R-release (via GitHub Actions)
-* ubuntu-latest, R-release (via GitHub Actions)
-* windows-latest, R-release (via GitHub Actions)
-* win-builder (R-devel)
+* local macOS (Darwin 25.6.0), R 4.6.0
 
 ## R CMD check results
 
 0 errors | 0 warnings | 1 note
 
-* The single NOTE is regarding "Possibly misspelled words in DESCRIPTION". These are
-  false positives caused by German terms and technical acronyms (INKAR, BBSR, BND,
-  BLD, ROR, KRE, GVB, GEM) which are not in the English dictionary.
+* The NOTE ("checking HTML version of manual ... Skipping checking HTML
+  validation: 'tidy' doesn't look like recent enough HTML Tidy") comes from
+  the outdated HTML Tidy on the local machine, not from the package.
+
+The check was run with `--as-cran --run-donttest`.
+
+On machines that do not have the intermediate certificate of www.inkar.de, the
+URL check may also report:
+
+```text
+Found the following (possibly) invalid URLs:
+  URL: https://www.inkar.de/
+    Message: libcurl error code 60:
+      SSL certificate problem: unable to get local issuer certificate
+      (Status without verification: OK)
+```
+
+The URL is correct and is the official data source. The INKAR server does not
+send its intermediate certificate (GoDaddy TLS Intermediate CA DV - R1v1), so
+curl cannot verify the chain although browsers can. The same URL was part of
+the current CRAN version 0.6.6.
 
 ## Downstream dependencies
 

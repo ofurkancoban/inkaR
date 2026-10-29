@@ -62,6 +62,8 @@ Map and chart downloaded data.
 
 - [`plot_inkar()`](https://ofurkancoban.github.io/inkaR/reference/plot_inkar.md)
   : Plot INKAR Data on German Maps
+- [`get_inkar_geometry()`](https://ofurkancoban.github.io/inkaR/reference/get_inkar_geometry.md)
+  : Get Administrative Boundaries Matching INKAR
 - [`theme_inkaR()`](https://ofurkancoban.github.io/inkaR/reference/theme_inkaR.md)
   : Premium ggplot2 theme for inkaR
 

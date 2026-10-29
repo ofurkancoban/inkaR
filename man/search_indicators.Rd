@@ -7,7 +7,8 @@
 search_indicators(pattern, lang = c("de", "en"), theme = NULL)
 }
 \arguments{
-\item{pattern}{Text to search in names and descriptions.}
+\item{pattern}{Text to search in names, IDs and descriptions. Matched literally
+and case-insensitively, so characters such as \code{(} need no escaping.}
 
 \item{lang}{Language to search in ("de" or "en").}
 

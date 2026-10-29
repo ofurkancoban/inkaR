@@ -4,7 +4,14 @@
 \alias{inkaR}
 \title{Download Data from INKAR (Interactive Alias)}
 \usage{
-inkaR(variable = NULL, level = NULL, year = NULL, lang = c("de", "en"), ...)
+inkaR(
+  variable = NULL,
+  level = NULL,
+  year = NULL,
+  lang = c("de", "en"),
+  digits = NULL,
+  ...
+)
 }
 \arguments{
 \item{variable}{Character. Indicator ID, shortname, or partial name.
@@ -16,6 +23,9 @@ If \code{NULL} and \code{variable} is also \code{NULL}, an interactive level men
 \item{year}{Integer/Character vector or \code{"latest"}. Specific year (e.g. 2021) or range.}
 
 \item{lang}{Character. \code{"de"} (default) for German column names, \code{"en"} for English.}
+
+\item{digits}{Integer or NULL. Rounds the value column to this many decimal places.
+Useful to correct IEEE 754 single-precision artifacts from the API (e.g. 8.44999... -> 8.45).}
 
 \item{...}{Additional arguments passed to \code{\link[=get_inkar_data]{get_inkar_data()}}, such as
 \code{format} or \code{csv}.}

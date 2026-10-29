@@ -5,7 +5,14 @@
 \alias{inkar}
 \title{Download INKAR Data (English Shortcut)}
 \usage{
-inkar(variable, level = "KRE", year = "latest", lang = "en", ...)
+inkar(
+  variable,
+  level = "KRE",
+  year = "latest",
+  lang = "en",
+  digits = NULL,
+  ...
+)
 }
 \arguments{
 \item{variable}{Character. Indicator ID, short name, or partial name.}
@@ -15,6 +22,8 @@ inkar(variable, level = "KRE", year = "latest", lang = "en", ...)
 \item{year}{Integer/Character vector or \code{"latest"} (default). Year(s) to download.}
 
 \item{lang}{Character. Output language (default \code{"en"}).}
+
+\item{digits}{Integer or NULL. Rounds the value column to this many decimal places.}
 
 \item{...}{Additional arguments passed to \code{\link[=get_inkar_data]{get_inkar_data()}}.}
 }

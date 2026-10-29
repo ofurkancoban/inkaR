@@ -12,7 +12,9 @@ compare_district(data, districts, exact = FALSE)
 \arguments{
 \item{data}{A data frame returned by \code{\link[=get_inkar_data]{get_inkar_data()}}.}
 
-\item{districts}{Character/Numeric vector. District names, IDs, or partial patterns to keep.}
+\item{districts}{Character/Numeric vector. District names or IDs (Kennziffer) to keep.
+Names match literally as parts of names. IDs match as a prefix (\code{"09"} keeps all of
+Bavaria) or exactly with leading zeros ignored (\code{1001} matches \code{"01001"}).}
 
 \item{exact}{Logical. If \code{TRUE}, require exact string match. Default \code{FALSE}.}
 }
@@ -26,6 +28,6 @@ by \code{\link[=get_inkar_data]{get_inkar_data()}} to rows matching specific dis
 \examples{
 \donttest{
   df <- try(get_inkar_data("011", level = "KRE", year = 2021, lang = "en"))
-  if (is.data.frame(df)) compare_districts(df, c("Berlin", "Hamburg"))
+  if (is.data.frame(df) && nrow(df) > 0) compare_districts(df, c("Berlin", "Hamburg"))
 }
 }

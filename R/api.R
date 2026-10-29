@@ -4,7 +4,7 @@
 #' \code{tools::R_user_dir()} so that cached API responses survive across
 #' R sessions.  In non-interactive environments (e.g. \code{R CMD check},
 #' CI, batch scripts) we fall back to \code{tempdir()} so that no files
-#' are left behind in the user's home directory — a requirement of the
+#' are left behind in the user's home directory, a requirement of the
 #' CRAN repository policy.
 #'
 #' @return Path to the cache directory (created if it does not exist).
@@ -93,10 +93,6 @@ inkar_request <- function(
     # Base URL confirmed as inkar.de
     # Endpoint usually /Table/GetDataTable for POST
 
-    if (!requireNamespace("httr2", quietly = TRUE)) {
-        stop("Package 'httr2' is required for this function.")
-    }
-
     req <- httr2::request(base_url) |>
         httr2::req_url_path_append(path) |>
         httr2::req_url_query(!!!query) |>
@@ -120,9 +116,19 @@ perform_request <- function(req) {
             httr2::req_perform(req)
         },
         error = function(e) {
-            if (grepl("SSL certificate problem", e$message)) {
-                message("SSL certificate verification failed. This may happen on some systems (e.g. Fedora) with incomplete CA bundles.")
-                message("Error: ", e$message)
+            # httr2 wraps the curl error, so check the parent condition too
+            msg <- if (!is.null(e$parent)) conditionMessage(e$parent) else conditionMessage(e)
+            if (grepl("SSL certificate problem", paste(conditionMessage(e), msg))) {
+                message(
+                    "SSL certificate verification failed for www.inkar.de.\n",
+                    "The INKAR server does not send its intermediate certificate ",
+                    "(GoDaddy TLS Intermediate CA DV - R1v1), so curl cannot verify ",
+                    "the chain even though browsers can.\n",
+                    "Workaround: add that certificate to a CA bundle and point ",
+                    "the CURL_CA_BUNDLE environment variable at it. ",
+                    "Do not disable SSL verification.\n",
+                    "Original error: ", msg
+                )
                 return(NULL)
             }
             stop(e)
@@ -148,7 +154,7 @@ perform_request <- function(req) {
         stop("API request failed with status ", httr2::resp_status(resp))
     }
 
-    if (httr2::resp_content_type(resp) != "application/json") {
+    if (!startsWith(httr2::resp_content_type(resp), "application/json")) {
         warning("Response is not JSON.")
     }
 
