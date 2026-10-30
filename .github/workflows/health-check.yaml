@@ -1,0 +1,101 @@
+# Weekly check of the live services inkaR depends on (INKAR API, Eurostat
+# GISCO). Opens an issue labelled "health-check" when something needs
+# attention, comments on it while the problem persists and closes it once a
+# run is clean again. See .github/scripts/health_check.R for the checks.
+on:
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      simulate_failure:
+        description: 'Add a failing check to test the alert (opens or updates the issue)'
+        type: boolean
+        default: false
+
+name: health-check.yaml
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: health-check
+  cancel-in-progress: false
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+    steps:
+      - name: Set report path
+        run: echo "HEALTH_REPORT=$RUNNER_TEMP/health-report.md" >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::sf, local::.
+
+      - name: Complete the certificate chain of www.inkar.de
+        run: |
+          bundle="$RUNNER_TEMP/inkar-ca.pem"
+          if out=$(.github/scripts/inkar-ca-bundle.sh "$bundle" 2>&1); then
+            echo "CURL_CA_BUNDLE=$bundle" >> "$GITHUB_ENV"
+          else
+            echo "::warning::$out"
+            echo "INKAR_CA_BUNDLE_ERROR=$(echo "$out" | tr '\n' ' ')" >> "$GITHUB_ENV"
+          fi
+
+      - name: Run health check
+        id: health
+        env:
+          INKAR_HEALTH_SIMULATE_FAILURE: ${{ inputs.simulate_failure }}
+          GITHUB_RUN_URL: ${{ env.RUN_URL }}
+        run: |
+          Rscript .github/scripts/health_check.R
+          cat "$HEALTH_REPORT" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open, update or close the health-check issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          STATUS: ${{ steps.health.outputs.status }}
+          OUTCOME: ${{ steps.health.outcome }}
+        run: |
+          label="health-check"
+          gh label create "$label" --color D93F0B \
+            --description "Automated weekly health check" --force > /dev/null
+
+          # A run that did not finish (setup or script error) is a problem too
+          if [ "$OUTCOME" != "success" ] || [ ! -s "$HEALTH_REPORT" ]; then
+            STATUS="problem"
+            printf '## inkaR health check\n\nThe health check did not finish. See the [workflow run](%s).\n' \
+              "$RUN_URL" > "$HEALTH_REPORT"
+          fi
+
+          issue=$(gh issue list --label "$label" --state open --json number --jq '.[0].number // empty')
+          if [ "$STATUS" = "problem" ]; then
+            if [ -z "$issue" ]; then
+              gh issue create --title "Health check: action needed" --label "$label" --body-file "$HEALTH_REPORT"
+            else
+              gh issue comment "$issue" --body-file "$HEALTH_REPORT"
+            fi
+          elif [ -n "$issue" ]; then
+            gh issue comment "$issue" --body-file "$HEALTH_REPORT"
+            gh issue close "$issue" --reason completed
+          fi
+
+      - name: Mark the run as failed when action is needed
+        if: steps.health.outputs.status == 'problem'
+        run: |
+          echo "::error::The health check found problems; see the issue labelled health-check."
+          exit 1

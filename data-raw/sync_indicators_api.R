@@ -56,7 +56,9 @@ info_resps <- httr2::req_perform_parallel(info_reqs, max_active = 6, progress = 
 info <- do.call(rbind, lapply(info_resps, function(r) {
   x <- parse_body(r)$Info
   data.frame(IndID = as.numeric(x$ID[1]), Kurzname = x$Kurzname[1], Name = x$Name[1],
-             Algorithmus = x$Algorithmus[1], Quelle = x$Quelle[1], stringsAsFactors = FALSE)
+             Algorithmus = x$Algorithmus[1], Quelle = x$Quelle[1],
+             Anmerkungen = if (is.null(x$Anmerkungen)) NA_character_ else x$Anmerkungen[1],
+             stringsAsFactors = FALSE)
 }))
 api <- cbind(api, info)
 stopifnot(
@@ -97,10 +99,19 @@ rows <- lapply(seq_len(nrow(api)), function(i) {
   by_official <- if (a$IndID != a$M_ID) old[old$M_ID == a$IndID, ] else old[0, ]
 
   if (nrow(by_gruppe) == 0 && nrow(by_official) == 0) {
-    stop("No local metadata for Gruppe ", a$M_ID, " (", a$KurznamePlus, "); add it to process_metadata.R first.")
+    # Indicator added to INKAR after the last release: build the row from the
+    # API. The English name is a placeholder (the German name) until someone
+    # adds a translation; ID stays numeric until an official short ID exists.
+    row <- old[NA_integer_, ]
+    row$ID <- as.character(a$M_ID)
+    row$Name_DE <- a$Name
+    row$Name_EN <- a$Name
+    row$Anmerkungen <- a$Anmerkungen
+    message("New indicator without local metadata, created from the API: ", a$M_ID, " ", a$KurznamePlus)
+  } else {
+    # Names and translations: keep the row users already know (Gruppe row)
+    row <- if (nrow(by_gruppe) > 0) by_gruppe[1, ] else by_official[1, ]
   }
-  # Names and translations: keep the row users already know (Gruppe row)
-  row <- if (nrow(by_gruppe) > 0) by_gruppe[1, ] else by_official[1, ]
   doc <- if (nrow(by_official) > 0) by_official[1, ] else row
 
   # The official short ID (e.g. "q_alo") replaces a numeric placeholder ID

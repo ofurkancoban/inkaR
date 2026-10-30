@@ -1,0 +1,91 @@
+# Monthly sync of data/indicators.rda with the live INKAR wizard. When the
+# metadata changed, opens (or updates) a pull request with a readable summary.
+# A failed sync opens an issue labelled "metadata-sync".
+on:
+  schedule:
+    - cron: '23 5 1 * *'
+  workflow_dispatch:
+
+name: sync-metadata.yaml
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: sync-metadata
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Set report path
+        run: echo "SYNC_REPORT=$RUNNER_TEMP/sync-report.md" >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::usethis, local::.
+
+      - name: Complete the certificate chain of www.inkar.de
+        run: |
+          bundle="$RUNNER_TEMP/inkar-ca.pem"
+          .github/scripts/inkar-ca-bundle.sh "$bundle"
+          echo "CURL_CA_BUNDLE=$bundle" >> "$GITHUB_ENV"
+
+      - name: Sync with the INKAR API
+        run: |
+          cp data/indicators.rda "$RUNNER_TEMP/indicators-before.rda"
+          Rscript data-raw/sync_indicators_api.R
+
+      - name: Summarise changes
+        id: diff
+        run: |
+          Rscript .github/scripts/metadata_diff.R \
+            "$RUNNER_TEMP/indicators-before.rda" data/indicators.rda "$SYNC_REPORT"
+          cat "$SYNC_REPORT" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep the data file when nothing changed
+        if: steps.diff.outputs.changed != 'true'
+        run: git checkout -- data/indicators.rda
+
+      - name: Open or update the pull request
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: auto/sync-indicator-metadata
+          add-paths: data/indicators.rda
+          commit-message: 'data: Sync indicator metadata with the INKAR API'
+          title: 'Sync indicator metadata with the INKAR API'
+          body-path: ${{ env.SYNC_REPORT }}
+          labels: metadata-sync
+          delete-branch: true
+
+      - name: Report a failed sync
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          label="metadata-sync"
+          gh label create "$label" --color 1D76DB \
+            --description "Automated indicator metadata sync" --force > /dev/null
+          body=$(printf 'The monthly metadata sync failed. See the [workflow run](%s) for the error.\n\nCommon causes: a new indicator has data only at levels other than Kreise and Gemeinden, or the INKAR API changed.' "$RUN_URL")
+          issue=$(gh issue list --label "$label" --state open --json number --jq '.[0].number // empty')
+          if [ -z "$issue" ]; then
+            gh issue create --title "Metadata sync failed" --label "$label" --body "$body"
+          else
+            gh issue comment "$issue" --body "$body"
+          fi
