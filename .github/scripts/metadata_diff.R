@@ -83,8 +83,9 @@ if (!changed) {
   lines <- c(lines,
     "Merging updates the bundled metadata; it reaches users with the next release.",
     "",
-    "Pull requests opened by GitHub Actions do not start the R-CMD-check workflow.",
-    "Close and reopen this pull request to run it before merging.")
+    "GitHub does not run R-CMD-check for pull requests opened by GitHub Actions; the",
+    "check may show as failed with no jobs. Close and reopen this pull request to run",
+    "it before merging.")
 }
 
 writeLines(lines, report_file, useBytes = TRUE)
