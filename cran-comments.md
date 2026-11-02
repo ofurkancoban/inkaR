@@ -27,6 +27,8 @@ This is an update of the CRAN version 0.6.6. Main changes (see NEWS.md):
 ## Test environments
 
 * local macOS (Darwin 25.6.0), R 4.6.0
+* GitHub Actions: macos-latest (R release), windows-latest (R release),
+  ubuntu-latest (R devel, R release, R oldrel-1)
 
 ## R CMD check results
 
