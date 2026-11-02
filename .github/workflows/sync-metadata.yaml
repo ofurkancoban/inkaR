@@ -3,7 +3,9 @@
 # A failed sync opens an issue labelled "metadata-sync".
 on:
   schedule:
-    - cron: '23 5 1 * *'
+    # Off-peak time: GitHub delays or drops scheduled runs under load (the
+    # 05:23 UTC run on 2026-11-01 started about 6.5 hours late)
+    - cron: '53 3 1 * *'
   workflow_dispatch:
 
 name: sync-metadata.yaml
